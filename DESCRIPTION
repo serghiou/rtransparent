@@ -6,7 +6,7 @@ Author: Stylianos Serghiou
 Maintainer: The package maintainer stelios.serghiou@gmail.com
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: GNU v3
+License: GNU General Public License v3.0
 Encoding: UTF-8
 LazyData: true
 URL: http://github.com/serghiou/rtransparent
