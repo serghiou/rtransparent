@@ -1,0 +1,13 @@
+Package: rtransparent
+Type: Package
+Title: Identifies indicators of transparency.
+Version: 0.1.0
+Author: Stylianos Serghiou
+Maintainer: The package maintainer stelios.serghiou@gmail.com
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GNU v3
+Encoding: UTF-8
+LazyData: true
+URL: http://github.com/serghiou/rtransparent
+BugReports: http://github.com/serghiou/rtransparent/issues
