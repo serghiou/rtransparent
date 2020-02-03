@@ -11,3 +11,5 @@ Encoding: UTF-8
 LazyData: true
 URL: http://github.com/serghiou/rtransparent
 BugReports: http://github.com/serghiou/rtransparent/issues
+Imports: 
+    magrittr
