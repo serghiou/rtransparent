@@ -1,21 +1,3 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Cmd + Shift + B'
-#   Check Package:             'Cmd + Shift + E'
-#   Test Package:              'Cmd + Shift + T'
-
-
-
-
 #' Identify mentions of support
 #'
 #' Returns the index with the elements of interest.
@@ -944,7 +926,7 @@ negate_absence_1 <- function(article) {
 #'
 #' Returns the text without potentially misleading mentions of COIs.
 #'
-#' @param article A List with paragraphs of interest.
+#' @param articles A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
 obliterate_conflict_1 <- function(articles) {
 
@@ -971,7 +953,7 @@ obliterate_conflict_1 <- function(articles) {
 #'
 #' Returns the list of paragraphs without potentially misleading fullstops.
 #'
-#' @param article A List with paragraphs of interest.
+#' @param articles A List with paragraphs of interest.
 #' @return The list of paragraphs without misleading fullstops.
 obliterate_fullstop_1 <- function(articles) {
 
@@ -991,7 +973,7 @@ obliterate_fullstop_1 <- function(articles) {
 #'
 #' Returns the list of paragraphs without references.
 #'
-#' @param article A List with paragraphs of interest.
+#' @param articles A List with paragraphs of interest.
 #' @return The list of paragraphs without misleading fullstops.
 obliterate_refs_1 <- function(articles) {
 
@@ -1083,9 +1065,10 @@ find_acknows <- function(article) {
 #'
 #' Returns the index with the elements of interest. More generic than _1.
 #'
-#' @param article A List with paragraphs of interest.
+#' @param filename A List with paragraphs of interest.
 #' @return A dataframe indicating whether a funding statement has been
 #'     identified and the funding statement.
+#' @export
 is_funding <- function(filename) {
 
   # TODO: Consider removing all :punct: apart from dots (e.g. author(s))
@@ -1096,14 +1079,16 @@ is_funding <- function(filename) {
 
   paragraphs <-
     readr::read_file(filename) %>%
-    {strsplit(., "\n| \\*")[[1]]} %>%
+    purrr::map(strsplit, "\n| \\*") %>%
+    unlist() %>%
     utf8::utf8_encode()
 
 
   # Remove potentially misleading sequences
+  utf <- "(\\\\[a-z0-9]{3})+"   # remove \\xfc\\xbe etc
   paragraphs_pruned <-
     paragraphs %>%
-    gsub("(\\\\[a-z0-9]{3})+", " ", ., perl = T) %>%  # remove \\xfc\\xbe etc
+    purrr::map_chr(gsub, pattern = utf, replacement = " ", perl = T) %>%
     obliterate_fullstop_1() %>%
     obliterate_conflict_1()
   # paragraphs_pruned <- obliterate_refs_1(paragraphs_pruned)
@@ -1175,7 +1160,7 @@ is_funding <- function(filename) {
         index_fund <- list()
         index_fund[['fund']] <- get_fund_acknow(paragraphs_pruned[from:to])
         index_fund[['project']] <- get_project_acknow(paragraphs_pruned[from:to])
-        index <- unlist(index_fund) %>% add(from - 1)
+        index <- unlist(index_fund) %>% magrittr::add(from - 1)
       }
     }
   }
@@ -1186,7 +1171,7 @@ is_funding <- function(filename) {
 
   article <- basename(filename) %>% stringr::word(sep = "\\.")
   pmid <- gsub("^.*PMID([0-9]+).*$", "\\1", filename)
-  tibble(article, pmid, is_funded_pred, funding_text)
+  tibble::tibble(article, pmid, is_funded_pred, funding_text)
 }
 
 
@@ -1239,8 +1224,7 @@ is_funding <- function(filename) {
 #' Returns each string with boundaries around it.
 #'
 #' @param x A vector of strings.
-#' @param location Where to bound each word ("both" (default), "end" or
-#'     "start").
+#' @param n_max Number of maximum words allowed
 #' @return A vector of bounded strings.
 .max_words <- function(x, n_max = 3) {
 

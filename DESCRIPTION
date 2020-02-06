@@ -1,15 +1,22 @@
 Package: rtransparent
 Type: Package
-Title: Identifies indicators of transparency.
+Title: Identifies indicators of transparency
 Version: 0.1.0
 Authors@R: c(person("Stylianos", "Serghiou", role = c("aut", "cre"),
                      email = "stelios.serghiou@gmail.com"))
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: GNU General Public License v3.0
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: http://github.com/serghiou/rtransparent
 BugReports: http://github.com/serghiou/rtransparent/issues
 Imports: 
-    magrittr
+    magrittr,
+    readr,
+    utf8,
+    stringr,
+    tibble,
+    rlang,
+    purrr
+RoxygenNote: 7.0.2
