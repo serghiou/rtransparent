@@ -2,8 +2,8 @@ Package: rtransparent
 Type: Package
 Title: Identifies indicators of transparency.
 Version: 0.1.0
-Author: Stylianos Serghiou
-Maintainer: stelios.serghiou@gmail.com
+Authors@R: c(person("Stylianos", "Serghiou", role = c("aut", "cre"),
+                     email = "stelios.serghiou@gmail.com"))
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: GNU General Public License v3.0
