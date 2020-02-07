@@ -969,7 +969,7 @@ find_refs <- function(article) {
 
   } else {
 
-    ref_index <- grep("^1.\\s+[A-Z]", article)
+    ref_index <- grep("^1(|\\.)\\s+[A-Z]", article)
     if (!!length(ref_index)) ref_index <- ref_index[length(ref_index)]
 
   }
@@ -1034,10 +1034,12 @@ is_funding <- function(filename) {
   diff <- integer()
 
   # Fix PDF to txt bugs
-  broken <- "([a-z]+)-\n([a-z]+)"
+  broken_1 <- "([a-z]+)(-)\n([a-z]+)"
+  broken_2 <- "([a-z]+)(|,|;)\n([a-z]+)"
   paragraphs <-
     readr::read_file(filename) %>%
-    purrr::map(gsub, pattern = broken, replacement = "\\1\\2") %>%
+    purrr::map(gsub, pattern = broken_1, replacement = "\\1\\2") %>%
+    purrr::map(gsub, pattern = broken_2, replacement = "\\1 \\3") %>%
     purrr::map(strsplit, "\n| \\*") %>%
     unlist() %>%
     utf8::utf8_encode()
