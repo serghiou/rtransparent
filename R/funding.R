@@ -230,7 +230,7 @@ get_authors_1 <- function(article) {
 get_authors_2 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("This", "author", "have", "no", "funding")
+  words <- c("This", "author", "have", "no", "funding_financial_award")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -360,7 +360,7 @@ get_fund_3 <- function(article) {
 get_fund_acknow <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("funds", "funded", "award")
+  words <- c("funded", "funds_award_financial")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -401,14 +401,17 @@ get_supported_1 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_financial_1 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
+  synonyms <- .create_synonyms()
+  words <- c("financial_title")
 
-  txt_0 <- "(^Financial support(|s)(|:|\\.)$|^Financial or other support(|s)(|:|\\.)$|^Support statement(|s)(|:|\\.)$|^Financial assistance(|:|\\.)$^Financial sponsorship(|s)(|:|\\.)$|^Financial support(|s) and sponsorship(|s)(|:|\\.)$|^Financial disclosure(|s)(|:|\\.)$|^Financiamento(|:|\\.)$)"
-
-  total_txt <- c(txt_0)
-  indicator_regex <- paste0(total_txt)
-
-  a <- grep(indicator_regex, article, perl = T, ignore.case = T)
+  a <-
+    synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.title) %>%
+    lapply(.encase) %>%
+    # lapply(.max_words) %>%
+    paste() %>%
+    grep(article, perl = T)
 
 
   if (length(a) > 0) {
@@ -421,12 +424,14 @@ get_financial_1 <- function(article) {
 
   } else {
 
-    txt_1 <- "(Financial [Ss]upport(|s)(:|\\.)|FINANCIAL SUPPORT(|S)(:|\\.)|Financial or other [Ss]upport(|s)(:|\\.)|FINANCIAL OR OTHER SUPPORT(|S)(:|\\.)|S(?i)upport statement(|s)(:|\\.)(?-i)|Financial [Aa]ssistance(:|\\.)|FINANCIAL ASSISTANCE(:|\\.)Financial [Ss]ponsorship(|s)(:|\\.)|FINANCIAL SPONSORSHIP(|S)(:|\\.)|Financial [Ss]upport(|s) [Aa]nd [Ss]ponsorship(|s)(:|\\.)|FINANCIAL SUPPORT(|S) AND SPONSORSHIP(|S)(:|\\.)|Financial [Dd]isclosure(|s)(:|\\.)|FINANCIAL DISCLOSURE(|S)(:|\\.)|Financiamento(:|\\.)|FINANCIAMENTO(:|\\.))"
+    synonyms %>%
+      magrittr::extract(words) %>%
+      lapply(.title, within_text = T) %>%
+      lapply(.encase) %>%
+      # lapply(.max_words) %>%
+      paste() %>%
+      grep(article, perl = T)
 
-    total_txt <- c(txt_1)
-    indicator_regex <- paste0(total_txt)
-
-    grep(indicator_regex, article, perl = T)
   }
 }
 
@@ -439,27 +444,17 @@ get_financial_1 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_financial_2 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
+  synonyms <- .create_synonyms()
+  words <- c("financial_title", "No")
 
-  financial_synonyms <- c(
-    "F(?i)inancial support(|s)(?-i)",
-    "F(?i)inancial or other support(|s)(?-i)",
-    "F(?i)inancial assistance(?-i)",
-    "F(?i)inancial aid(?-i)",
-    "F(?i)inancial sponsorship(|s)(?-i)",
-    "F(?i)inancial support(|s) and sponsorship(|s)(?-i)",
-    "F(?i)inancial disclosure(|s)(?-i)",
-    "F(?i)inanciamento(?-i)"
-  )
+  synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    # lapply(.max_words) %>%
+    paste(collapse = " ") %>%
+    grep(article, perl = T)
 
-  no_synonyms <- "(No|Nil|None)"
-
-  regex <- paste0("(",
-                  paste0(financial_synonyms, collapse = "|"),
-                  ") ",
-                  no_synonyms)
-
-  grep(regex, article, perl = T)
 }
 
 
@@ -471,41 +466,18 @@ get_financial_2 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_financial_3 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
 
-  financial_synonyms <- c(
-    "F(?i)inancial support(|s)(?-i)",
-    "F(?i)inancial or other support(|s)(?-i)",
-    "F(?i)inancial assistance(?-i)",
-    "F(?i)inancial aid(?-i)",
-    "F(?i)inancial sponsorship(|s)(?-i)",
-    "F(?i)inancial support(|s) and sponsorship(|s)(?-i)",
-    "F(?i)inancial disclosure(|s)(?-i)",
-    "F(?i)inanciamento(?-i)"
-  )
+  synonyms <- .create_synonyms()
+  words <- c("financial_title", "this", "research")
 
-  this_synonyms <- c(
-    "this",
-    "these"
-  )
+  synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    # lapply(.max_words) %>%
+    paste(collapse = synonyms$txt) %>%
+    grep(article, perl = T)
 
-  study_synonyms <- c(
-    "work\\b",
-    "research\\b",
-    "stud(y|ies)\\b",
-    "project(|s)\\b",
-    "trial(|s)\\b",
-    "publication(|s)\\b",
-    "\\breport(|s)\\b",
-    "program(|s)\\b"
-  )
-
-  finance <- .encase(financial_synonyms)
-  this <- .encase(this_synonyms)
-  study <- .encase(study_synonyms)
-
-  regex <- paste(finance, this, study, sep = txt)
-  grep(regex, article, perl = T, ignore.case = T)
 }
 
 
@@ -517,28 +489,16 @@ get_financial_3 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_disclosure_1 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
+  synonyms <- .create_synonyms()
+  words <- c("disclosure_title")
 
-  disclosure_synonyms <- c(
-    "D(?i)isclosure(|s)(?-i)"
-  )
-
-  funds_synonyms <- c(
-    "[Ff]und(|s)",
-    "[Ff]unding",
-    "[Ff]inanced",
-    "[Ss]upport",
-    "[Aa]ssistance",
-    "\\b[Aa]id\\b",
-    "[Ff]ellowship",
-    "[Aa]ward",
-    "[Ss]tipend",
-    "[Ss]cholar",
-    "[Gg]rant"
-  )
-
-  regex <- paste0("^", disclosure_synonyms, "$")
-  a <- grep(regex, article, perl = T)
+  a <-
+    synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.title) %>%
+    lapply(.encase) %>%
+    paste(collapse = "|") %>%
+    grep(article, perl = T)
 
   out <- integer()
   if (!!length(a)) {
@@ -551,8 +511,11 @@ get_disclosure_1 <- function(article) {
         b <- a[i] + 1
       }
 
-      regex <- paste0(funds_synonyms, collapse = "|")
-      d <- grep(regex, article[b], perl = T)
+      d <-
+        synonyms$funding_financial_award %>%
+        lapply(.bound) %>%
+        paste0(collapse = "|") %>%
+        grep(article[b], perl = T)
 
       if (!!length(d)) out <- c(out, a[i], b)
     }
@@ -569,37 +532,24 @@ get_disclosure_1 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_disclosure_2 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
+  synonyms <- .create_synonyms()
+  words <- c("disclosure_title", "funding_financial_award")
 
-  disclosure_synonyms <- c(
-    "D(?i)isclosure(|s)(?-i)"
-  )
+  disclosure <-
+    synonyms %>%
+    magrittr::extract(words[1]) %>%
+    lapply(.title, within_text = T)
 
-  # funds_synonyms <- c(
-  #   "[Ff]und(|s)",
-  #   "[Ff]unding",
-  #   "[Ff]inanced",
-  #   "[Ss]upport",
-  #   "[Aa]ssistance"
-  # )
-  funds_synonyms <- c(
-    "[Ff]und(|s)",
-    "[Ff]unding",
-    "[Ff]inanced",
-    "[Ss]upport",
-    "[Aa]ssistance",
-    "\\b[Aa]id\\b",
-    "[Ff]ellowship",
-    "[Aa]ward",
-    "[Ss]tipend",
-    "[Ss]cholar",
-    "[Gg]rant"
-  )
+  funding <-
+    synonyms %>%
+    magrittr::extract(words[2]) %>%
+    lapply(.bound)
 
-  funds <- paste0(funds_synonyms, collapse = "|")
+  c(disclosure, funding) %>%
+    lapply(.encase) %>%
+    paste(collapse = synonyms$txt) %>%
+    grep(article, perl = T)
 
-  regex <- paste0("(", disclosure_synonyms, ")", txt, "(", funds, ")")
-  grep(regex, article, perl = T)
 }
 
 
@@ -826,6 +776,59 @@ negate_disclosure_1 <- function(article) {
 }
 
 
+#' Identify "Funding disclosure. Nothing to declare" statements
+#'
+#' Returns the index with the elements of interest. More generic than _1.
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+negate_disclosure_2 <- function(article) {
+
+  synonyms <- .create_synonyms()
+
+  Disclosure_synonyms <- c(
+    "F(?i)inancial disclosure(|s)(?-i)(|:|\\.)",
+    "F(?i)inancial declaration(|s)(?-i)(|:|\\.)",
+    "Disclosure(|:|\\.)",
+    "Declaration(|:|\\.)"
+  )
+
+  disclosure_synonyms <- c(
+    "financial disclosure(|s)",
+    "financial declaration(|s)",
+    "disclosure",
+    "declaration"
+  )
+
+  disclose_synonyms <- c(
+    "to disclose",
+    "to declare",
+    "to report"
+  )
+
+  Disclosure <- .encase(Disclosure_synonyms)
+  disclosure <- .encase(disclosure_synonyms)
+  disclose   <- .encase(disclose_synonyms)
+  no <- .encase(synonyms$No)
+  no_1 <- "(no|not have any)"
+  no_2 <- "(nil|nothing)"
+
+  regex_1 <-  # Financial disclosure: Nothing to declare
+    paste(Disclosure, no) %>%
+    .encase()
+  regex_2 <-  # Financial disclosure: The authors have no financial disclosures
+    paste(Disclosure, paste(no_1, disclosure), sep = synonyms$txt) %>%
+    .encase()
+  regex_3 <-  # Financial disclosure: The author has nothing to declare
+    paste(Disclosure, paste(no_2, disclose), sep = synonyms$txt) %>%
+    .encase()
+
+  regex <- paste(regex_1, regex_2, regex_3, sep = "|")
+  grepl(regex, article, perl = T)
+
+}
+
+
 #' Avoid financial that is part of COI statements
 #'
 #' Returns the index with the elements of interest. More generic than _1.
@@ -854,71 +857,16 @@ negate_conflict_1 <- function(article) {
 #' @return The index of the paragraph of interest.
 negate_absence_1 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
+  synonyms <- .create_synonyms()
+  words <- c("No", "info", "of", "funding_financial_award", "is", "received")
 
-  no_synonyms <- c(
-    "No\\b",  # not \\bNo to capture "(No details)"
-    "Nil\\b",
-    "None\\b"
-  )
+  synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = synonyms$txt) %>%
+    grepl(article, perl = T)
 
-  info_synonyms <- c(
-    "info(|rmation)\\b",
-    "detail(|s)",
-    "particulars",
-    "data\\b",
-    "material\\b"
-  )
-
-  of_synonyms <- c(
-    "of",
-    "about"
-  )
-
-  funding_synonyms <- c(
-    "F(?i)unding(?-i)",
-    "F(?i)unding source(|s)(?-i)",
-    "F(?i)unding source(|s) for the stud(y|ies)(?-i)",
-    "F(?i)unding information(?-i)",
-    "F(?i)unding statement(|s)(?-i)"
-  )
-
-  financial_synonyms <- c(
-    "F(?i)inancial support(|s)(?-i)",
-    "F(?i)inancial or other support(|s)(?-i)",
-    "F(?i)inancial assistance(?-i)",
-    "F(?i)inancial aid(?-i)",
-    "F(?i)inancial sponsorship(|s)(?-i)",
-    "F(?i)inancial support(|s) and sponsorship(|s)(?-i)",
-    "F(?i)inancial disclosure(|s)(?-i)",
-    "F(?i)inanciamento(?-i)"
-  )
-
-  is_synonyms <- c(
-    "is",
-    "been",
-    "was",
-    "were"
-  )
-
-  provided_synonyms <- c(
-    "provided",
-    "presented",
-    "received",
-    "given",
-    "offered",
-    "supplied"
-  )
-
- no <- .encase(no_synonyms)
- info <- .encase(info_synonyms)
- of <- .encase(of_synonyms)
- funding <- .encase(c(funding_synonyms, financial_synonyms))
- is <- .encase(is_synonyms)
- provided <- .encase(provided_synonyms)
-
- regex <- paste(no, info, of, funding, is, provided, sep = txt)
- grepl(regex, article, perl = T, ignore.case = T)
 }
 
 
@@ -937,15 +885,23 @@ obliterate_conflict_1 <- function(articles) {
   #   "(?=[a-zA-Z0-9\\s,()-]*(conflict|competing))"
   # )
 
-  words <- c(
-    "((funding|financial|support)[a-zA-Z0-9\\s,()/-]*(association|relationship)[a-zA-Z0-9\\s,()/-]*(conflict|competing))",
-    "((conflict|competing)[a-zA-Z0-9\\s,()/-]*(association|relationship)[a-zA-Z0-9\\s,()/-]*(financial))",
-    "financial(?:\\s+\\w+){0,3} interest"
-  )
+  synonyms <- .create_synonyms()
 
-  words %>%
+  financial_1 <- "(funding|financial|support)"
+  financial_2 <- "(financial|support)"
+  relationship <- synonyms$relationship %>% .bound() %>% .encase()
+  conflict <- synonyms$conflict %>% .bound() %>% .encase()
+  financial_interest <- "(financial(?:\\s+\\w+){0,3} interest)"
+
+  regex_1 <- paste(financial_1, relationship, conflict, sep = synonyms$txt)
+  regex_2 <- paste(conflict, relationship, financial_2, sep = synonyms$txt)
+  regex_3 <- paste(relationship, financial_interest,  sep = synonyms$txt)
+
+  c(regex_1, regex_2, regex_3) %>%
+    lapply(.encase) %>%
     paste(collapse = "|") %>%
     gsub("", articles, perl = T)
+
 }
 
 
@@ -1075,20 +1031,25 @@ is_funding <- function(filename) {
 
   index <- integer()
   disclosure <- integer()
-  diff  <- integer()
+  diff <- integer()
 
+  # Fix PDF to txt bugs
+  broken <- "([a-z]+)-\n([a-z]+)"
   paragraphs <-
     readr::read_file(filename) %>%
+    purrr::map(gsub, pattern = broken, replacement = "\\1\\2") %>%
     purrr::map(strsplit, "\n| \\*") %>%
     unlist() %>%
     utf8::utf8_encode()
 
 
   # Remove potentially misleading sequences
-  utf <- "(\\\\[a-z0-9]{3})+"   # remove \\xfc\\xbe etc
+  utf_1 <- "(\\\\[a-z0-9]{3})"   # remove \\xfc\\xbe etc
+  utf_2 <- "(\\\\[a-z])"   # \\f or
   paragraphs_pruned <-
     paragraphs %>%
-    purrr::map_chr(gsub, pattern = utf, replacement = " ", perl = T) %>%
+    purrr::map_chr(gsub, pattern = utf_1, replacement = " ", perl = T) %>%
+    purrr::map_chr(gsub, pattern = utf_2, replacement = "",  perl = T) %>%
     obliterate_fullstop_1() %>%
     obliterate_conflict_1()
   # paragraphs_pruned <- obliterate_refs_1(paragraphs_pruned)
@@ -1099,7 +1060,7 @@ is_funding <- function(filename) {
   # Identify sequences of interest
   index_any <- list()
   index_any[['support_1']] <- get_support_1(paragraphs_pruned)
-  index_any[['support_2']] <- get_support_2(paragraphs_pruned)
+  # index_any[['support_2']] <- get_support_2(paragraphs_pruned)
   index_any[['support_3']] <- get_support_3(paragraphs_pruned)
   index_any[['support_4']] <- get_support_4(paragraphs_pruned)
   index_any[['received_1']] <- get_received_1(paragraphs_pruned)
@@ -1126,10 +1087,12 @@ is_funding <- function(filename) {
   # Remove potential mistakes
   if (!!length(index)) {
 
-    if (length(unlist(index_any[c("authors_2")]))) {
-      is_coi <- negate_conflict_1(paragraphs_pruned[min(index) - 1])
-      index <- index[!is_coi]
-    }
+    # Funding info can be within COI statements, as per Ioannidis
+    # Comment out until problems arise
+    # if (length(unlist(index_any[c("authors_2")]))) {
+    #   is_coi <- negate_conflict_1(paragraphs_pruned[min(index) - 1])
+    #   index <- index[!is_coi]
+    # }
 
     is_coi_disclosure <- negate_disclosure_1(paragraphs_pruned[index])
     index <- index[!is_coi_disclosure]
@@ -1137,6 +1100,24 @@ is_funding <- function(filename) {
     is_absent <- negate_absence_1(paragraphs_pruned[index])
     index <- index[!is_absent]
 
+    # Currently removed b/c I made the disclosure functions more robust to
+    #     statements like "Financial disclosure. Nothing to disclose.
+    # disclosures <- unique(unlist(index_any[c("disclosure_1", "disclosure_2")]))
+    # if (!!length(disclosures)) {
+    #
+    #   if (length(disclosures) == 1) {
+    #
+    #     is_disclosure <- negate_disclosure_2(paragraphs[index])
+    #     index <- index[!is_disclosure]
+    #
+    #   } else {
+    #
+    #     disclosure_text <- paste(paragraphs_pruned[disclosures], collapse = " ")
+    #     is_disclosure <- negate_disclosure_2(disclosure_text)
+    #     index <- setdiff(index, disclosures)
+    #
+    #   }
+    # }
   }
 
 
@@ -1244,7 +1225,7 @@ is_funding <- function(filename) {
 
   if (within_text) {
 
-    return(paste0(x, "(:|\\.)"))
+    return(paste0(x, "(|:|\\.)"))
 
   } else {
 
@@ -1284,10 +1265,10 @@ is_funding <- function(filename) {
   )
 
   synonyms[["this"]] <- c(
-    "this",
-    "these",
-    "the",
-    "our"
+    "[Tt]his",
+    "[Tt]hese",
+    "[Tt]he",
+    "[Oo]ur"
   )
 
   synonyms[["this_singular"]] <- c(
@@ -1315,9 +1296,8 @@ is_funding <- function(filename) {
   )
 
   synonyms[["are"]] <- c(
-    "is",
+    "are",
     "have",
-    "has",
     "were"
   )
 
@@ -1344,16 +1324,23 @@ is_funding <- function(filename) {
     "for"
   )
 
+  synonyms[["of"]] <- c(
+    "of",
+    "about"
+  )
+
   synonyms[["no"]] <- c(
     "[Nn]o",
     "[Nn]il",
-    "[Nn]one"
+    "[Nn]one",
+    "[Nn]othing"
   )
 
   synonyms[["No"]] <- c(
-    "No",
-    "Nil",
-    "None"
+    "N(?i)o(?-i)",
+    "N(?i)il(?-i)",
+    "N(?i)one(?-i)",
+    "N(?i)othing(?-i)"
   )
 
   synonyms[["author"]] <- c(
@@ -1414,7 +1401,7 @@ is_funding <- function(filename) {
     "[Ff]unding",
     "[Ff]unds",
     "[Ss]elf-funding",
-    "[Ff]inancial",
+    # "[Ff]inancial",
     "[Ss]upport",
     "[Ss]ponsorship",
     "[Aa]id",
@@ -1439,7 +1426,8 @@ is_funding <- function(filename) {
     "[Ff]inancial aid(|s)",
     "[Ff]inancial sponsorship(|s)",
     "[Ff]inancial support(|s) and sponsorship(|s)",
-    "[Ff]inancial disclosure(|s)",
+    # "[Ff]inancial disclosure(|s)",
+    # "[Ff]inancial declaration(|s)",
     "[Ff]inanciamento"
   )
 
@@ -1450,13 +1438,23 @@ is_funding <- function(filename) {
     "F(?i)inancial aid(?-i)",
     "F(?i)inancial sponsorship(|s)(?-i)",
     "F(?i)inancial support(|s) and sponsorship(|s)(?-i)",
-    "F(?i)inancial disclosure(|s)(?-i)",
+    # "F(?i)inancial disclosure(|s)(?-i)",
+    # "F(?i)inancial declaration(|s)(?-i)",
     "F(?i)inanciamento(?-i)"
   )
 
   synonyms[["any_title"]] <- c(
     synonyms[["funding_title"]],
     synonyms[["financial_title"]]
+  )
+
+  synonyms[["disclosure_title"]] <- c(
+    "F(?i)unding disclosure(|s)(?-i)",
+    "F(?i)unding disclosure(|s)(?-i)",
+    "F(?i)inancial disclosure(|s)(?-i)",
+    "F(?i)inancial declaration(|s)(?-i)",
+    "D(?i)isclosure(|s)(?-i)",
+    "D(?i)eclaration(|s)(?-i)"
   )
 
   synonyms[["support"]] <- c(
@@ -1506,7 +1504,9 @@ is_funding <- function(filename) {
      "[Gg]iven",
      "[Oo]ffered",
      "[Aa]llotted",
-     "[Dd]isclosed"
+     "[Dd]isclosed",
+     "[Ss]upplied",
+     "[Pp]resented"
    )
 
    synonyms[["thank"]] <- c(
@@ -1517,9 +1517,9 @@ is_funding <- function(filename) {
 
    synonyms[["conflict"]] <- c(
      "[Cc]onflict(|ing)",
-     "[Cc]onflits",
-     "[Cc]onflictos",
-     "[Cc]ompeting"
+     "[Cc]ompet(e|ing)"
+     # "[Cc]onflits",
+     # "[Cc]onflictos",
    )
 
    synonyms[["conflict_title"]] <- c(
@@ -1534,6 +1534,22 @@ is_funding <- function(filename) {
      "C(?i)ompeting financial interest(?-i)",
      "D(?i)eclaration of interest(?-i)",
      "D(?i)uality of interest(?-i)"
+   )
+
+   synonyms[["relationship"]] <- c(
+     "relation(|s|ship(|s))",
+     "association(|s)",
+     "involvement(|s)",
+     "affiliation(|s)",
+     "tie(|s)"
+   )
+
+   synonyms[["info"]] <- c(
+     "info(|rmation)\\b",
+     "detail(|s)",
+     "particulars",
+     "data\\b",
+     "material\\b"
    )
 
   return(synonyms)
