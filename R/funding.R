@@ -372,6 +372,27 @@ get_fund_acknow <- function(article) {
 }
 
 
+#' Identify mentions of funds in acknowledgements
+#'
+#' Returns the index with the elements of interest. More generic than _1.
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+get_fund_acknow_new <- function(article) {
+
+  synonyms <- .create_synonyms()
+  words <- c("acknowledge", "support", "grant|foundation|insititute|organization")
+
+  synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.bound) %>%
+    unlist() %>%
+    .encase %>%
+    grep(article, perl = T, ignore.case = T)
+
+}
+
+
 #' Identify mentions of "Supported by ..."
 #'
 #' Returns the index with the elements of interest. More generic than _1.
