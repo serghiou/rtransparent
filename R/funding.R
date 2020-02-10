@@ -27,7 +27,7 @@ get_support_1 <- function(article) {
 
 
   synonyms <- .create_synonyms()
-  words <- c("This_singular", "research_singular", "is_singular", "funded", "by")
+  words <- c("This_singular", "research_singular", "is_singular", "funded_funding", "by")
 
   singular <-
     synonyms %>%
@@ -40,7 +40,7 @@ get_support_1 <- function(article) {
 
   if (!length(singular)) {
 
-    words <- c("These", "researches", "are", "funded", "by")
+    words <- c("These", "researches", "are", "funded_funding", "by")
 
     synonyms %>%
       magrittr::extract(words) %>%
@@ -1551,7 +1551,8 @@ is_funding <- function(filename) {
 
   synonyms[["by"]] <- c(
     "by",
-    "from"
+    "from",
+    "within"
   )
 
   synonyms[["and"]] <- c(
@@ -1635,6 +1636,12 @@ is_funding <- function(filename) {
     "[Ss]upporter"
   )
 
+  synonyms[["funds"]] <- c(
+    "[Ff]und(|s)",
+    "[Ff]unding",
+    "[Ss]elf-funding"
+  )
+
   synonyms[["funded"]] <- c(
     "[Ff]unded",
     "[Ss]elf-funded",
@@ -1642,12 +1649,6 @@ is_funding <- function(filename) {
     "[Ss]upported",
     "[Ss]ponsored",
     "[Rr]esourced"
-  )
-
-  synonyms[["funds"]] <- c(
-    "[Ff]und(|s)",
-    "[Ff]unding",
-    "[Ss]elf-funding"
   )
 
   synonyms[["funding"]] <- c(
@@ -1660,6 +1661,11 @@ is_funding <- function(filename) {
     "[Ss]ponsorship",
     "[Aa]id",
     "[Rr]esources"
+  )
+
+  synonyms[["funded_funding"]] <- c(
+    synonyms[["funded"]],
+    synonyms[["funding"]]
   )
 
   synonyms[["funding_title"]] <- c(
