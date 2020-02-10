@@ -135,8 +135,14 @@ get_support_3 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_support_4 <- function(article) {
 
+  # TODO: I have now made this function much more general than before, by
+  #    removing the requirement for "is" from the start. It seems that this now
+  #    became more sensitive with no loss in specificity. If it remains so in
+  #    further testing, remove all previews functions, which are basically more
+  #    specific versions of this!
+
   synonyms <- .create_synonyms()
-  words <- c("is", "funded", "by", "award")
+  words <- c("funded", "by", "award")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -147,6 +153,95 @@ get_support_4 <- function(article) {
     grep(article, perl = T)
 }
 
+
+get_support_5 <- function(article) {
+
+  # TODO: This is trying to capture some phrases missed by get_support_4 b/c of
+  #    the requirement for is, e.g. "Project supported by X". I am introducing
+  #    a 3 word limit at the start to make it stricter - upon tests, there were
+  #    very very few mistakes (1/200 FP) without introducing this restriction.
+
+  synonyms <- .create_synonyms()
+  words <- c("funded", "by", "foundation")
+
+  funded_by_award <-
+    synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = synonyms$txt)
+
+
+  .max_words("(^\\s*|\\.\\s*)", n_max = 4, space_first = F) %>%
+    paste0(funded_by_award) %>%
+    grep(article, perl = T)
+}
+
+
+#' Identify mentions of support
+#'
+#' Return the index of support statements such as: We gratefully acknowledge
+#'     support from the UK Engineering and Physical Sciences Research Council.
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+get_support_6 <- function(article) {
+
+  synonyms <- .create_synonyms()
+  words_1 <- c("acknowledge", "support_only", "foundation_award")
+  words_2 <- c("support_only", "foundation_award", "acknowledged")
+
+  .max_words(c("acknowledge", "support_only"), 2)
+
+  acknowledge <-
+    synonyms %>%
+    magrittr::extract(words_1[1]) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    lapply(.max_words)
+
+  support_foundation <-
+    synonyms %>%
+    magrittr::extract(words_1[2:3]) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = synonyms$txt)
+
+  a <-
+    c(acknowledge, support_foundation) %>%
+    paste(collapse = " ") %>%
+    grep(article, perl = T)
+
+  b <-
+    synonyms %>%
+    magrittr::extract(words_2) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    # lapply(.max_words) %>%
+    paste(collapse = synonyms$txt) %>%
+    grep(article, perl = T)
+
+  return(unique(c(a, b)))
+}
+
+
+#' Identify mentions of support
+#'
+#' Return the index of support statements such as: Support was provided by the
+#'     U.S. Department of Agriculture (USDA) Forest Service.
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+get_support_7 <- function(article) {
+
+  synonyms <- .create_synonyms()
+
+  a <- "Support"
+  b <- .encase(synonyms$received)
+  d <- .encase(synonyms$by)
+  grep(paste(a, b, d, sep = synonyms$txt), article, perl = T)
+
+}
 
 #' Identify mentions of received
 #'
@@ -177,7 +272,7 @@ get_received_1 <- function(article) {
 get_received_2 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("received", "support", "by", "agency")
+  words <- c("received", "support_only", "by", "agency")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -381,7 +476,7 @@ get_fund_acknow <- function(article) {
 get_fund_acknow_new <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("acknowledge", "support", "grant|foundation|insititute|organization")
+  words <- c("acknowledge", "support_only", "grant|foundation|insititute|organization")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -582,17 +677,23 @@ get_disclosure_2 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_grant_1 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
+  # TODO: This whole function takes a LOT of time to run, but it is ONLY
+  #    activated for "(Grant [Ss]ponsor(|s):)|)Contract [Gg]rant
+  #    [Ss]ponsor(|s):). Consider replacing it with just this!!!
 
-  txt_0 <- "(^Grant(|s)(|:|\\.)$|^Grant sponsor(|s)(|:|\\.)$|^Grant sponsorship(|s)(|:|\\.)$|^Grant support(|:|\\.)$)"  # removed Sponsorship and sponsors b/c FP without TP
+  synonyms <- .create_synonyms()
+  words <- c("grant_title")
 
-  total_txt <- c(txt_0)
-  indicator_regex <- paste0(total_txt)
+  a <-
+    synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.title) %>%
+    lapply(.encase) %>%
+    paste() %>%
+    grep(article, perl = T)
 
-  a <- grep(indicator_regex, article, perl = T, ignore.case = T)
 
-
-  if (length(a) > 0) {
+  if (!!length(a)) {
 
     if (nchar(article[a + 1]) == 0) {
       return(c(a, a + 2))
@@ -602,12 +703,22 @@ get_grant_1 <- function(article) {
 
   } else {
 
-    txt_1 <- "(Grant sponsor(|s)(:|\\.)|GRANT SPONSOR(|S)(:|\\.)|Grant [Ss]ponsorship(|s)(:|\\.)|GRANT SPONSORSHIP(|S)(:|\\.)|Grant [Ss]upport(|s)(:|\\.)|GRANT SUPPORT(|S)(:|\\.))"  # removed Sponsorship and sponsors b/c FP without TP
+    # This is done to avoid mentions such as "Grant AK, Brown AZ, ..."
+    grant <- c("G(?i)rant ", "^[A-Z](?i)\\w+ grant ")
 
-    total_txt <- c(txt_1)
-    indicator_regex <- paste0(total_txt)
+    support <-
+      synonyms %>%
+      magrittr::extract(c("support", "funder")) %>%
+      lapply(paste0, "(?-i)") %>%
+      lapply(.title, within_text = T) %>%
+      unlist()
 
-    grep(indicator_regex, article, perl = T)
+    grant %>%
+      lapply(paste0, support) %>%
+      unlist() %>%
+      .encase() %>%
+      grep(article, perl = T)
+
   }
 }
 
@@ -636,13 +747,25 @@ get_common_1 <- function(article) {
   synonyms <- .create_synonyms()
   words <- c("no", "funding_financial_award", "is", "received")
 
-  synonyms %>%
-    magrittr::extract(words) %>%
+  no_funding <-
+    synonyms %>%
+    magrittr::extract(words[1:2]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
-    paste(collapse = " ") %>%
+    paste(collapse = " ")
+
+  was_received <-
+    synonyms %>%
+    magrittr::extract(words[3:4]) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = " ")
+
+  no_funding %>%
+    paste(was_received, sep = synonyms$txt) %>%
     grep(article, perl = T)
 }
+
 
 
 #' Get common phrases
@@ -665,6 +788,20 @@ get_common_2 <- function(article) {
 }
 
 
+#' Get common phrases
+#'
+#' Identify statements of the following type: "All authors are required to
+#'     disclose all affiliations, funding sources and financial or management
+#'     relationships that could be perceived as potential sources of bias. The
+#'     authors disclosed none.
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+get_common_3 <- function(article) {
+
+  grep("required to disclose.*disclosed none", article)
+
+}
 
 
 #' Identify mentions of "Acknowledgement and"
@@ -926,6 +1063,55 @@ obliterate_conflict_1 <- function(articles) {
 }
 
 
+#' Remove disclosures with inappropriate sentences
+#'
+#' Returns the text without potentially misleading disclsoures mentions. This
+#'     is intended to solve problems with disclosures, such as: Disclosure.
+#'     Authors have no conflict of interests, and the work was not supported
+#'     or funded by any drug company. This project was funded by the Deanship
+#'     of Scientific Research, King Abdulaziz University, Jeddah, Saudi Arabia
+#'     (Grant No. 4/165/1431);
+#'
+#' @param articles A List with paragraphs of interest.
+#' @return The list of paragraphs without mentions of financial COIs.
+obliterate_disclosure_1 <- function(articles) {
+
+  synonyms <- .create_synonyms()
+  words <- c("disclosure_title", "conflict", "and", "not", "funded")
+
+  # disclosure_title <-
+  #   synonyms %>%
+  #   magrittr::extract(words[1]) %>%
+  #   lapply(.title) %>%
+  #   lapply(.encase)
+
+  synonyms %>%
+    magrittr::extract(words[2:5]) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = synonyms$txt) %>%
+    paste0(synonyms$txt, ., synonyms$txt, "($|.)") %>%
+    gsub("", articles, perl = T)
+
+  # disclosure_title %>%
+  #   paste0("(", synonyms$txt, conflict_funded, synonyms$txt, ")") %>%
+  #   gsub("\\1", articles, perl = T)
+
+
+  # if (any(a)) {
+  #
+  #   return(a)
+  #
+  # } else {
+  #
+  #   funded <- .encase(c(funded_synonyms, synonyms$funding))
+  #   regex <- paste(disclose, funded, conflict, sep = txt)
+  #   grepl(regex, article, perl = T)
+  # }
+
+}
+
+
 #' Remove fullstops that are unlikely to represent end of sentence
 #'
 #' Returns the list of paragraphs without potentially misleading fullstops.
@@ -1055,7 +1241,7 @@ is_funding <- function(filename) {
   diff <- integer()
 
   # Fix PDF to txt bugs
-  broken_1 <- "([a-z]+)(-)\n([a-z]+)"
+  broken_1 <- "([a-z]+)-\n([a-z]+)"
   broken_2 <- "([a-z]+)(|,|;)\n([a-z]+)"
   paragraphs <-
     readr::read_file(filename) %>%
@@ -1074,7 +1260,8 @@ is_funding <- function(filename) {
     purrr::map_chr(gsub, pattern = utf_1, replacement = " ", perl = T) %>%
     purrr::map_chr(gsub, pattern = utf_2, replacement = "",  perl = T) %>%
     obliterate_fullstop_1() %>%
-    obliterate_conflict_1()
+    obliterate_conflict_1() %>%
+    obliterate_disclosure_1()  # Adds 30s overhead! TODO: Place elsehwere
   # paragraphs_pruned <- obliterate_refs_1(paragraphs_pruned)
   # to <- find_refs(paragraphs_pruned)
   # if (!length(to)) to <- length(paragraphs_pruned)  # TODO: prevent early mention
@@ -1086,6 +1273,9 @@ is_funding <- function(filename) {
   # index_any[['support_2']] <- get_support_2(paragraphs_pruned)
   index_any[['support_3']] <- get_support_3(paragraphs_pruned)
   index_any[['support_4']] <- get_support_4(paragraphs_pruned)
+  index_any[['support_5']] <- get_support_5(paragraphs_pruned)
+  index_any[['support_6']] <- get_support_6(paragraphs_pruned)
+  index_any[['support_7']] <- get_support_6(paragraphs_pruned)
   index_any[['received_1']] <- get_received_1(paragraphs_pruned)
   index_any[['received_2']] <- get_received_2(paragraphs_pruned)
   index_any[['authors_1']] <- get_authors_1(paragraphs_pruned)
@@ -1101,11 +1291,11 @@ is_funding <- function(filename) {
   index_any[['grant_1']] <- get_grant_1(paragraphs_pruned)
   index_any[['common_1']] <- get_common_1(paragraphs_pruned)
   index_any[['common_2']] <- get_common_2(paragraphs_pruned)
+  index_any[['common_3']] <- get_common_3(paragraphs_pruned)
   index_any[['acknow_1']] <- get_acknow_1(paragraphs_pruned)
   index_any[['disclosure_1']] <- get_disclosure_1(paragraphs_pruned)
   index_any[['disclosure_2']] <- get_disclosure_2(paragraphs_pruned)
   index <- unlist(index_any) %>% unique() %>% sort()
-
 
   # Remove potential mistakes
   if (!!length(index)) {
@@ -1117,8 +1307,20 @@ is_funding <- function(filename) {
     #   index <- index[!is_coi]
     # }
 
-    is_coi_disclosure <- negate_disclosure_1(paragraphs_pruned[index])
-    index <- index[!is_coi_disclosure]
+
+# Difficult to make it work properly because it does not
+    # disclosures <- c("disclosure_1", "disclosure_2")
+    # if (!!length(unlist(index_any[disclosures]))) {
+    #
+    #   for (i in 1:seq_along(disclosures)) {
+    #
+    #     ind <- index_any[[disclosures[i]]]
+    #     is_coi_disclosure <- negate_disclosure_1(paragraphs_pruned[ind])
+    #     index_any[[disclosures[i]]] <- ind[!is_coi_disclosure]
+    #
+    #   }
+    #
+    # }
 
     is_absent <- negate_absence_1(paragraphs_pruned[index])
     index <- index[!is_absent]
@@ -1230,10 +1432,18 @@ is_funding <- function(filename) {
 #' @param x A vector of strings.
 #' @param n_max Number of maximum words allowed
 #' @return A vector of bounded strings.
-.max_words <- function(x, n_max = 3) {
+.max_words <- function(x, n_max = 3, space_first = T) {
 
-  # This increases time by at least a few seconds each time used!
-  paste0(x, "(?:\\s+\\w+){0,", n_max, "}")
+  if (space_first) {
+
+    # This increases time by at least a few seconds each time used!
+    paste0(x, "(?:\\s+\\w+){0,", n_max, "}")
+
+  } else {
+
+    paste0(x, "(?:\\w+\\s+){0,", n_max, "}")
+
+  }
 }
 
 
@@ -1249,6 +1459,7 @@ is_funding <- function(filename) {
   if (within_text) {
 
     return(paste0(x, "(|:|\\.)"))
+    # stricter: "( [A-Z][a-zA-Z]|:|\\.)", avoided b/c Funding sources none.
 
   } else {
 
@@ -1343,6 +1554,12 @@ is_funding <- function(filename) {
     "from"
   )
 
+  synonyms[["and"]] <- c(
+    "and",
+    "&",
+    "or"
+  )
+
   synonyms[["for"]] <- c(
     "for"
   )
@@ -1366,6 +1583,10 @@ is_funding <- function(filename) {
     "N(?i)othing(?-i)"
   )
 
+  synonyms[["not"]] <- c(
+    "not"
+  )
+
   synonyms[["author"]] <- c(
     "author(|s|\\(s\\))",
     "researcher(|s|\\(s\\))",
@@ -1381,7 +1602,8 @@ is_funding <- function(filename) {
     "[Tt]rial(|s)",
     "[Pp]ublication(|s)",
     "[Rr]eport(|s)",
-    "[Pp]rogram(|s)"
+    "[Pp]rogram(|s)",
+    "[Pp]aper(|s)"
   )
 
   synonyms[["research_singular"]] <- c(
@@ -1392,7 +1614,8 @@ is_funding <- function(filename) {
     "[Tt]rial",
     "[Pp]ublication",
     "[Rr]eport",
-    "[Pp]rogram"
+    "[Pp]rogram",
+    "[Pp]aper"
   )
 
   synonyms[["researches"]] <- c(
@@ -1402,7 +1625,14 @@ is_funding <- function(filename) {
     "[Tt]rials",
     "[Pp]ublications",
     "[Rr]eports",
-    "[Pp]rograms"
+    "[Pp]rograms",
+    "[Pp]apers"
+  )
+
+  synonyms[["funder"]] <- c(
+    "[Ff]under",
+    "[Ss]ponsor",
+    "[Ss]upporter"
   )
 
   synonyms[["funded"]] <- c(
@@ -1425,6 +1655,7 @@ is_funding <- function(filename) {
     "[Ff]unds",
     "[Ss]elf-funding",
     # "[Ff]inancial",
+    "[Ff]und support(|s)",
     "[Ss]upport",
     "[Ss]ponsorship",
     "[Aa]id",
@@ -1439,7 +1670,8 @@ is_funding <- function(filename) {
     "F(?i)unding source(|s) for the stud(y|ies)(?-i)",
     "F(?i)unding information(?-i)",
     "F(?i)unding statement(|s)(?-i)",
-    "S(?i)upport statement(|s)(?-i)"
+    "S(?i)upport statement(|s)(?-i)",
+    "S(?i)ource of support(|s)(?-i)"
   )
 
   synonyms[["financial"]] <- c(
@@ -1451,7 +1683,11 @@ is_funding <- function(filename) {
     "[Ff]inancial support(|s) and sponsorship(|s)",
     # "[Ff]inancial disclosure(|s)",
     # "[Ff]inancial declaration(|s)",
-    "[Ff]inanciamento"
+    "[Ff]inanciamento",
+    "[Gg]rant support(|s)",
+    "[Gg]rant assistance",
+    "[Gg]rant aid(|s)",
+    "[Gg]rant sponsorship(|s)"
   )
 
   synonyms[["financial_title"]] <- c(
@@ -1481,6 +1717,13 @@ is_funding <- function(filename) {
   )
 
   synonyms[["support"]] <- c(
+    "[Ss]upport(|s)",
+    "[Aa]id(|s)",
+    "[Aa]ssistance",
+    "[Ss]ponsorship(|s)"
+  )
+
+  synonyms[["support_only"]] <- c(
     "[Ss]upport(|s)"
   )
 
@@ -1496,6 +1739,16 @@ is_funding <- function(filename) {
      "[Ee]ndowment(|s)",
      "[Ss]tipend(|s)",
      "[Bb]ursar(y|ies)"
+   )
+
+   synonyms[["grant_title"]] <- c(
+     "G(?i)rant(|s)(?-i)",
+     "G(?i)rant sponsor(|s|ship(|s))(?-i)",
+     "G(?i)rant support(|s)(?-i)",
+     "G(?i)rant assistance(?-i)",
+     "G(?i)rant aid(|s)(?-i)",
+     "^[A-Z]\\w+ grant sponsor(|s|ship(|s))(?-i)"
+     # removed Sponsorship and sponsors b/c FP without TP
    )
 
    synonyms[["funds_award_financial"]] <- c(
@@ -1528,6 +1781,7 @@ is_funding <- function(filename) {
      "[Oo]ffered",
      "[Aa]llotted",
      "[Dd]isclosed",
+     "[Dd]eclared",
      "[Ss]upplied",
      "[Pp]resented"
    )
@@ -1540,7 +1794,8 @@ is_funding <- function(filename) {
 
    synonyms[["conflict"]] <- c(
      "[Cc]onflict(|ing)",
-     "[Cc]ompet(e|ing)"
+     "[Cc]ompet(e|ing)",
+     "source(|s) of bias"
      # "[Cc]onflits",
      # "[Cc]onflictos",
    )
@@ -1556,7 +1811,8 @@ is_funding <- function(filename) {
      "C(?i)ompeting of interest(?-i)",
      "C(?i)ompeting financial interest(?-i)",
      "D(?i)eclaration of interest(?-i)",
-     "D(?i)uality of interest(?-i)"
+     "D(?i)uality of interest(?-i)",
+     "S(?i)ource(|s) of bias(?-i)"
    )
 
    synonyms[["relationship"]] <- c(
@@ -1573,6 +1829,49 @@ is_funding <- function(filename) {
      "particulars",
      "data\\b",
      "material\\b"
+   )
+
+   synonyms[["acknowledge"]] <- c(
+     "acknowledge",
+     "recognize",
+     "disclose",
+     "declare",
+     "report",
+     "appreciate"
+   )
+
+   synonyms[["acknowledged"]] <- c(
+     "acknowledged",
+     "recognized",
+     "disclosed",
+     "declared",
+     "reported",
+     "appreciated"
+   )
+
+   synonyms[["foundation"]] <- c(
+     "[Ff]oundation(|s)",
+     "[Ii]nstitut(e|es|ution)",
+     "[Uu]niversit",  # to cover for say German Universitaet
+     "Department(|s)",
+     "[Aa]cadem(y|ies)",
+     "[Mm]inistr(y|ies)",
+     "[Gg]overnment(|s)",
+     "[Cc]ouncil(|s)",
+     "[Nn]ational",
+     "[Tt]rust(|s)",
+     "[A]ssociation(|s)",
+     "Societ(y|ies)",
+     "College(|s)",
+     "Commission(|s)",
+     "Center(|s)",
+     "Office(|s)",
+     "Alliance(|s)"
+   )
+
+   synonyms[["foundation_award"]] <- c(
+     synonyms[["foundation"]],
+     synonyms[["award"]]
    )
 
   return(synonyms)
