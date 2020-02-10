@@ -464,7 +464,7 @@ get_fund_acknow <- function(article) {
     lapply(.bound) %>%
     unlist()
 
-  c(funded_synonyms, "NIH (R|P)[0-9]{2}") %>%
+  c(funded_synonyms, "NIH (|\\()(R|P)[0-9]{2}") %>%
     .encase %>%
     grep(article, perl = T, ignore.case = T)
 
@@ -1686,7 +1686,8 @@ is_funding <- function(filename) {
     "F(?i)unding information(?-i)",
     "F(?i)unding statement(|s)(?-i)",
     "S(?i)upport statement(|s)(?-i)",
-    "S(?i)ource of support(|s)(?-i)"
+    "S(?i)ource(|s) of support(|s)(?-i)",
+    "S(?i)ource(|s) of funding(?-i)"
   )
 
   synonyms[["financial"]] <- c(
@@ -1707,6 +1708,7 @@ is_funding <- function(filename) {
 
   synonyms[["financial_title"]] <- c(
     "F(?i)inancial support(|s)(?-i)",
+    "S(?i)ource(|s) of financial support(|s)(?-i)",
     "F(?i)inancial or other support(|s)(?-i)",
     "F(?i)inancial assistance(?-i)",
     "F(?i)inancial aid(?-i)",
