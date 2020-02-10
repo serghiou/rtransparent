@@ -1,6 +1,7 @@
 #' Identify mentions of support
 #'
-#' Returns the index with the elements of interest.
+#' Identifies mentions of "This work was funded by ..." and of "This work was
+#'     completed using funds from ..."
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The index of the paragraph of interest.
@@ -272,7 +273,7 @@ get_received_1 <- function(article) {
 get_received_2 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("received", "support_only", "by", "agency")
+  words <- c("received", "funding_financial", "by", "foundation_award")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -457,10 +458,13 @@ get_fund_acknow <- function(article) {
   synonyms <- .create_synonyms()
   words <- c("funded", "funds_award_financial")
 
-  synonyms %>%
+  funded_synonyms <-
+    synonyms %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
-    unlist() %>%
+    unlist()
+
+  c(funded_synonyms, "NIH (R|P)[0-9]{2}") %>%
     .encase %>%
     grep(article, perl = T, ignore.case = T)
 
@@ -1668,6 +1672,11 @@ is_funding <- function(filename) {
     synonyms[["funding"]]
   )
 
+  synonyms[["funding_financial"]] <- c(
+    synonyms[["funding"]],
+    synonyms[["financial"]]
+  )
+
   synonyms[["funding_title"]] <- c(
     "F(?i)unding(?-i)",
     "F(?i)unding/Support(?-i)",
@@ -1769,13 +1778,6 @@ is_funding <- function(filename) {
      synonyms[["award"]]
    )
 
-   synonyms[["agency"]] <- c(
-     "[Aa]gency",
-     "[Ff]oundation",
-     "[Ii]nstitute",
-     synonyms[["award"]]
-   )
-
    synonyms[["received"]] <- c(
      "[Rr]eceived",
      "[Aa]ccepted",
@@ -1872,7 +1874,8 @@ is_funding <- function(filename) {
      "Commission(|s)",
      "Center(|s)",
      "Office(|s)",
-     "Alliance(|s)"
+     "Alliance(|s)",
+     "[Aa]gency"
    )
 
    synonyms[["foundation_award"]] <- c(
