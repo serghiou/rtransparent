@@ -68,7 +68,7 @@ get_support_1 <- function(article) {
 get_support_2 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("funded", "this_singular", "research_singular")
+  words <- c("funded_funding", "this_singular", "research_singular")
 
   singular <-
     synonyms %>%
@@ -172,8 +172,8 @@ get_support_5 <- function(article) {
     lapply(.encase) %>%
     paste(collapse = synonyms$txt)
 
-
-  .max_words("(^\\s*|\\.\\s*)", n_max = 4, space_first = F) %>%
+  start_of_sentence <- "(^\\s*|(:|\\.)\\s*|[A-Z][a-zA-Z]+\\s*)"
+  .max_words(start_of_sentence, n_max = 4, space_first = F) %>%
     paste0(funded_by_award) %>%
     grep(article, perl = T)
 }
@@ -464,7 +464,7 @@ get_fund_acknow <- function(article) {
     lapply(.bound) %>%
     unlist()
 
-  c(funded_synonyms, "NIH (|\\()(R|P)[0-9]{2}") %>%
+  c(funded_synonyms, "NIH (|\\()(R|P)[0-9]{2}", "awarded by") %>%
     .encase %>%
     grep(article, perl = T, ignore.case = T)
 
@@ -490,6 +490,21 @@ get_fund_acknow_new <- function(article) {
     grep(article, perl = T, ignore.case = T)
 
 }
+
+
+# get_fund_acknow_new <- function(article) {
+#
+#   synonyms <- .create_synonyms()
+#   words <- c("acknowledge")
+#
+#   a <- synonyms %>%
+#     magrittr::extract(words) %>%
+#     lapply(.bound) %>%
+#     lapply(.encase)
+#
+#   grep(paste0(a, synonyms$txt, "[0-9]{3,10}"), article, perl = T)
+#
+# }
 
 
 #' Identify mentions of "Supported by ..."
@@ -1482,7 +1497,7 @@ is_funding <- function(filename) {
 
   synonyms <- list()
 
-  synonyms[["txt"]] <- "[a-zA-Z0-9\\s,()/-]*"  # order matters
+  synonyms[["txt"]] <- "[a-zA-Z0-9\\s,()/:-]*"  # order matters
 
   synonyms[["This"]] <- c(
     "This",
@@ -1499,7 +1514,8 @@ is_funding <- function(filename) {
 
   synonyms[["These"]] <- c(
     "These",
-    "Our"
+    "Our",
+    "Research"
   )
 
   synonyms[["this"]] <- c(
@@ -1556,7 +1572,8 @@ is_funding <- function(filename) {
   synonyms[["by"]] <- c(
     "by",
     "from",
-    "within"
+    "within",
+    "under"
   )
 
   synonyms[["and"]] <- c(
@@ -1669,7 +1686,8 @@ is_funding <- function(filename) {
 
   synonyms[["funded_funding"]] <- c(
     synonyms[["funded"]],
-    synonyms[["funding"]]
+    synonyms[["funding"]],
+    "[Dd]eveloped"  # added here only - used in stricter regexes
   )
 
   synonyms[["funding_financial"]] <- c(
@@ -1729,6 +1747,8 @@ is_funding <- function(filename) {
     "F(?i)unding disclosure(|s)(?-i)",
     "F(?i)inancial disclosure(|s)(?-i)",
     "F(?i)inancial declaration(|s)(?-i)",
+    "F(?i)inancial (&|and) competing interests disclosure(|s)(?-i)",
+    "F(?i)inancial (&|and) competing interests declaration(|s)(?-i)",
     "D(?i)isclosure(|s)(?-i)",
     "D(?i)eclaration(|s)(?-i)"
   )
@@ -1869,6 +1889,9 @@ is_funding <- function(filename) {
      "[Gg]overnment(|s)",
      "[Cc]ouncil(|s)",
      "[Nn]ational",
+     "NIH",
+     "NSF",
+     "HHMI",
      "[Tt]rust(|s)",
      "[A]ssociation(|s)",
      "Societ(y|ies)",
