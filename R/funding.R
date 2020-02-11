@@ -359,6 +359,32 @@ get_thank_1 <- function(article) {
 }
 
 
+#' Identify mentions of thank you statements
+#'
+#' Returns the index with the elements related to "The authors acknowledge
+#'     Worldwide Cancer Research (AICR) 15-1002; Blueprint 282510; ..."
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+get_thank_2 <- function(article) {
+
+  synonyms <- .create_synonyms()
+  words <- c("thank")
+  txt <- "[a-zA-Z0-9\\s,()/:;-]*"
+
+  thank <-
+    synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = synonyms$txt)
+
+  thank %>%
+    paste("[0-9]{5}", sep = txt) %>%
+    grep(article, perl = T)
+}
+
+
 #' Identify mentions of "funding for this study was..."
 #'
 #' Returns the index with the elements of interest. More generic than _1.
@@ -819,6 +845,45 @@ get_common_2 <- function(article) {
 get_common_3 <- function(article) {
 
   grep("required to disclose.*disclosed none", article)
+
+}
+
+
+#' Get common phrases
+#'
+#' Identify statements of the following type: "There were no external funding
+#'     sources for this study"
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+get_common_4 <- function(article) {
+
+  synonyms <- .create_synonyms()
+  words <- c("no", "funding_financial_award", "for", "this", "research")
+
+  no_funding <-
+    synonyms %>%
+    magrittr::extract(words[1:2]) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = synonyms$txt)
+
+  for_this <-
+    synonyms %>%
+    magrittr::extract(words[3:4]) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = " ")
+
+  research <-
+    synonyms %>%
+    magrittr::extract(words[5]) %>%
+    lapply(.bound) %>%
+    lapply(.encase)
+
+  c(no_funding, for_this, research) %>%
+    paste(collapse = synonyms$txt) %>%
+    grep(article, perl = T)
 
 }
 
@@ -1300,6 +1365,7 @@ is_funding <- function(filename) {
   index_any[['authors_1']] <- get_authors_1(paragraphs_pruned)
   index_any[['authors_2']] <- get_authors_2(paragraphs_pruned)
   index_any[['thank_1']] <- get_thank_1(paragraphs_pruned)
+  index_any[['thank_2']] <- get_thank_2(paragraphs_pruned)
   index_any[['fund_1']] <- get_fund_1(paragraphs_pruned)
   index_any[['fund_2']] <- get_fund_2(paragraphs_pruned)
   index_any[['fund_3']] <- get_fund_3(paragraphs_pruned)
@@ -1311,6 +1377,7 @@ is_funding <- function(filename) {
   index_any[['common_1']] <- get_common_1(paragraphs_pruned)
   index_any[['common_2']] <- get_common_2(paragraphs_pruned)
   index_any[['common_3']] <- get_common_3(paragraphs_pruned)
+  index_any[['common_4']] <- get_common_4(paragraphs_pruned)
   index_any[['acknow_1']] <- get_acknow_1(paragraphs_pruned)
   index_any[['disclosure_1']] <- get_disclosure_1(paragraphs_pruned)
   index_any[['disclosure_2']] <- get_disclosure_2(paragraphs_pruned)
@@ -1369,7 +1436,7 @@ is_funding <- function(filename) {
   if (!length(index)) {
 
     from <- find_acknows(paragraphs_pruned)
-    to <- find_refs(paragraphs_pruned)
+    to <- find_refs(paragraphs_pruned) - 1
 
     if (!!length(from) & !!length(to)) {
 
