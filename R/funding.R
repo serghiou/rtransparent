@@ -985,6 +985,22 @@ get_grant_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The index of the paragraph of interest.
+get_french_1 <- function(article) {
+
+  # This study was financed by... - avoiding specifics b/c of UTF-8 characters
+  grep("Cette.*tude.*financ.*par", article, perl = T, ignore.case = T)
+
+}
+
+
+#' Identify mentions of funding in frence
+#'
+#' Returns the index of mentions such as: "Remerciements Cette étude a été
+#'     financée par l’Institut de Recherches Médicales et d’Etudes des Plantes
+#'     Médicinales (IMPM)."
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
 get_project_acknow <- function(article) {
 
   grep("project (no|num)", article, perl = T, ignore.case = T)
@@ -1094,6 +1110,27 @@ get_common_4 <- function(article) {
 
   c(no_funding, for_this, research) %>%
     paste(collapse = synonyms$txt) %>%
+    grep(article, perl = T)
+
+}
+
+
+#' Get common phrases
+#'
+#' Identify statements of the following type: "No specific sources of funding."
+#'
+#' @param article A List with paragraphs of interest.
+#' @return The index of the paragraph of interest.
+get_common_5 <- function(article) {
+
+  synonyms <- .create_synonyms()
+  words <- c("no", "sources", "funding_financial")
+
+  synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(.bound) %>%
+    lapply(.encase) %>%
+    paste(collapse = .max_words(" ", space_first = F)) %>%
     grep(article, perl = T)
 
 }
@@ -1452,20 +1489,34 @@ obliterate_refs_1 <- function(articles) {
 #' @return The index of the start and finish of this section.
 find_refs <- function(article) {
 
-  ref_synonyms <- c(
-    "R(?i)eferences(?-i)(| [A-Z0-9]+.*)",
-    "L(?i)terature(?-i)(| [A-Z0-9]+.*)",
-    "L(?i)iterature Cited(?-i)(| [A-Z0-9]+.*)",
-    "N(?i)otes and References(?-i)(| [A-Z0-9]+.*)",
-    "W(?i)orks Cited(?-i)(| [A-Z0-9]+.*)",
-    "^C(?i)itations(?-i)(| [A-Z0-9]+.*)",
-    "^B(?i)ibliographic references(?-i)(| [A-Z0-9]+.*)",
-    "R(?i)eferences and recommended reading(?-i)(| [A-Z0-9]+.*)"
-  )
+  synonyms <- .create_synonyms()
+  words <- c("References")
+  next_sentence <- "((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$"
+
+  ref_index <-
+    synonyms %>%
+    magrittr::extract(words) %>%
+    lapply(paste0, next_sentence) %>%
+    # lapply(.title) %>%
+    lapply(.encase) %>%
+    # lapply(.max_words) %>%
+    paste() %>%
+    grep(article, perl = T)
+
+  # ref_synonyms <- c(
+  #   "R(?i)eferences(?-i)(| [A-Z0-9]+.*)",
+  #   "L(?i)terature(?-i)(| [A-Z0-9]+.*)",
+  #   "L(?i)iterature Cited(?-i)(| [A-Z0-9]+.*)",
+  #   "N(?i)otes and References(?-i)(| [A-Z0-9]+.*)",
+  #   "W(?i)orks Cited(?-i)(| [A-Z0-9]+.*)",
+  #   "^C(?i)itations(?-i)(| [A-Z0-9]+.*)",
+  #   "B(?i)ibliographic references(?-i)(| [A-Z0-9]+.*)",
+  #   "R(?i)eferences and recommended reading(?-i)(| [A-Z0-9]+.*)"
+  # )
 
   # no "^" b/c of UTF-8 characters, e.g. "\\fReferences"
-  regex <- paste0("(", paste(ref_synonyms, collapse = "|"), ")$")
-  ref_index <- grep(regex, article, perl = T)
+  # regex <- paste0("(", paste(ref_synonyms, collapse = "|"), ")$")
+  # ref_index <- grep(regex, article, perl = T)
 
   if (!!length(ref_index)) {
 
@@ -1592,10 +1643,12 @@ is_funding <- function(filename) {
   index_any[['financial_2']] <- get_financial_2(paragraphs_pruned)
   index_any[['financial_3']] <- get_financial_3(paragraphs_pruned)
   index_any[['grant_1']] <- get_grant_1(paragraphs_pruned)
+  index_any[['french_1']] <- get_french_1(paragraphs_pruned)
   index_any[['common_1']] <- get_common_1(paragraphs_pruned)
   index_any[['common_2']] <- get_common_2(paragraphs_pruned)
   index_any[['common_3']] <- get_common_3(paragraphs_pruned)
   index_any[['common_4']] <- get_common_4(paragraphs_pruned)
+  index_any[['common_5']] <- get_common_5(paragraphs_pruned)
   index_any[['acknow_1']] <- get_acknow_1(paragraphs_pruned)
   index_any[['disclosure_1']] <- get_disclosure_1(paragraphs_pruned)
   index_any[['disclosure_2']] <- get_disclosure_2(paragraphs_pruned)
@@ -1788,7 +1841,8 @@ is_funding <- function(filename) {
     "This",
     "These",
     "The",
-    "Our"
+    "Our",
+    "All"
   )
 
   synonyms[["This_singular"]] <- c(
@@ -1800,7 +1854,8 @@ is_funding <- function(filename) {
   synonyms[["These"]] <- c(
     "These",
     "Our",
-    "Research"
+    "Research",
+    "All"
   )
 
   synonyms[["this"]] <- c(
@@ -1974,7 +2029,7 @@ is_funding <- function(filename) {
     "[Ff]und support(|s)",
     "[Ss]upport",
     "[Ss]ponsorship",
-    "[Aa]id",
+    "\\b[Aa]id",
     "[Rr]esources"
   )
 
@@ -2048,7 +2103,7 @@ is_funding <- function(filename) {
 
   synonyms[["support"]] <- c(
     "[Ss]upport(|s)",
-    "[Aa]id(|s)",
+    "\\b[Aa]id(|s)",
     "[Aa]ssistance",
     "[Ss]ponsorship(|s)"
   )
@@ -2187,20 +2242,20 @@ is_funding <- function(filename) {
    )
 
    synonyms[["foundation"]] <- c(
-     "[Ff]oundation(|s)",
-     "[Ii]nstitut(e|es|ution)",
-     "[Uu]niversit",  # to cover for say German Universitaet
+     "Foundation(|s)",
+     "Institut(e|es|ution)",
+     "Universit",  # to cover for say German Universitaet
      # "Department(|s)",  # too sensitive
-     "[Aa]cadem(y|ies)",
-     "[Mm]inistr(y|ies)",
+     "Academ(y|ies)",
+     "Ministr(y|ies)",
      "[Gg]overnment(|s)",
-     "[Cc]ouncil(|s)",
-     "[Nn]ational",
+     "Council(|s)",
+     "National",
      "NIH",
      "NSF",
      "HHMI",
-     "[Tt]rust(|s)",
-     "[A]ssociation(|s)",
+     "Trust(|s)",
+     "Association(|s)",
      "Societ(y|ies)",
      "College(|s)",
      "Commission(|s)",
@@ -2214,6 +2269,22 @@ is_funding <- function(filename) {
    synonyms[["foundation_award"]] <- c(
      synonyms[["foundation"]],
      synonyms[["award"]]
+   )
+
+   synonyms[["References"]] <- c(
+     "R(?i)eferences(?-i)",
+     "L(?i)terature(?-i)",
+     "L(?i)iterature Cited(?-i)",
+     "N(?i)otes and References(?-i)",
+     "W(?i)orks Cited(?-i)",
+     "^C(?i)itations(?-i)",
+     "B(?i)ibliograpy(?-i)",
+     "B(?i)ibliographic references(?-i)",
+     "R(?i)eferences and recommended reading(?-i)"
+   )
+
+   synonyms[["sources"]] <- c(
+     "source(|s)"
    )
 
   return(synonyms)
