@@ -960,7 +960,7 @@ get_grant_1 <- function(article) {
   } else {
 
     # This is done to avoid mentions such as "Grant AK, Brown AZ, ..."
-    grant <- c("G(?i)rant ", "^[A-Z](?i)\\w+ grant ")
+    grant <- c("G(?i)rant ", "^[A-Z](?i)\\w+ grant ", "Contract grant ")
 
     support <-
       synonyms %>%
@@ -1452,8 +1452,8 @@ obliterate_disclosure_1 <- function(articles) {
 #' @return The list of paragraphs without misleading fullstops.
 obliterate_fullstop_1 <- function(articles) {
 
-  articles <- gsub("([A-Z])(\\.) ([A-Z])(\\.) ([A-Z])(\\.)", "\\1 \\3 \\5", articles)
-  articles <- gsub("([A-Z])(\\.) ([A-Z])(\\.)", "\\1 \\3", articles)
+  articles <- gsub("([A-Z])(\\.)\\s*([A-Z])(\\.)\\s*([A-Z])(\\.)", "\\1 \\3 \\5", articles)
+  articles <- gsub("([A-Z])(\\.)\\s*([A-Z])(\\.)", "\\1 \\3", articles)
   articles <- gsub("(\\s[A-Z])(\\.) ([A-Z][a-z]+)", "\\1 \\3", articles)
   articles <- gsub("(\\.) ([a-z])", " \\2", articles)
   articles <- gsub("(\\.) ([0-9])", " \\2", articles)
@@ -1588,18 +1588,20 @@ is_funding <- function(filename) {
   disclosure <- integer()
   diff <- integer()
 
+  # TODO: MOVE THIS TO THE pdf2text FUNCTION AND ENCODE AS UTF-8
   # Fix PDF to txt bugs
-  broken_1 <- "([a-z]+)-\n([a-z]+)"
-  broken_2 <- "([a-z]+)(|,|;)\n([a-z]+)"
+  broken_1 <- "([a-z]+)-\n*([a-z]+)"
+  broken_2 <- "([a-z]+)(|,|;)\n*([a-z]+)"
   paragraphs <-
     readr::read_file(filename) %>%
     purrr::map(gsub, pattern = broken_1, replacement = "\\1\\2") %>%
-    purrr::map(gsub, pattern = broken_2, replacement = "\\1 \\3") %>%
+    purrr::map(gsub, pattern = broken_2, replacement = "\\1\\3") %>%
     purrr::map(strsplit, "\n| \\*") %>%
     unlist() %>%
     utf8::utf8_encode()
 
 
+  # TODO: MOVE UP TO obliterate_fullstop_1 TO pdf2text FUNCTION
   # Remove potentially misleading sequences
   utf_1 <- "(\\\\[a-z0-9]{3})"   # remove \\xfc\\xbe etc
   utf_2 <- "(\\\\[a-z])"   # \\f or
@@ -2043,6 +2045,7 @@ is_funding <- function(filename) {
     synonyms[["financial"]]
   )
 
+  # TODO: split this into (financial|funding) (support|source|etc)
   synonyms[["funding_title"]] <- c(
     "F(?i)unding(?-i)",
     "F(?i)unding/Support(?-i)",
@@ -2058,6 +2061,7 @@ is_funding <- function(filename) {
 
   synonyms[["financial"]] <- c(
     "[Ff]inancial support(|s)",
+    "[Ff]inancial source(|s)",
     "[Ff]inancial or other support(|s)",
     "[Ff]inancial assistance",
     "[Ff]inancial aid(|s)",
@@ -2072,14 +2076,20 @@ is_funding <- function(filename) {
     "[Gg]rant sponsorship(|s)"
   )
 
+
+  # TODO: split this into (financial|funding) (support|source|etc)
   synonyms[["financial_title"]] <- c(
     "F(?i)inancial support(|s)(?-i)",
+    "F(?i)inancial source(|s)(?-i)",
     "S(?i)ource(|s) of financial support(|s)(?-i)",
     "F(?i)inancial or other support(|s)(?-i)",
     "F(?i)inancial assistance(?-i)",
     "F(?i)inancial aid(?-i)",
     "F(?i)inancial sponsorship(|s)(?-i)",
     "F(?i)inancial support(|s) and sponsorship(|s)(?-i)",
+    "F(?i)inancial source(|s) for the stud(y|ies)(?-i)",
+    "F(?i)inancial information(?-i)",
+    "F(?i)inancial statement(|s)(?-i)",
     # "F(?i)inancial disclosure(|s)(?-i)",
     # "F(?i)inancial declaration(|s)(?-i)",
     "F(?i)inanciamento(?-i)"
@@ -2242,9 +2252,10 @@ is_funding <- function(filename) {
    )
 
    synonyms[["foundation"]] <- c(
-     "Foundation(|s)",
+     "Ffoundation(|s)",
      "Institut(e|es|ution)",
      "Universit",  # to cover for say German Universitaet
+     "Universit(y|ies)",
      # "Department(|s)",  # too sensitive
      "Academ(y|ies)",
      "Ministr(y|ies)",
@@ -2260,9 +2271,9 @@ is_funding <- function(filename) {
      "College(|s)",
      "Commission(|s)",
      "Center(|s)",
-     "Office(|s)",
-     "Program(|s)",
-     "Alliance(|s)",
+     "[Oo]ffice(|s)",
+     "[Pp]rogram(|s)",
+     "[Aa]lliance(|s)",
      "[Aa]gency"
    )
 
