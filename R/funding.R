@@ -1455,11 +1455,12 @@ obliterate_fullstop_1 <- function(articles) {
   articles <- gsub("([A-Z])(\\.)\\s*([A-Z])(\\.)\\s*([A-Z])(\\.)", "\\1 \\3 \\5", articles)
   articles <- gsub("([A-Z])(\\.)\\s*([A-Z])(\\.)", "\\1 \\3", articles)
   articles <- gsub("(\\s[A-Z])(\\.) ([A-Z][a-z]+)", "\\1 \\3", articles)
-  articles <- gsub("(\\.) ([a-z])", " \\2", articles)
-  articles <- gsub("(\\.) ([0-9])", " \\2", articles)
-  articles <- gsub("(\\.) ([A-Z]+[0-9])", " \\2", articles)
-  articles <- gsub("(\\.)([a-zA-Z0-9])", "\\2", articles)
+  articles <- gsub("(\\.)\\s*([a-z])", " \\2", articles)
+  articles <- gsub("(\\.)\\s*([0-9])", " \\2", articles)
+  articles <- gsub("(\\.)([A-Z])", " \\2", articles)
+  articles <- gsub("(\\.)\\s*([A-Z]+[0-9])", " \\2", articles)
   articles <- gsub("\\.([^\\s])", "\\1", articles, perl = T)
+  # articles <- gsub("(\\.)([a-zA-Z0-9])", "\\2", articles)  # covered above
 
   return(articles)
 }
@@ -1973,7 +1974,9 @@ is_funding <- function(filename) {
     "[Rr]eport(|s)",
     "[Pp]rogram(|s)",
     "[Pp]aper(|s)",
-    "[Mm]anuscript(|s)"
+    "[Mm]anuscript(|s)",
+    "[Aa]nalys(is|es)",
+    "[Ii]nvestigation(|s)"
   )
 
   synonyms[["research_singular"]] <- c(
@@ -1986,7 +1989,9 @@ is_funding <- function(filename) {
     "[Rr]eport",
     "[Pp]rogram",
     "[Pp]aper",
-    "[Mm]anuscript"
+    "[Mm]anuscript",
+    "[Aa]nalysis",
+    "[Ii]nvestigation"
   )
 
   synonyms[["researches"]] <- c(
@@ -1998,7 +2003,9 @@ is_funding <- function(filename) {
     "[Rr]eports",
     "[Pp]rograms",
     "[Pp]apers",
-    "[Mm]anuscripts"
+    "[Mm]anuscripts",
+    "[Aa]nalyses",
+    "[Ii]nvestigations"
   )
 
   synonyms[["funder"]] <- c(
