@@ -262,10 +262,13 @@ rt_register <- function(filename) {
   # TODO: Consider removing all :punct: apart from dots (e.g. author(s))
 
   index <- integer()
+  is_relevant <- FALSE
 
   file_text <- readr::read_file(filename)
 
   if (any(grepl("[Rr]egist|[Tt]rial", file_text))) {
+
+    is_relevant <- TRUE
 
     # TODO: MOVE THIS TO THE pdf2text FUNCTION AND ENCODE AS UTF-8
     # Fix PDF to txt bugs
@@ -330,7 +333,7 @@ rt_register <- function(filename) {
 
   article <- basename(filename) %>% stringr::word(sep = "\\.")
   pmid <- gsub("^.*PMID([0-9]+).*$", "\\1", filename)
-  tibble::tibble(article, pmid, is_register_pred, register_text)
+  tibble::tibble(article, pmid, is_register_pred, register_text, is_relevant)
 
 }
 
