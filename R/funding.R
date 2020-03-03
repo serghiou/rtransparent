@@ -1456,10 +1456,11 @@ obliterate_fullstop_1 <- function(articles) {
   articles <- gsub("([A-Z])(\\.)\\s*([A-Z])(\\.)", "\\1 \\3", articles)
   articles <- gsub("(\\s[A-Z])(\\.) ([A-Z][a-z]+)", "\\1 \\3", articles)
   articles <- gsub("(\\.)\\s*([a-z])", " \\2", articles)
-  articles <- gsub("(\\.)\\s*([0-9])", " \\2", articles)
+  articles <- gsub("(\\.)\\s+([0-9])", " \\2", articles)
   articles <- gsub("(\\.)([A-Z])", " \\2", articles)
   articles <- gsub("(\\.)\\s*([A-Z]+[0-9])", " \\2", articles)
-  articles <- gsub("\\.([^\\s])", "\\1", articles, perl = T)
+  articles <- gsub("\\.([^\\s0-9\\[])", "\\1", articles, perl = T)
+  articles <- gsub("([0-9])\\.([0-9])", "\\1\\2", articles, perl = T)
   # articles <- gsub("(\\.)([a-zA-Z0-9])", "\\2", articles)  # covered above
 
   return(articles)
