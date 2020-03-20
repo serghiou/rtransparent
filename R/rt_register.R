@@ -8,7 +8,7 @@ get_ct_1 <- function(article) {
 
   # Just using the NCT was too sensitive
   # e.g. picked up references to protocols, mentions of trials underway, etc.
-  grep("\\b(|pre|pre-)regist.*NCT[0-9]{8}", article, perl = T)
+  grep("\\b(|pre|pre-)regist.{0,20}NCT[0-9]{8}", article, perl = T)
 
 }
 
@@ -54,7 +54,7 @@ get_prospero_1 <- function(article) {
 get_registered_1 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("this", "research_lower", "and", "registered_registration")
+  words <- c("this", "research_lower_strict", "and", "registered_registration")
   # Too generic without research & registered, or if including registration
 
   this_research <-
@@ -153,7 +153,7 @@ get_registered_3 <- function(article) {
 get_registered_4 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("this", "registered", "research_lower")
+  words <- c("this", "registered", "research_lower_strict")
   # Too generic without research & registered, or if including registration
 
   synonyms$this <- append(synonyms$this, "\\b[Ww]e")
@@ -180,7 +180,7 @@ get_registered_4 <- function(article) {
 get_registered_5 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("this", "research", "and", "registered_registration")
+  words <- c("this", "research_strict", "and", "registered_registration")
   SOME <- "\\([a-zA-Z]+\\)"
   # Too generic without research & registered, or if including registration
 
@@ -235,7 +235,7 @@ get_registered_5 <- function(article) {
 get_not_registered_1 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("this", "research_lower")
+  words <- c("this", "research_lower_strict")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -256,7 +256,7 @@ get_not_registered_1 <- function(article) {
 get_registration_1 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("research", "registration")  # Too generic without these
+  words <- c("research_strict", "registration")  # Too generic without these
 
   research_registration <-
     synonyms %>%
@@ -282,7 +282,7 @@ get_registration_1 <- function(article) {
 get_registration_2 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("Research", "registration")
+  words <- c("Research_strict", "registration")
 
   research_registration <-
     synonyms %>%
@@ -322,7 +322,7 @@ get_registration_3 <- function(article) {
 get_registration_4 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("This", "research_lower", "registration")
+  words <- c("This", "research_lower_strict", "registration")
   # Too generic without research & registered, or if including registration
 
   this_research <-
@@ -353,7 +353,7 @@ get_registration_4 <- function(article) {
 get_registry_1 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("research_lower", "registry")  # Too generic without these
+  words <- c("research_lower_strict", "registry")  # Too generic without these
 
   research_registry <-
     synonyms %>%
@@ -381,10 +381,9 @@ get_registry_1 <- function(article) {
 
 
 
-#' Identify registration titles - sensitive
+#' Identify registration titles - sensitive with negation
 #'
-#' Extract the index of mentions such as: "The trial was registered with
-#'     controlled-trials.com (ISRCTN 10627379)"
+#' Extract the index of mentions such as: "Study registration: ..."
 #'
 #' @return Index of element with phrase of interest
 get_reg_title_1 <- function(article) {
@@ -435,7 +434,7 @@ get_reg_title_1 <- function(article) {
 }
 
 
-#' Identify registration titles - specific
+#' Identify registration titles - specific with no negation
 #'
 #' Extract the index of mentions such as: "Trial registration: ..."
 #'
@@ -509,12 +508,12 @@ get_reg_title_3 <- function(article) {
   synonyms <- .create_synonyms()
   punct <-
 
-  # Protocol only contributed to FPs due to protocol ethical approval
-  registration_synonyms <- c(
-    "Registration",
-    "Clinical [Tt]rial",
-    "Trial"
-  )
+    # Protocol only contributed to FPs due to protocol ethical approval
+    registration_synonyms <- c(
+      "Registration",
+      "Clinical [Tt]rial",
+      "Trial"
+    )
 
   number_synonyms <- c(
     "registration",
@@ -651,7 +650,7 @@ get_reg_title_4 <- function(article) {
 get_protocol_1 <- function(article) {
 
   synonyms <- .create_synonyms()
-  words <- c("study protocol", "published", "previously")
+  words <- c("study_protocol", "published", "previously")
 
   synonyms %>%
     magrittr::extract(words) %>%
@@ -707,7 +706,7 @@ get_funded_ct_1 <- function(article) {
 #'     Chang Gung Memorial Hospital under registry number 201601023B0."
 #'
 #' @return Index of element with phrase of interest
-negate_registry_1 <- function(articles) {
+negate_registry_1 <- function(article) {
 
   synonyms <- .create_synonyms()
 
@@ -716,20 +715,19 @@ negate_registry_1 <- function(articles) {
   code <- "[\\s,;:]+([A-Z]{2,10}\\s*[0-9]{2}|[0-9]{5})"
 
   paste(research, "approv", registry, code, sep = synonyms$txt) %>%
-    grepl(articles, perl = T)
+    grepl(article, perl = T)
 
 }
 
 
 #' Negate unwanted mentions of title
 #'
-#' Negate title mentions that refer to unwated text.
+#' Negate title mentions that refer to unwanted text.
 #'
 #' @return Index of element with phrase of interest
-negate_reg_title_1 <- function(articles) {
+negate_reg_title_1 <- function(article) {
 
-  grepl("[A-Z]{2}\\s*[0-9]{2}|[0-9]{5}|registration|registered",
-        articles, perl = T)
+  grepl("[A-Z]{2}\\s*[0-9]{2}|[0-9]{5}", article, perl = T)
 
 }
 
@@ -740,9 +738,9 @@ negate_reg_title_1 <- function(articles) {
 #'     conducted as previously reported (ClinicalTrials.gov identifier
 #'     NCT01280162) [16]."
 #'
-#' @param articles A List with paragraphs of interest.
+#' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_refs_1 <- function(articles) {
+obliterate_refs_1 <- function(article) {
 
   # Good for finding, but not for substituting b/c it's a lookahead
   # words <- c(
@@ -764,9 +762,9 @@ obliterate_refs_1 <- function(articles) {
   #   "case( |\\s*-\\s*)control"
   # )
   #
-  # gsub("(reported|published).{0,20}([Cc]linical[Tt]rial|NCT", "", articles, perl = T)
+  # gsub("(reported|published).{0,20}([Cc]linical[Tt]rial|NCT", "", article, perl = T)
 
-  gsub("NCT[0-9]{8}.{3}[0-9]+", "", articles, perl = T)
+  gsub("NCT[0-9]{8}.{3}[0-9]+", "", article, perl = T)
 
   # TODO: This to be inserted only for get_ct_2!
 
@@ -779,25 +777,25 @@ obliterate_refs_1 <- function(articles) {
 #'     conducted as previously reported (ClinicalTrials.gov identifier
 #'     NCT01280162) [16]."
 #'
-#' @param articles A List with paragraphs of interest.
+#' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_references_1 <- function(articles) {
+obliterate_references_1 <- function(article) {
 
   # If within References or under references and starts with 1. or contains et al. then remove.
 
-  ref_from <- find_refs(articles)
+  ref_from <- find_refs(article)
 
   if (!!length(ref_from)) {
 
-    ref_to <- length(articles)
+    ref_to <- length(article)
 
-    articles[ref_from] <- ""
-    articles[ref_from:ref_to] <-
+    article[ref_from] <- ""
+    article[ref_from:ref_to] <-
       gsub("^([0-9]{1,3}\\.\\s|.*et al\\.).*$", "",
-      articles[ref_from:ref_to], perl = T)
+      article[ref_from:ref_to], perl = T)
 
   }
-  return(articles)
+  return(article)
 }
 
 
@@ -806,11 +804,11 @@ obliterate_references_1 <- function(articles) {
 #' Removes mentions such as: "guidelines for diagnostic studies (trial
 #'     registered at www.clinicaltrial.gov; NCT01697930)."
 #'
-#' @param articles A List with paragraphs of interest.
+#' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_semicolon_1 <- function(articles) {
+obliterate_semicolon_1 <- function(article) {
 
-  gsub("(\\(.*); (.*\\))", "\\1 - \\2", articles)
+  gsub("(\\(.*); (.*\\))", "\\1 - \\2", article)
 
 }
 
@@ -819,11 +817,11 @@ obliterate_semicolon_1 <- function(articles) {
 #'
 #' Removes commas to simplify regular expressions.
 #'
-#' @param articles A List with paragraphs of interest.
+#' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_comma_1 <- function(articles) {
+obliterate_comma_1 <- function(article) {
 
-  gsub(", ", " ", articles)
+  gsub(", ", " ", article)
 
 }
 
@@ -834,14 +832,14 @@ obliterate_comma_1 <- function(articles) {
 #'     implmenting this function, "ball's" should become balls and l'Alba
 #'     should become lAlba and balls' into balls.
 #'
-#' @param articles A List with paragraphs of interest.
+#' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_apostrophe_1 <- function(articles) {
+obliterate_apostrophe_1 <- function(article) {
 
   txt_1 <- "([a-zA-Z])'([a-zA-Z])"
   txt_2 <- "[a-z]+s'"
 
-  articles %>%
+  article %>%
     purrr::map(gsub, pattern = txt_1, replacement = "\\1\\2") %>%
     purrr::map(gsub, pattern = txt_2, replacement = "s")
 
@@ -852,11 +850,11 @@ obliterate_apostrophe_1 <- function(articles) {
 #'
 #' Removes hashes to make ease creation of regular expressions.
 #'
-#' @param articles A List with paragraphs of interest.
+#' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_hash_1 <- function(articles) {
+obliterate_hash_1 <- function(article) {
 
-  gsub("#", "", articles)
+  gsub("#", "", article)
 
 }
 
@@ -866,6 +864,7 @@ obliterate_hash_1 <- function(articles) {
 #' Find the index of the start of the Methods section.
 #'
 #' @return Index of element with phrase of interest
+
 find_methods <- function(article) {
 
   method_index <- integer()
@@ -971,21 +970,22 @@ rt_register <- function(filename) {
     from <- find_methods(paragraphs)
     is_method <- !!length(from)
 
-    # Removed: found a correspondence article that was registered with NCT
-    # if (!is_method) {
-    #
-    #   return(tibble::tibble(
-    #     article,
-    #     pmid,
-    #     is_register_pred,
-    #     register_text,
-    #     is_relevant,
-    #     is_method,
-    #     is_NCT,
-    #     is_explicit
-    #   ))
-    #
-    # }
+    # Previously removed b/c I thought a correspondence article was wrongly
+    # classified - I was wrong and that was a TN
+    if (!is_method) {
+
+      return(tibble::tibble(
+        article,
+        pmid,
+        is_register_pred,
+        register_text,
+        is_relevant,
+        is_method,
+        is_NCT,
+        is_explicit
+      ))
+
+    }
 
 
     # TODO: MOVE UP TO obliterate_fullstop_1 TO pdf2text FUNCTION
@@ -1206,11 +1206,13 @@ rt_register <- function(filename) {
 #' @return A list of synonyms to words of interest
 .create_synonyms <- function() {
 
+  # synonyms$ about x2 faster than synonyms[[]]
+
   synonyms <- list()
 
-  synonyms[["txt"]] <- "[a-zA-Z0-9\\s,()/:-]*"  # order matters
+  synonyms$txt <- "[a-zA-Z0-9\\s,()\\[\\]/:-]*"  # order matters
 
-  synonyms[["This"]] <- c(
+  synonyms$This <- c(
     "This",
     "These",
     "The",
@@ -1218,36 +1220,36 @@ rt_register <- function(filename) {
     "All"
   )
 
-  synonyms[["This_singular"]] <- c(
+  synonyms$This_singular <- c(
     "This",
     "The",
     "Our"
   )
 
-  synonyms[["These"]] <- c(
+  synonyms$These <- c(
     "These",
     "Our",
     "Research",
     "All"
   )
 
-  synonyms[["this"]] <- c(
+  synonyms$this <- c(
     "[Tt]his",
     "[Tt]hese",
     "[Tt]he",
     "[Oo]ur"
   )
 
-  synonyms[["this_singular"]] <- c(
+  synonyms$this_singular <- c(
     "this",
     "the"
   )
 
-  synonyms[["these"]] <- c(
+  synonyms$these <- c(
     "these"
   )
 
-  synonyms[["is"]] <- c(
+  synonyms$is <- c(
     "is",
     "been",
     "are",
@@ -1255,41 +1257,41 @@ rt_register <- function(filename) {
     "were"
   )
 
-  synonyms[["is_singular"]] <- c(
+  synonyms$is_singular <- c(
     "is",
     "have",
     "has",
     "was"
   )
 
-  synonyms[["are"]] <- c(
+  synonyms$are <- c(
     "are",
     "have",
     "were"
   )
 
-  synonyms[["have"]] <- c(
+  synonyms$have <- c(
     "have",
     "has"
   )
 
-  synonyms[["is_have"]] <- c(
-    synonyms[["is"]],
-    synonyms[["have"]]
+  synonyms$is_have <- c(
+    synonyms$is,
+    synonyms$have
   )
 
-  synonyms[["We"]] <- c(
+  synonyms$We <- c(
     "We"
   )
 
-  synonyms[["by"]] <- c(
+  synonyms$by <- c(
     "by",
     "from",
     "within",
     "under"
   )
 
-  synonyms[["and"]] <- c(
+  synonyms$and <- c(
     "and",
     "&",
     "or"
@@ -1299,42 +1301,42 @@ rt_register <- function(filename) {
     "for"
   )
 
-  synonyms[["of"]] <- c(
+  synonyms$of <- c(
     "of",
     "about"
   )
 
-  synonyms[["for_of"]] <- c(
+  synonyms$for_of <- c(
     synonyms[["for"]],
-    synonyms[["of"]]
+    synonyms$of
   )
 
-  synonyms[["no"]] <- c(
+  synonyms$no <- c(
     "[Nn]o",
     "[Nn]il",
     "[Nn]one",
     "[Nn]othing"
   )
 
-  synonyms[["No"]] <- c(
+  synonyms$No <- c(
     "N(?i)o(?-i)",
     "N(?i)il(?-i)",
     "N(?i)one(?-i)",
     "N(?i)othing(?-i)"
   )
 
-  synonyms[["not"]] <- c(
+  synonyms$not <- c(
     "not"
   )
 
-  synonyms[["author"]] <- c(
+  synonyms$author <- c(
     "author(|s|\\(s\\))",
     "researcher(|s|\\(s\\))",
     "investigator(|s|\\(s\\))",
     "scientist(|s|\\(s\\))"
   )
 
-  synonyms[["research"]] <- c(
+  synonyms$research <- c(
     "[Ww]ork(|s)",
     "[Rr]esearch",
     "[Ss]tud(y|ies)",
@@ -1352,7 +1354,21 @@ rt_register <- function(filename) {
     "[Cc]ollaboration(|s)"
   )
 
-  synonyms[["research_lower"]] <- c(
+  synonyms$research_strict <- c(
+    "[Ww]ork(|s)",
+    "[Rr]esearch",
+    "[Ss]tud(y|ies)",
+    "[Pp]roject(|s)",
+    "[Tt]rial(|s)",
+    "[Pp]rogram(|s)",
+    "[Aa]nalys(is|es)",
+    "[Ii]nvestigation(|s)",
+    "[Pp]rotocol(|s)",
+    "[Cc]ohort(|s)",
+    "[Cc]ollaboration(|s)"
+  )
+
+  synonyms$research_lower <- c(
     "work(|s)",
     "research",
     "stud(y|ies)",
@@ -1370,7 +1386,21 @@ rt_register <- function(filename) {
     "collaboration(|s)"
   )
 
-  synonyms[["Research"]] <- c(
+  synonyms$research_lower_strict <- c(
+    "work(|s)",
+    "research",
+    "stud(y|ies)",
+    "project(|s)",
+    "trial(|s)",
+    "program(|s)",
+    "analys(is|es)",
+    "investigation(|s)",
+    "protocol(|s)",
+    "cohort(|s)",
+    "collaboration(|s)"
+  )
+
+  synonyms$Research <- c(
     "Work(|s)",
     "Research",
     "Stud(y|ies)",
@@ -1385,7 +1415,18 @@ rt_register <- function(filename) {
     "Investigation(|s)"
   )
 
-  synonyms[["research_singular"]] <- c(
+  synonyms$Research_strict <- c(
+    "Work(|s)",
+    "Research",
+    "Stud(y|ies)",
+    "Project(|s)",
+    "Trial(|s)",
+    "Program(|s)",
+    "Analys(is|es)",
+    "Investigation(|s)"
+  )
+
+  synonyms$research_singular <- c(
     "[Ww]ork",
     "[Rr]esearch",
     "[Ss]tudy",
@@ -1400,7 +1441,7 @@ rt_register <- function(filename) {
     "[Ii]nvestigation"
   )
 
-  synonyms[["researches"]] <- c(
+  synonyms$researches <- c(
     "[Ww]orks",
     "[Ss]tudies",
     "[Pp]rojects",
@@ -1414,19 +1455,19 @@ rt_register <- function(filename) {
     "[Ii]nvestigations"
   )
 
-  synonyms[["funder"]] <- c(
+  synonyms$funder <- c(
     "[Ff]under",
     "[Ss]ponsor",
     "[Ss]upporter"
   )
 
-  synonyms[["funds"]] <- c(
+  synonyms$funds <- c(
     "[Ff]und(|s)",
     "[Ff]unding",
     "[Ss]elf-funding"
   )
 
-  synonyms[["funded"]] <- c(
+  synonyms$funded <- c(
     "[Ff]unded",
     "[Ss]elf-funded",
     "[Ff]inanced",
@@ -1436,7 +1477,7 @@ rt_register <- function(filename) {
     "[Aa]ided"
   )
 
-  synonyms[["funding"]] <- c(
+  synonyms$funding <- c(
     "[Ff]unding",
     "[Ff]unds",
     "[Ss]elf-funding",
@@ -1448,18 +1489,18 @@ rt_register <- function(filename) {
     "[Rr]esources"
   )
 
-  synonyms[["funded_funding"]] <- c(
-    synonyms[["funded"]],
-    synonyms[["funding"]]
+  synonyms$funded_funding <- c(
+    synonyms$funded,
+    synonyms$funding
   )
 
-  synonyms[["funding_financial"]] <- c(
-    synonyms[["funding"]],
-    synonyms[["financial"]]
+  synonyms$funding_financial <- c(
+    synonyms$funding,
+    synonyms$financial
   )
 
   # TODO: split this into (financial|funding) (support|source|etc)
-  synonyms[["funding_title"]] <- c(
+  synonyms$funding_title <- c(
     "F(?i)unding(?-i)",
     "F(?i)unding/Support(?-i)",
     "F(?i)unding source(|s)(?-i)",
@@ -1472,7 +1513,7 @@ rt_register <- function(filename) {
     "S(?i)ource(|s) of funding(?-i)"
   )
 
-  synonyms[["financial"]] <- c(
+  synonyms$financial <- c(
     "[Ff]inancial support(|s)",
     "[Ff]inancial source(|s)",
     "[Ff]inancial or other support(|s)",
@@ -1491,7 +1532,7 @@ rt_register <- function(filename) {
 
 
   # TODO: split this into (financial|funding) (support|source|etc)
-  synonyms[["financial_title"]] <- c(
+  synonyms$financial_title <- c(
     "F(?i)inancial support(|s)(?-i)",
     "F(?i)inancial source(|s)(?-i)",
     "S(?i)ource(|s) of financial support(|s)(?-i)",
@@ -1508,12 +1549,12 @@ rt_register <- function(filename) {
     "F(?i)inanciamento(?-i)"
   )
 
-  synonyms[["any_title"]] <- c(
-    synonyms[["funding_title"]],
-    synonyms[["financial_title"]]
+  synonyms$any_title <- c(
+    synonyms$funding_title,
+    synonyms$financial_title
   )
 
-  synonyms[["disclosure_title"]] <- c(
+  synonyms$disclosure_title <- c(
     "F(?i)unding disclosure(|s)(?-i)",
     "F(?i)unding disclosure(|s)(?-i)",
     "F(?i)inancial disclosure(|s)(?-i)",
@@ -1524,22 +1565,22 @@ rt_register <- function(filename) {
     "D(?i)eclaration(|s)(?-i)"
   )
 
-  synonyms[["support"]] <- c(
+  synonyms$support <- c(
     "[Ss]upport(|s)",
     "\\b[Aa]id(|s)",
     "[Aa]ssistance",
     "[Ss]ponsorship(|s)"
   )
 
-  synonyms[["support_only"]] <- c(
+  synonyms$support_only <- c(
     "[Ss]upport(|s)"
   )
 
-  synonyms[["Supported"]] <- c(
+  synonyms$Supported <- c(
     "Supported"
   )
 
-  synonyms[["award"]] <- c(
+  synonyms$award <- c(
     "[Gg]rant(|s)",
     "[Ff]ellowship(|s)",
     "[Aa]ward(|s|ing)",
@@ -1549,7 +1590,7 @@ rt_register <- function(filename) {
     "[Bb]ursar(y|ies)"
   )
 
-  synonyms[["grant_title"]] <- c(
+  synonyms$grant_title <- c(
     "G(?i)rant(|s)(?-i)",
     "G(?i)rant sponsor(|s|ship(|s))(?-i)",
     "G(?i)rant support(|s)(?-i)",
@@ -1559,19 +1600,19 @@ rt_register <- function(filename) {
     # removed Sponsorship and sponsors b/c FP without TP
   )
 
-  synonyms[["funds_award_financial"]] <- c(
-    synonyms[["funds"]],
-    synonyms[["financial"]],
-    synonyms[["award"]]
+  synonyms$funds_award_financial <- c(
+    synonyms$funds,
+    synonyms$financial,
+    synonyms$award
   )
 
-  synonyms[["funding_financial_award"]] <- c(
-    synonyms[["funding"]],
-    synonyms[["financial"]],
-    synonyms[["award"]]
+  synonyms$funding_financial_award <- c(
+    synonyms$funding,
+    synonyms$financial,
+    synonyms$award
   )
 
-  synonyms[["received"]] <- c(
+  synonyms$received <- c(
     "[Rr]eceived",
     "[Aa]ccepted",
     "[Aa]cquired",
@@ -1587,27 +1628,27 @@ rt_register <- function(filename) {
     "[Pp]resented"
   )
 
-  synonyms[["recipient"]] <- c(
+  synonyms$recipient <- c(
     "[Rr]ecipient(|s)",
     "[Aa]wardee(|s)",
     "[Gg]rantee(|s)"
   )
 
 
-  synonyms[["provide"]] <- c(
+  synonyms$provide <- c(
     "provid(ed|ing)",
     "g(ave|iving)",
     "award(ed|ing)"
   )
 
-  synonyms[["thank"]] <- c(
+  synonyms$thank <- c(
     "[Tt]hank(|ful)",
     "[Aa]cknowledge",
     "[Dd]isclose",
     "[Gg]rateful"
   )
 
-  synonyms[["conflict"]] <- c(
+  synonyms$conflict <- c(
     "[Cc]onflict(|ing)",
     "[Cc]ompet(e|ing)",
     "source(|s) of bias"
@@ -1615,7 +1656,7 @@ rt_register <- function(filename) {
     # "[Cc]onflictos",
   )
 
-  synonyms[["conflict_title"]] <- c(
+  synonyms$conflict_title <- c(
     "C(?i)onflict(|s) of interest(?-i)",
     "C(?i)onflicting interest(?-i)",
     "C(?i)onflicting financial interest(?-i)",
@@ -1630,7 +1671,7 @@ rt_register <- function(filename) {
     "S(?i)ource(|s) of bias(?-i)"
   )
 
-  synonyms[["relationship"]] <- c(
+  synonyms$relationship <- c(
     "relation(|s|ship(|s))",
     "association(|s)",
     "involvement(|s)",
@@ -1638,7 +1679,7 @@ rt_register <- function(filename) {
     "tie(|s)"
   )
 
-  synonyms[["info"]] <- c(
+  synonyms$info <- c(
     "info(|rmation)\\b",
     "detail(|s)",
     "particulars",
@@ -1646,7 +1687,7 @@ rt_register <- function(filename) {
     "material\\b"
   )
 
-  synonyms[["acknowledge"]] <- c(
+  synonyms$acknowledge <- c(
     "acknowledge",
     "recognize",
     "disclose",
@@ -1655,7 +1696,7 @@ rt_register <- function(filename) {
     "appreciate"
   )
 
-  synonyms[["acknowledged"]] <- c(
+  synonyms$acknowledged <- c(
     "acknowledged",
     "recognized",
     "disclosed",
@@ -1664,7 +1705,7 @@ rt_register <- function(filename) {
     "appreciated"
   )
 
-  synonyms[["foundation"]] <- c(
+  synonyms$foundation <- c(
     "Ffoundation(|s)",
     "Institut(e|es|ution)",
     "Universit",  # to cover for say German Universitaet
@@ -1690,12 +1731,12 @@ rt_register <- function(filename) {
     "[Aa]gency"
   )
 
-  synonyms[["foundation_award"]] <- c(
-    synonyms[["foundation"]],
-    synonyms[["award"]]
+  synonyms$foundation_award <- c(
+    synonyms$foundation,
+    synonyms$award
   )
 
-  synonyms[["References"]] <- c(
+  synonyms$References <- c(
     "R(?i)eferences(?-i)",
     "L(?i)terature(?-i)",
     "L(?i)iterature Cited(?-i)",
@@ -1707,11 +1748,13 @@ rt_register <- function(filename) {
     "R(?i)eferences and recommended reading(?-i)"
   )
 
-  synonyms[["Methods"]] <- c(
+  synonyms$Methods <- c(
     ".{0,4}M(?i)ethod(|s)(?-i)",
     ".{0,4}O(?i)nline method(|s)(?-i)",
     ".{0,4}M(?i)aterial(|s) and Method(|s)(?-i)",
+    ".{0,4}M(?i)aterial(|s)/Method(|s)(?-i)",
     ".{0,4}M(?i)ethod(|s) and Material(|s)(?-i)",
+    ".{0,4}M(?i)ethod(|s)/Material(|s)(?-i)",
     ".{0,4}S(?i)ubjects and method(|s)(?-i)",
     ".{0,4}P(?i)atients and method(|s)(?-i)",
     ".{0,4}P(?i)articipants and method(|s)(?-i)",
@@ -1722,60 +1765,60 @@ rt_register <- function(filename) {
     ".{0,4}M(?i)etodologie(?-i)"
   )
 
-  synonyms[["Abstract"]] <- c(
+  synonyms$Abstract <- c(
     "Abstract",
     "Synopsis",
     "Summary"
   )
 
-  synonyms[["Introduction"]] <- c(
+  synonyms$Introduction <- c(
     "Introduction",
     "Background"
   )
 
-  synonyms[["Results"]] <- c(
+  synonyms$Results <- c(
     "Results",
     "Findings"
   )
 
-  synonyms[["Conclusion"]] <- c(
+  synonyms$Conclusion <- c(
     "Conclusion",
     "Interpretation"
   )
 
-  synonyms[["sources"]] <- c(
+  synonyms$sources <- c(
     "source(|s)"
   )
 
-  synonyms[["register"]] <- c(
+  synonyms$register <- c(
     "register"
   )
 
-  synonyms[["registered"]] <- c(
+  synonyms$registered <- c(
     "registered"
   )
 
-  synonyms[["registration"]] <- c(
+  synonyms$registration <- c(
     "registration"
   )
 
-  synonyms[["registry"]] <- c(
+  synonyms$registry <- c(
     "[Rr]egistr(y|ies)"
   )
 
-  synonyms[["registered_registration"]] <- c(
-    synonyms[["registered"]],
-    synonyms[["registration"]]
+  synonyms$registered_registration <- c(
+    synonyms$registered,
+    synonyms$registration
   )
 
-  synonyms[["registration_title_1"]] <- c(
+  synonyms$registration_title_1 <- c(
     "Registration",
     "Trial(|s)",
     "Clinical trial(|s)"
-    # "Protocol(|s)"  # only contributed to FPs due to protocol ethical approval
+    # "Protocol(|s)"  # only contributed FPs due to protocol ethical approval
   )
 
-  synonyms[["registration_title_2"]] <- c(
+  synonyms$registration_title_2 <- c(
     "info(|rmation)\\b",
     "detail(|s)\\b",
     "no(|s)(|\\.)",
@@ -1785,7 +1828,7 @@ rt_register <- function(filename) {
     "registration"
   )
 
-  synonyms[["registration_title_3"]] <- c(
+  synonyms$registration_title_3 <- c(
     paste(c(
       "Work", "Research", "Study", "Project", "Program", "Report"),
       "registration"
@@ -1793,20 +1836,25 @@ rt_register <- function(filename) {
     "Registration"
   )
 
-  synonyms[["registration_title"]] <- expand.grid(
-    synonyms[["registration_title_1"]],
-    synonyms[["registration_title_2"]]
-    ) %>%
+  # synonyms[["registration_title"]] <-
+  #   synonyms[["registration_title_3"]] %>%
+  #   .first_capital()
+
+  # Captures "Trial details" and used with negation - worth the duplication
+  synonyms$registration_title <- expand.grid(
+    synonyms$registration_title_1,
+    synonyms$registration_title_2
+  ) %>%
     purrr::pmap(paste, sep = " ") %>%
     unlist() %>%
-    append(synonyms[["registration_title_3"]]) %>%
+    append(synonyms$registration_title_3) %>%
     .first_capital()
 
-  synonyms[["protocol"]] <- c(
+  synonyms$protocol <- c(
     "protocol"
   )
 
-  synonyms[["study protocol"]] <- c(
+  synonyms$study_protocol <- c(
     "research protocol",
     "study protocol",
     "trial protocol",
@@ -1817,7 +1865,7 @@ rt_register <- function(filename) {
     "trial design"
   )
 
-  synonyms[["published"]] <- c(
+  synonyms$published <- c(
     "published",
     "reported",
     "made available",
@@ -1825,7 +1873,7 @@ rt_register <- function(filename) {
     "issued"
   )
 
-  synonyms[["previously"]] <- c(
+  synonyms$previously <- c(
     "previously",
     "before",
     "already"
