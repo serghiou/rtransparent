@@ -1,4 +1,4 @@
-#' Remove fullstops that are unlikely to represent end of sentence
+' Remove fullstops that are unlikely to represent end of sentence
 #'
 #' Returns the list of paragraphs without potentially misleading fullstops.
 #'
@@ -17,7 +17,8 @@ obliterate_fullstop_1 <- function(article) {
     stringr::str_replace_all("\\.\\s*([A-Z]+[0-9])", " \\1") %>%
     stringr::str_replace_all("\\.([^\\s0-9\\[])", "\\1") %>%
     stringr::str_replace_all("\\.\\s+(\\()", " \\1") %>%
-    stringr::str_replace_all("([0-9])\\.([0-9])", "\\1\\2")
+    stringr::str_replace_all("([0-9])\\.([0-9])", "\\1\\2") %>%
+    stringr::str_replace_all("\\.(\\s*[[:punct:]])", "\\1")
 
 }
 
@@ -136,10 +137,18 @@ obliterate_contribs <- function(article) {
   # Not obliterating "Authors' information" b/c some publications use it to
   # mention funds to each author - need a more sophisiticated approach if I
   # want to do that, but not worth it right now.
+  # {0,4} accounts for Author(s)
+  contribs <- "Author(|s).{0,4}[Cc]ontribution(|s)"
+  txt <- "[a-zA-Z0-9\\s,;()\\[\\]/:-]*"
 
-  gsub("^Author(|s).{0,4}([Cc]ontribution(|s)).*$", "", article, perl = T)
-  # Consider at the end: \\s*(-|:|\\.)\\s*[A-Z].*$
-  #{0,4} accounts for Author(s)
+  contribs_title <- paste0("^", contribs, ".*$")
+  contribs_intxt <- paste0(contribs, "\\s*(:|-|\\.)", txt, "\\.")
+
+  article %>%
+    str_replace_all(contribs_title, "") %>%
+    str_replace_all(contribs_intxt, "")
+    # not very effective without removing full stops
+
 }
 
 
@@ -299,6 +308,30 @@ find_acknows <- function(article) {
 
   }
 }
+
+
+
+#' Create a regex for titles
+#'
+#' Returns words designed to identify titles.
+#'
+#' @param x A vector of strings.
+#' @param within_text Boolean defines whether a regex typical to a title found      within text should be created or not.
+#' @return A vector of strings with a suffix attached.
+.title <- function(x, within_text = F) {
+
+  if (within_text) {
+
+    return(paste0(x, "(|:|\\.)"))
+    # stricter: "( [A-Z][a-zA-Z]|:|\\.)", avoided b/c Funding sources none.
+
+  } else {
+
+    return(paste0("^", x, "(|:|\\.)$"))
+
+  }
+}
+
 
 
 #' Create a regex for titles
@@ -1047,12 +1080,15 @@ find_acknows <- function(article) {
   # this worked perfectly with 100% specificity
   synonyms[["conflict_title"]] <- c(
     "C(?i)onflict(|s) of interest(|s)(?-i)",
+    "C(?i)onflict(|s) of interest(|s) declaration(?-i)",
     "C(?i)onflicting interest(|s)(?-i)",
+    "C(?i)onflicting interest(|s) declaration(?-i)",
     "C(?i)onflicting financial intere",
     "C(?i)onflicting of interest(|s)(?-i)",
     "C(?i)onflits d'int(?-i)",
     "C(?i)onflictos de Inter(?-i)",
     "C(?i)ompeting interest(|s)(?-i)",
+    "C(?i)ompeting interest(|s) declaration(?-i)",
     "C(?i)ompeting of interest(|s)(?-i)",
     "C(?i)ompeting financial interest(|s)(?-i)",
     "D(?i)eclaration of interest(|s)(?-i)",

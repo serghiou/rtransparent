@@ -588,9 +588,9 @@
 #'
 #' @param article_xml The text as an xml_document.
 #' @return The title and its related text as a string.
-.get_coi_title_pmc <- function(article_xml, synonyms) {
+.get_coi_pmc_title <- function(article_xml, synonyms) {
 
-  b <- character()
+  b <- ""
   words <- c("conflict_title", "disclosure_coi_title")
 
   # In case I want to programmatically add these
@@ -764,7 +764,7 @@
 #'
 #' @param article_xml The text as an xml_document.
 #' @return The title and its related text as a string.
-.get_coi_fn_pmc <- function(article_xml) {
+.get_coi_pmc_fn <- function(article_xml, remove_ns = T) {
 
   fn_xpaths <- c(
     "back//fn[@fn-type = 'conflict' or @fn-type = 'COI-statement']",
@@ -802,7 +802,58 @@
 
 
 
-rt_coi_pmc <- function(filename) {
+.is_relevant_coi <- function(article) {
+
+  hi_synonyms <- c(
+    "conflict",
+    "compet",
+    "disclos",
+    "declar",
+    "\\commercial"
+  )
+
+  lo_synonyms <- c(
+    "fee(|s)\\b",
+    "honorari",
+    "\\bboard\\b",
+    "consult",
+    "relation",
+    "connection",
+    "\\bfinancial",
+    "\\b(co|co-)founder",
+    "\\bpaid\\b",
+    "speaker",
+    "\\bemployee",
+    "member\\b",
+    "funder"
+  )
+
+  hi_regex <- paste(hi_synonyms, collapse = "|")
+  lo_regex <- paste(lo_synonyms, collapse = "|")
+
+
+  hi_relevance <-
+    article %>%
+    stringr::str_detect(stringr::regex(hi_regex, ignore_case = T))
+
+  lo_relevance <-
+    article %>%
+    stringr::str_detect(stringr::regex(lo_regex, ignore_case = T))
+
+
+  is_relevant_hi = any(hi_relevance)
+  is_relevant_lo = any(lo_relevance)
+
+  list(
+    is_relevant_coi = any(is_relevant_hi, is_relevant_lo),
+    is_relevant_coi_hi = is_relevant_hi,
+    is_relevant_coi_lo = is_relevant_lo,
+    index = hi_relevance | lo_relevance
+  )
+}
+
+
+rt_coi_pmc <- function(filename, remove_ns = F) {
 
   index <- integer()
   synonyms <- .create_synonyms()
@@ -824,12 +875,11 @@ rt_coi_pmc <- function(filename) {
     commercial_1 = NA,
     benefit_1 = NA,
     consultant_1 = NA,
-    grant_1 = NA,
+    grants_1 = NA,
     brief_1 = NA
   )
 
   index_ack <- list(
-    grants_1 = NA,
     fees_1 = NA,
     consults_1 = NA,
     connect_1 = NA,
@@ -858,7 +908,20 @@ rt_coi_pmc <- function(filename) {
   )
 
 
-  article_xml <- xml2::read_xml(filename) %>% xml2::xml_ns_strip()
+  if (remove_ns) {
+
+    article_xml <-
+      filename %>%
+      read_xml() %>%
+      xml_ns_strip()
+
+  } else {
+
+    article_xml <-
+      filename %>%
+      read_xml()
+
+  }
   # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
 
 
@@ -867,7 +930,7 @@ rt_coi_pmc <- function(filename) {
 
 
   # Capture coi fn elements
-  out$coi_text <- .get_coi_fn_pmc(article_xml)
+  out$coi_text <- .get_coi_pmc_fn(article_xml)
   index_any$coi_fn_pmc <- nchar(out$coi_text) > 0
 
   if (index_any$coi_fn_pmc) {
@@ -880,8 +943,8 @@ rt_coi_pmc <- function(filename) {
 
 
   # Go through titles
-  title_txt <- .get_coi_title_pmc(article_xml, synonyms)
-  is_title <- !!length(title_txt)
+  title_txt <- .get_coi_pmc_title(article_xml, synonyms)
+  is_title <- nchar(title_txt) > 0
 
   if (is_title) {
 
@@ -948,7 +1011,7 @@ rt_coi_pmc <- function(filename) {
   index_any$commercial_1 <- .which_commercial_1(article_processed, synonyms)
   index_any$benefit_1 <- .which_benefit_1(article_processed, synonyms)
   index_any$consultant_1 <- .which_consultant_1(article_processed, synonyms)
-  index_any$grant_1 <- .which_grants_1(article_processed)
+  index_any$grants_1 <- .which_grants_1(article_processed)
   index_any$brief_1 <- .which_brief(article_processed)
   index <- unlist(index_any) %>% unique() %>% sort()
 
@@ -982,7 +1045,6 @@ rt_coi_pmc <- function(filename) {
 
   if (!!length(i)) {
 
-    index_ack$grants_1 <- .which_grants_1(article_processed[i])
     index_ack$fees_1 <- .which_fees_1(article_processed[i], synonyms)
     index_ack$consults_1 <- .which_consults_1(article_processed[i], synonyms)
     index_ack$connect_1 <- .which_connections_1(article_processed[i], synonyms)
@@ -1019,164 +1081,369 @@ rt_coi_pmc <- function(filename) {
 
 
 
+.rt_coi_pmc <- function(article_ls, pmc_coi_ls, dict) {
+
+  index <- integer()
+
+  # Way faster than index_any[["reg_title_pmc"]] <- NA
+  index_any <- list(
+    coi_1 = NA,
+    coi_2 = NA,
+    coi_disclosure_1 = NA,
+    commercial_1 = NA,
+    benefit_1 = NA,
+    consultant_1 = NA,
+    grants_1 = NA,
+    brief_1 = NA
+  )
+
+  index_ack <- list(
+    fees_1 = NA,
+    consults_1 = NA,
+    connect_1 = NA,
+    connect_2 = NA,
+    commercial_ack_1 = NA,
+    rights_1 = NA,
+    founder_1 = NA,
+    advisor_1 = NA,
+    paid_1 = NA,
+    board_1 = NA,
+    no_coi_1 = NA,
+    no_funder_role_1 = NA
+  )
+
+  relevance_ls <- list(
+    is_relevant_coi = NA,
+    is_relevant_coi_hi = NA,
+    is_relevant_coi_lo = NA
+  )
+
+  out <- list(
+    is_coi_pred = FALSE,
+    coi_text = "",
+    is_explicit_coi = NA
+  )
 
 
+  if (pmc_coi_ls$is_coi_pred) {
 
-remains <- function(index, splitted, wanted_disclosure, is_conflict) {
+    out$is_coi_pred <- TRUE
+    out$coi_text <- pmc_coi_ls$coi_text
 
-  # If in point form, sections are missed when they do not include the keywords.
-  if (length(index) > 1 & any(diff(index) > 1)) {
-    if (max(index) - min(index) < 10) {  # Safeguard
-      index <- seq(min(index), max(index), 1)
-    }
+    relevance_ls$is_relevant_coi <- TRUE
+    relevance_ls$is_relevant_coi_hi <- TRUE
+
+    return(c(relevance_ls, out, index_any, index_ack))
+
   }
 
-  coi_text <- splitted[index] %>% unlist %>% paste(., collapse = " ")
+  # TODO Consider adding unique
+  article <-
+    article_ls[c("ack", "body", "footnotes")] %>%
+    unlist()
+    # unique()
 
-  # Identify text that may have been  missed because it was in a new line
-  if (length(index) == 1) {
-    no_stop_words <- gsub(" of ", " ", coi_text,  ignore.case = T)
-    if (length(strsplit(no_stop_words, " ")[[1]]) < 4) {
-      if (!grepl("no", splitted[index], ignore.case = T)) {
-        if (nchar(splitted[index + 1]) == 0) {
-          index <- c(index, index + 2)
-        } else {
-          index <- c(index, index + 1)
-        }
-        new_str <- gsub("^.+(None.*$)", "\\1", splitted[index[2]])
-        if (grepl("^.*\\.$", new_str)) {
-          # make sure this is a whole sentence
-          coi_text <- paste(coi_text, new_str)
-        } else {
-          coi_text <- paste(coi_text, new_str, splitted[index[2] + 1])
-        }
+
+  relevance_ls <- .is_relevant_coi(article)
+
+  if (!relevance_ls$is_relevant_coi) {
+
+    return(c(relevance_ls[-4], out, index_any, index_ack))
+
+  }
+
+
+  article %<>% purrr::keep(relevance_ls$index)
+  relevance_ls$index <- NULL
+
+  article_processed <-
+    article %>%
+    iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
+    trimws() %>%
+    obliterate_fullstop_1() %>%
+    obliterate_semicolon_1() %>%  # adds minimal overhead
+    obliterate_comma_1() %>%   # adds minimal overhead
+    obliterate_apostrophe_1() %>%
+    obliterate_punct_1() %>%
+    obliterate_line_break_1() %>%
+    .obliterate_honoraria_1(dict)
+
+
+  # No change in speed by recreating the list
+  index_any <- list(
+    coi_1 = .which_coi_1(article_processed, dict),
+    coi_2 = .which_coi_2(article_processed, dict),
+    coi_disclosure_1 = .which_disclosure_1(article_processed, dict),
+    commercial_1 = .which_commercial_1(article_processed, dict),
+    benefit_1 = .which_benefit_1(article_processed, dict),
+    consultant_1 = .which_consultant_1(article_processed, dict),
+    grants_1 = .which_grants_1(article_processed),
+    brief_1 = .which_brief(article_processed)
+  )
+
+  index <- unlist(index_any) %>% unique() %>% sort()
+
+
+  if (!!length(index)) {
+
+    out$is_explicit_coi <- !!length(unlist(index_any))
+    out$is_coi_pred <- !!length(index)
+    out$coi_text <- article[index] %>% paste(collapse = " ")
+
+    index_any %<>% purrr::map(function(x) !!length(x))
+
+
+    if (length(index) == 1) {
+      coi_only <- dict$conflict_title %>% .encase %>% .title_strict
+      is_coi_only <- stringr::str_detect(out$coi_text, coi_only)
+
+      if (is_coi_only & !is.na(article[index + 1])) {
+
+        out$coi_text <- article[c(index, index + 1)] %>% paste(collapse = ": ")
+
       }
     }
+
+    return(c(out, index_any, index_ack))
   }
 
-  # Exclude other mentions of disclosure that are not disclosures of interest
-  # e.g. Patient information disclosure
-  # If no capital D and no mention of competing/conflicts, or None
-  # then false positive
-  # I am doing this after the above b/c things like Disclosure/n None. would not be captured otherwise
-  # if (length(is_disclosure) > 0 & length(the_conflicts) == 0 & length(wanted_disclosure) == 0) {
-  #
-  #   # Capital D
-  #   is_capital <- grepl("Disclos|DISCLOS", coi_text)
-  #   # Mention of conflict/competing
-  #   # (this uses only mentions of conflict/competing interest deemed relevant)
-  #   is_compconf <- length(the_conflicts) > 0
-  #   # Mention negation
-  #   is_no_1 <- grepl("None|Nothing|No|Nil", coi_text)
-  #   is_no_2 <- grepl("NONE|NOTHING|NO|NIL", coi_text)
-  #   is_no <- any(c(is_no_1, is_no_2))
-  #   # Punctuation
-  #   # (disclose. needed for 0245)
-  #   is_punctuation <- grepl("disclosure.{0,1}[.:;,]", coi_text, ignore.case = T)
-  #   # Mention of author
-  #   is_author <- grepl("[Aa]uthor[a-zA-Z\\s-]*[dD]isclo", coi_text, perl = T)
-  #
-  #   if (!is_capital & !is_compconf & !is_no & !is_punctuation & !is_author) {
-  #     index <- c()
-  #     coi_text <- ""
-  #   }
-  # }
 
-  # Adjudicate presence of COI
-  is_coi_pred <- length(index) > 0
+  # Identify potentially missed signals
+  i <- which(article %in% c(article_ls$ack, article_ls$footnotes))
 
-  # Remove preceding text that is not relevant
-  coi_text <-
-    gsub(  # lazy match to stop at first occurrence of a word
-      "^.*?(Disclosure.*conflict.*$)|^.*?(Disclosure.*compet.*$)|^.*?(Declaration of Conflict.*$)|^.*?(Declaration of Interest.*$)|^.*?(Potential conflict.{0,1} of interest.*$)|^.*?(Conflict.*$)|^.*?(Competing.*$)",  # disclosure may refer to financial disclosures
-      "\\1\\2\\3\\4\\5\\6\\7",
-      coi_text,
-      perl = T
+  if (!!length(i)) {
+
+    index_ack <- list(
+      fees_1 = .which_fees_1(article_processed[i], dict),
+      consults_1 = .which_consults_1(article_processed[i], dict),
+      connect_1 = .which_connections_1(article_processed[i], dict),
+      connect_2 = .which_connections_2(article_processed[i], dict),
+      commercial_ack_1 = .which_commercial_ack_1(article_processed[i], dict),
+      rights_1 = .which_rights_1(article_processed[i], dict),
+      founder_1 = .which_founder_1(article_processed[i], dict),
+      advisor_1 = .which_advisor_1(article_processed[i], dict),
+      paid_1 = .which_paid_1(article_processed[i], dict),
+      board_1 = .which_board_1(article_processed[i], dict),
+      no_coi_1 = .which_no_coi_1(article_processed[i], dict),
+      no_funder_role_1 = .which_no_funder_role_1(article_processed[i], dict)
     )
 
+    index <- i[unlist(index_ack) %>% unique() %>% sort()]
+    index_ack %<>% purrr::map(function(x) !!length(x))
+
+  }
+
+  out$is_coi_pred <- !!length(index)
+  out$coi_text <- article[index] %>% paste(collapse = " ")
+
+  index_any %<>% purrr::map(function(x) !!length(x))
+
+  if (out$is_coi_pred) {
+
+    out$is_explicit_coi <- FALSE
+
+  }
+
+  return(c(relevance_ls, out, index_any, index_ack))
+}
 
 
 
-  # Capture disclosures that do not contain "conflict" but are relevant
-  if (grepl("disclosure", coi_text, ignore.case = T)) {
-    val <- "^.*conflict.*disclosure.*$|^.*compet.*disclosure.*$"
-    if (!grepl(val, coi_text, ignore.case = T, perl = T)) {
-      coi_text <- gsub( "^.*?(Disclosure.*$)", "\\1", coi_text, fixed = F)
-    }
+
+rt_coi_pmc2 <- function(article_xml) {
+
+  index <- integer()
+  synonyms <- .create_synonyms()
+
+
+  # Way faster than index_any[["reg_title_pmc"]] <- NA
+  index_any <- list(
+    coi_fn_pmc = NA,
+    coi_title_pmc = NA,
+    coi_1 = NA,
+    coi_2 = NA,
+    disclosure_1 = NA,
+    commercial_1 = NA,
+    benefit_1 = NA,
+    consultant_1 = NA,
+    grants_1 = NA,
+    brief_1 = NA
+  )
+
+  index_ack <- list(
+    fees_1 = NA,
+    consults_1 = NA,
+    connect_1 = NA,
+    connect_2 = NA,
+    commercial_ack_1 = NA,
+    rights_1 = NA,
+    founder_1 = NA,
+    advisor_1 = NA,
+    paid_1 = NA,
+    board_1 = NA,
+    no_coi_1 = NA,
+    no_funder_role_1 = NA
+  )
+
+  out <- list(
+    pmid = NA,
+    pmcid_pmc = NA,
+    pmcid_uid = NA,
+    doi = NA,
+    is_relevant = NA,
+    is_relevant_hi = NA,
+    is_relevant_lo = NA,
+    is_coi_pred = FALSE,
+    coi_text = "",
+    is_explicit = NA
+  )
+
+  # Capture coi fn elements
+  out$coi_text <- .get_coi_pmc_fn(article_xml)
+  index_any$coi_fn_pmc <- nchar(out$coi_text) > 0
+
+  if (index_any$coi_fn_pmc) {
+
+    out$is_relevant <- TRUE
+    out$is_coi_pred <- TRUE
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
   }
 
 
+  # Go through titles
+  title_txt <- .get_coi_pmc_title(article_xml, synonyms)
+  is_title <- nchar(title_txt) > 0
 
-  # If only None/No/Nothing appear, stop after the fullstop.
-  coi_text <-
-    gsub(
-      "(^.+None\\.).*$|(^.+None disclosed\\.).*$|(^.+None reported\\.).*$|(^.+None declared\\.).*$|(^.+None mentioned\\.).*$|(^.+None aired\\.).*$|(^.+None communicated\\.).*$|(^.+None revealed\\.).*$|(^.+Nothing to declare\\.).*$",
-      "\\1\\2\\3\\4\\5\\6\\7\\8\\9",
-      coi_text,
-      fixed = F, ignore.case = T
-    )
-  coi_text <-
-    gsub(
-      "(^.+No\\.).*$|(^.+Nil\\.).*$",
-      "\\1\\2",
-      coi_text,
-      fixed = F # do not ignore case b/c Grant NO. 133234 avoided
-    )
+  if (is_title) {
 
-  # Correct statements with repeating sentences (e.g. 0036, 0405)
-  # 0405 not fixed b/c it contains 3 slightly different versions - hard to fix
-  new <- strsplit(coi_text, "\\. {0,1}")[[1]]
-  if (length(new) > 1) {
-    if (all(duplicated(new)[2:length(new)])) {
-      coi_text <- paste0(new[1], ".")
-    }
+    index_any$coi_title_pmc <- TRUE
+    out$coi_text <- title_txt
+
+    out$is_relevant <- TRUE
+    out$is_explicit <- TRUE
+    out$is_coi_pred <- TRUE
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
+
   }
 
 
-  # If 'The authors declare no competing financial interests' appears, extract.
-  # (solves e.g. 0077, 0098)
-  # e.g. "no competing interests exist."
-  val1 <- "^.*(The author.+no.*competing.+interest.*$)"
-  val2 <- "^.*(The author.+no.*conflict.+interest.*$)"
-  val3 <- "^.*(None of the author.+no.*competing.+interest.*$)"
-  val4 <- "^.*(None of the author.+no.*conflict.+interest.*$)"
-  val5 <- "^.*(No conflict.*$)"
-  val6 <- "^.*(No competing.*$)"
-  val7 <- "^.*[.;] ([a-zA-Z\\s]+no financial disclosures.*$)"
-  vals <- paste(val1, val2, val3, val4, val5, val6, val7, sep = "|")
-  if (grepl(vals, coi_text, perl = T)) {
-    # Make sure that we are not missing the title
-    new_n <- str_count(coi_text, "[cC]ompeting|[cC]onflict|[fF]inancial")
-    # Identify all statements that are not preceded by a title
-    # and extract everything from "The author" onwards
-    if (new_n == 1 & (length(c(is_disclosure, is_declare, is_dual)) == 0 | length(wanted_disclosure) > 0)) {
-      coi_text <- gsub(vals, "\\1\\2\\3\\4\\5\\6\\7", coi_text, perl = T)
-    }
+  # Extract article text into a vector
+  ack <- .xml_ack(article_xml)
+  body <- .xml_body(article_xml, get_last_two = T)
+  footnotes <- .xml_footnotes(article_xml) %>% obliterate_contribs()
+  article <- c(footnotes, body, ack)
 
-    # Do not extract info after the last such sentence, if such info exists.
-    # Only do this if "author" is mentioned once.
-    # (e.g. 0089, 0097, 0137, 0231)
-    if (str_count(coi_text, "author") < 2) {
-      val1 <- "(^.*The author.+no.*competing.+interest.*?\\.) [A-Z].*$"
-      val2 <- "(^.*The author.+no.*conflict.+interest.*?\\.) [A-Z].*$"
-      val3 <- "(^.*All authors.+no.*conflict.+interest.*?\\.) [A-Z].*$"
-      val4 <- "(^.*Both authors.+no.*conflict.+interest.*?\\.) [A-Z].*$"
-      val5 <- "(^.*No conflicts of interest.{0,12}?\\.) [A-Z].*$"
-      val6 <- "(^.*No conflicting.{0,12} interest.{0,12}?\\.) [A-Z].*$"
-      val7 <- "(^.*No competing.{0,12} interest.{0,12}?\\.) [A-Z].*$"
-      vals <- paste(val1, val2, val3, val4, val5, val6, val7, sep = "|")
-      coi_text <- gsub(vals, "\\1\\2\\3\\4\\5\\6\\7", coi_text)
 
-      val1 <- "(^.*The author.+no.*financial.+disclosure.*?\\.) [A-Z].*$"
-      val2 <- "(^.*All authors.+no.*financial.+disclosure.*?\\.) [A-Z].*$"
-      val3 <- "(^.*Both authors.+no.*financial.+disclosure.*?\\.) [A-Z].*$"
-      val4 <- "(^.*There are no [a-zA-Z\\s] financial.+disclosure.*?\\.) [A-Z].*$"
-      vals <- paste(val1, val2, val3, val4, sep = "|")
-      coi_text <- gsub(vals, "\\1\\2\\3\\4", coi_text, perl = T)
-    }
+  # Check relevance
+  hi <- "conflict|compet|disclos|declar|\\bcommercial"
+  lo <- "fee(|s)\\b|honorari|\\bboard\\b|consult|relation|connection|\\bfinancial|\\b(co|co-)founder|\\bpaid\\b|speaker|\\bemployee|member\\b|funder"
+
+  hi_relevance <- str_detect(article, regex(hi, ignore_case = T))
+  lo_relevance <- str_detect(article, regex(lo, ignore_case = T))
+
+  article <- article[(hi_relevance + lo_relevance) > 0]
+  # rel_regex <- paste(hi_regex, lo_regex, sep = "|")
+  # article %<>% purrr::keep(~ str_detect(.x, regex(rel_regex, ignore_case = T)))
+
+  out$is_relevant_hi <- any(hi_relevance)
+  out$is_relevant_lo <- any(lo_relevance)
+  out$is_relevant <- with(out, any(c(is_relevant_hi, is_relevant_lo)))
+
+  # Check for relevance
+  if (!out$is_relevant) {
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
+
   }
 
-  coi_text %<>% trimws()
 
-  data.frame(article, pmid, is_coi_pred, coi_text, stringsAsFactors = F)
+  # Text pre-processing
+  article_processed <-
+    article %>%
+    iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
+    trimws() %>%
+    obliterate_fullstop_1() %>%
+    obliterate_semicolon_1() %>%  # adds minimal overhead
+    obliterate_comma_1() %>%   # adds minimal overhead
+    obliterate_apostrophe_1() %>%
+    obliterate_punct_1() %>%
+    obliterate_line_break_1() %>%
+    .obliterate_honoraria_1(synonyms)
+
+  index_any$coi_fn_pmc <- integer()
+  index_any$coi_title_pmc <- integer()
+  index_any$coi_1 <- .which_coi_1(article_processed, synonyms)
+  index_any$coi_2 <- .which_coi_2(article_processed, synonyms)
+  index_any$disclosure_1 <- .which_disclosure_1(article_processed, synonyms)
+  index_any$commercial_1 <- .which_commercial_1(article_processed, synonyms)
+  index_any$benefit_1 <- .which_benefit_1(article_processed, synonyms)
+  index_any$consultant_1 <- .which_consultant_1(article_processed, synonyms)
+  index_any$grants_1 <- .which_grants_1(article_processed)
+  index_any$brief_1 <- .which_brief(article_processed)
+  index <- unlist(index_any) %>% unique() %>% sort()
+
+
+  if (!!length(index)) {
+
+    out$is_explicit <- !!length(unlist(index_any))
+    out$is_coi_pred <- !!length(index)
+    out$coi_text <- article[index] %>% paste(collapse = " ")
+
+    index_any %<>% purrr::map(function(x) !!length(x))
+
+
+    if (length(index) == 1) {
+      coi_only <- synonyms$conflict_title %>% .encase %>% .title_strict
+      is_coi_only <- stringr::str_detect(out$coi_text, coi_only)
+
+      if (is_coi_only & !is.na(article[index + 1])) {
+
+        out$coi_text <- article[c(index, index + 1)] %>% paste(collapse = ": ")
+
+      }
+    }
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
+  }
+
+
+  # Identify potentially missed signals
+  i <- which(article %in% c(ack, footnotes))
+
+  if (!!length(i)) {
+
+    index_ack$fees_1 <- .which_fees_1(article_processed[i], synonyms)
+    index_ack$consults_1 <- .which_consults_1(article_processed[i], synonyms)
+    index_ack$connect_1 <- .which_connections_1(article_processed[i], synonyms)
+    index_ack$connect_2 <- .which_connections_2(article_processed[i], synonyms)
+    index_ack$commercial_ack_1 <-
+      .which_commercial_ack_1(article_processed[i], synonyms)
+    index_ack$rights_1 <- .which_rights_1(article_processed[i], synonyms)
+    index_ack$founder_1 <- .which_founder_1(article_processed[i], synonyms)
+    index_ack$advisor_1 <- .which_advisor_1(article_processed[i], synonyms)
+    index_ack$paid_1 <- .which_paid_1(article_processed[i], synonyms)
+    index_ack$board_1 <- .which_board_1(article_processed[i], synonyms)
+    index_ack$no_coi_1 <- .which_no_coi_1(article_processed[i], synonyms)
+    index_ack$no_funder_role_1 <-
+      .which_no_funder_role_1(article_processed[i], synonyms)
+
+    index <- i[unlist(index_ack) %>% unique() %>% sort()]
+    index_ack %<>% purrr::map(function(x) !!length(x))
+
+  }
+
+  out$is_coi_pred <- !!length(index)
+  out$coi_text <- article[index] %>% paste(collapse = " ")
+
+  index_any %<>% purrr::map(function(x) !!length(x))
+
+  if (out$is_coi_pred) {
+
+    out$is_explicit <- FALSE
+
+  }
+
+  return(tibble::as_tibble(c(out, index_any, index_ack)))
 }

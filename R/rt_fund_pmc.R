@@ -581,7 +581,6 @@ get_thank_2 <- function(article) {
 
   synonyms <- .create_synonyms()
   words <- c("thank")
-  txt <- "[a-zA-Z0-9\\s,()/:;-]*"
 
   thank <-
     synonyms %>%
@@ -591,7 +590,7 @@ get_thank_2 <- function(article) {
     paste(collapse = synonyms$txt)
 
   thank %>%
-    paste("[0-9]{5}", sep = txt) %>%
+    paste("[0-9]{5}", sep = synonyms$txt) %>%
     grep(article, perl = T)
 }
 
@@ -632,6 +631,7 @@ get_fund_1 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_fund_2 <- function(article) {
 
+  b <- integer()
   synonyms <- .create_synonyms()
   words <- c("funding_title")
 
@@ -643,17 +643,32 @@ get_fund_2 <- function(article) {
     paste() %>%
     grep(article, perl = T)
 
-  if (length(a) > 0) {
+  if (!!length(a)) {
 
-    if (nchar(article[a + 1]) == 0) {
-      return(c(a, a + 2))
-    } else {
-      return(c(a, a + 1))
+    for (i in seq_along(a)) {
+
+      if (is.na(article[a[i] + 1])) {
+
+        b <- c(b, a[i])
+
+      } else {
+
+        if (nchar(article[a[i] + 1]) == 0) {
+
+          b <- c(b, a[i], a[i] + 2)
+
+        } else {
+
+          b <- c(b, a[i], a[i] + 1)
+
+        }
+      }
     }
 
   } else {
 
-    synonyms %>%
+    b <-
+      synonyms %>%
       magrittr::extract(words) %>%
       lapply(.title, within_text = T) %>%
       lapply(.encase) %>%
@@ -661,6 +676,7 @@ get_fund_2 <- function(article) {
       grep(article, perl = T)
 
   }
+  return(b)
 }
 
 
@@ -773,6 +789,8 @@ get_supported_1 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_financial_1 <- function(article) {
 
+  b <- integer()
+
   synonyms <- .create_synonyms()
   words <- c("financial_title")
 
@@ -786,17 +804,32 @@ get_financial_1 <- function(article) {
     grep(article, perl = T)
 
 
-  if (length(a) > 0) {
+  if (!!length(a)) {
 
-    if (nchar(article[a + 1]) == 0) {
-      return(c(a, a + 2))
-    } else {
-      return(c(a, a + 1))
+    for (i in seq_along(a)) {
+
+      if (is.na(article[a[i] + 1])) {
+
+        b <- c(b, a[i])
+
+      } else {
+
+        if (nchar(article[a[i] + 1]) == 0) {
+
+          b <- c(b, a[i], a[i] + 2)
+
+        } else {
+
+          b <- c(b, a[i], a[i] + 1)
+
+        }
+      }
     }
 
   } else {
 
-    synonyms %>%
+    b <-
+      synonyms %>%
       magrittr::extract(words) %>%
       lapply(.title, within_text = T) %>%
       lapply(.encase) %>%
@@ -805,6 +838,7 @@ get_financial_1 <- function(article) {
       grep(article, perl = T)
 
   }
+  return(b)
 }
 
 
@@ -947,6 +981,8 @@ get_grant_1 <- function(article) {
   #    activated for "(Grant [Ss]ponsor(|s):)|)Contract [Gg]rant
   #    [Ss]ponsor(|s):). Consider replacing it with just this!!!
 
+  b <- integer()
+
   synonyms <- .create_synonyms()
   words <- c("grant_title")
 
@@ -961,10 +997,24 @@ get_grant_1 <- function(article) {
 
   if (!!length(a)) {
 
-    if (nchar(article[a + 1]) == 0) {
-      return(c(a, a + 2))
-    } else {
-      return(c(a, a + 1))
+    for (i in seq_along(a)) {
+
+      if (is.na(article[a[i] + 1])) {
+
+        b <- c(b, a[i])
+
+      } else {
+
+        if (nchar(article[a[i] + 1]) == 0) {
+
+          b <- c(b, a[i], a[i] + 2)
+
+        } else {
+
+          b <- c(b, a[i], a[i] + 1)
+
+        }
+      }
     }
 
   } else {
@@ -979,13 +1029,15 @@ get_grant_1 <- function(article) {
       lapply(.title, within_text = T) %>%
       unlist()
 
-    grant %>%
+    b <-
+      grant %>%
       lapply(paste0, support) %>%
       unlist() %>%
       .encase() %>%
       grep(article, perl = T)
 
   }
+  return(b)
 }
 
 
@@ -1154,7 +1206,7 @@ get_common_5 <- function(article) {
 #' @return The index of the paragraph of interest.
 get_acknow_1 <- function(article) {
 
-  txt <- "[a-zA-Z0-9\\s,()-]*"  # order matters
+  b <- integer()
 
   txt_0 <- "^Acknowledg(|e)ment(|s)"
   txt_1 <- "(of|and)"
@@ -1165,20 +1217,29 @@ get_acknow_1 <- function(article) {
 
   a <- grep(indicator_regex, article, perl = T, ignore.case = T)
 
-  if (length(a) > 0) {
-    if (!is.na(article[a + 1])) {
-      # TODO: Change in all functions
-      if (nchar(article[a + 1]) == 0) {
-        return(c(a, a + 2))
+  if (!!length(a)) {
+
+    for (i in seq_along(a)) {
+
+      if (is.na(article[a[i] + 1])) {
+
+        b <- c(b, a)
+
       } else {
-        return(c(a, a + 1))
+
+        if (nchar(article[a[i] + 1]) == 0) {
+
+          b <- c(b, a[i], a[i] + 2)
+
+        } else {
+
+          b <- c(b, a[i], a[i] + 1)
+        }
+
       }
-    } else {
-      return(a)
     }
-  } else {
-    return(a)
   }
+  return(b)
 }
 
 
@@ -1210,10 +1271,10 @@ get_acknow_2 <- function(article) {
 #'
 #' @param article_xml The text as an xml_document.
 #' @return The title and its related text as a string.
-get_fund_title_pmc <- function(article_xml) {
+.get_fund_pmc_title <- function(article_xml) {
 
   synonyms <- .create_synonyms()
-  b <- character()
+  b <- ""
 
   fund_titles <- .encase(synonyms$any_title)
 
@@ -1315,10 +1376,10 @@ get_fund_title_pmc <- function(article_xml) {
 #' @param article_xml An NLM XML as an xml_document.
 #' @return The text of interest as a list indicating whether it was found, the
 #'     quoated institutes and the actual statement as a string.
-get_fund_group_pmc <- function(article_xml) {
+.get_fund_pmc_group <- function(article_xml) {
 
   fund_pmc <- list(
-    has_fund_group_pmc = FALSE,
+    is_fund_group_pmc = FALSE,
     fund_statement_pmc = "",
     fund_institute_pmc = "",
     fund_source_pmc = ""
@@ -1330,7 +1391,7 @@ get_fund_group_pmc <- function(article_xml) {
 
   if (!!length(fund_group)) {
 
-    fund_pmc$has_fund_group_pmc <- TRUE
+    fund_pmc$is_fund_group_pmc <- TRUE
 
     fund_pmc$fund_statement_pmc <-
       fund_group %>%
@@ -1352,6 +1413,13 @@ get_fund_group_pmc <- function(article_xml) {
       paste(collapse = "; ")
   }
 
+
+  if (with(fund_pmc, fund_institute_pmc == "N/A" & fund_statement_pmc == "")) {
+
+    fund_pmc$is_fund_group_pmc <- FALSE
+
+  }
+
   return(fund_pmc)
 }
 
@@ -1366,7 +1434,7 @@ get_fund_group_pmc <- function(article_xml) {
 #'
 #' @param article_xml An NLM XML as an xml_document.
 #' @return The text of interest as a string.
-get_fund_source_pmc <- function(article_xml) {
+.get_fund_pmc_source <- function(article_xml) {
 
   article_xml %>%
     xml_find_all("body//funding-source | back//funding-source") %>%
@@ -1689,7 +1757,7 @@ obliterate_disclosure_1 <- function(article) {
 #' @return A dataframe indicating whether a funding statement has been
 #'     identified and the funding statement.
 #' @export
-rt_fund_pmc <- function(filename) {
+rt_fund_pmc <- function(filename, remove_ns = F) {
 
   xpath <- c(
     "front/article-meta/article-id[@pub-id-type = 'pmid']",
@@ -1752,7 +1820,7 @@ rt_fund_pmc <- function(filename) {
     doi = NA,
     is_relevant = NA,
     is_fund_pred = FALSE,
-    has_fund_group_pmc = NA,
+    is_fund_group_pmc = NA,
     fund_statement_pmc = "",
     fund_institute_pmc = "",
     fund_source_pmc = "",
@@ -1762,7 +1830,20 @@ rt_fund_pmc <- function(filename) {
   )
 
 
-  article_xml <- xml2::read_xml(filename) %>% xml2::xml_ns_strip()
+  if (remove_ns) {
+
+    article_xml <-
+      filename %>%
+      read_xml() %>%
+      xml_ns_strip()
+
+  } else {
+
+    article_xml <-
+      filename %>%
+      read_xml()
+
+  }
   # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
 
 
@@ -1771,36 +1852,28 @@ rt_fund_pmc <- function(filename) {
 
 
   # Capture fund-group elements
-  fund_group_pmc <- get_fund_group_pmc(article_xml)
+  fund_group_pmc <- .get_fund_pmc_group(article_xml)
 
-  if (fund_group_pmc$has_fund_group_pmc) {
+  if (fund_group_pmc$is_fund_group_pmc) {
 
-    if (with(fund_group_pmc, fund_institute_pmc == "N/A" &
-             fund_statement_pmc == "")) {
+    index_any$fund_group_pmc <- TRUE
+    out %<>% purrr::list_modify(!!!fund_group_pmc)
 
-      fund_group_pmc$has_fund_group_pmc <- FALSE
+    out$is_relevant <- TRUE
+    out$is_fund_pred <- TRUE
 
-    } else {
-
-      index_any$fund_group_pmc <- TRUE
-      out %<>% purrr::list_modify(!!!fund_group_pmc)
-
-      out$is_relevant <- TRUE
-      out$is_fund_pred <- TRUE
-
-      if (nchar(fund_group_pmc$fund_statement_pmc) > 0) {
-        return(tibble::as_tibble(c(out, index_any, index_ack)))
-      }
+    if (nchar(fund_group_pmc$fund_statement_pmc) > 0) {
+      return(tibble::as_tibble(c(out, index_any, index_ack)))
     }
   }
 
 
   # Capture missed fund-source elements
-  out$fund_anysource_pmc <- get_fund_source_pmc(article_xml)
+  out$fund_anysource_pmc <- .get_fund_pmc_source(article_xml)
 
 
   # Go through titles
-  title_txt <- get_fund_title_pmc(article_xml)
+  title_txt <- .get_fund_pmc_title(article_xml)
   is_title <- !!length(title_txt)
 
   if (is_title) {
@@ -1909,7 +1982,7 @@ rt_fund_pmc <- function(filename) {
     # disclosures <- c("disclosure_1", "disclosure_2")
     # if (!!length(unlist(index_any[disclosures]))) {
     #
-    #   for (i in 1:seq_along(disclosures)) {
+    #   for (i in seq_along(disclosures)) {
     #
     #     ind <- index_any[[disclosures[i]]]
     #     is_coi_disclosure <- negate_disclosure_1(article_processed[ind])
@@ -1980,7 +2053,553 @@ rt_fund_pmc <- function(filename) {
   }
 
   # Placed here to give a chance to the title to populate the statement field
-  if (!out$is_fund_pred & fund_group_pmc$has_fund_group_pmc) {
+  if (!out$is_fund_pred & fund_group_pmc$is_fund_group_pmc) {
+
+    index_any$fund_group_pmc <- TRUE
+    out$is_fund_pred <- TRUE
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
+
+  }
+
+  if (!out$is_fund_pred & nchar(out$fund_anysource_pmc) > 0) {
+
+    out$is_fund_pred <- TRUE
+
+  }
+
+  return(tibble::as_tibble(c(out, index_any, index_ack)))
+}
+
+
+
+.rt_fund_pmc <- function(article_ls, pmc_fund_ls) {
+
+  index <- integer()
+
+  # Way faster than index_any[["reg_title_pmc"]] <- NA
+  index_any <- list(
+    support_1 = NA,
+    support_3 = NA,
+    support_4 = NA,
+    support_5 = NA,
+    support_6 = NA,
+    support_7 = NA,
+    support_8 = NA,
+    support_9 = NA,
+    support_10 = NA,
+    developed_1 = NA,
+    received_1 = NA,
+    received_2 = NA,
+    recipient_1 = NA,
+    authors_1 = NA,
+    authors_2 = NA,
+    thank_1 = NA,
+    thank_2 = NA,
+    fund_1 = NA,
+    fund_2 = NA,
+    fund_3 = NA,
+    supported_1 = NA,
+    financial_1 = NA,
+    financial_2 = NA,
+    financial_3 = NA,
+    grant_1 = NA,
+    french_1 = NA,
+    common_1 = NA,
+    common_2 = NA,
+    common_3 = NA,
+    common_4 = NA,
+    common_5 = NA,
+    acknow_1 = NA,
+    disclosure_1 = NA,
+    disclosure_2 = NA
+  )
+
+  index_ack <- list(
+    fund_ack = NA,
+    project_ack = NA
+  )
+
+  relevance_ls <- list(
+    is_relevant_fund = NA
+  )
+
+  out <- list(
+    is_fund_pred = FALSE,
+    fund_text = "",
+    is_explicit_fund = NA
+  )
+
+  # True only if a fund-statement or fund-title was found
+  if (pmc_fund_ls$is_fund_pred) {
+
+    out$is_fund_pred <- TRUE
+    out$fund_text <- pmc_fund_ls$fund_text
+
+    if (!is.na(pmc_fund_ls$is_fund_pmc_title)) {
+
+      out$is_explicit_fund <- TRUE
+
+    }
+
+    return(c(relevance_ls, out, index_any, index_ack))
+  }
+
+  # TODO Consider adding unique
+  article <-
+    article_ls[c("ack", "body", "footnotes")] %>%
+    unlist() # %>%
+    # unique()
+
+
+  # Check relevance
+  # TODO Consider adding Department
+  fund_regex <- "fund|support|financ|receive|grant|none|sponsor|fellowship|Association|Institute|National|Foundation"
+  article %<>% purrr::keep(~ str_detect(.x, regex(fund_regex, ignore_case = T)))
+
+  relevance_ls$is_relevant_fund <- !!length(article)
+
+  # Check for relevance
+  if (!relevance_ls$is_relevant_fund) {
+
+    return(c(relevance_ls, out, index_any, index_ack))
+
+  }
+
+
+  article_processed <-
+    article %>%
+    iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
+    trimws() %>%
+    obliterate_fullstop_1() %>%
+    obliterate_semicolon_1() %>%  # adds minimal overhead
+    obliterate_comma_1() %>%   # adds minimal overhead
+    obliterate_apostrophe_1() %>%
+    obliterate_punct_1() %>%
+    obliterate_line_break_1() %>%
+    obliterate_conflict_1() %>%
+    obliterate_conflict_2() %>%
+    obliterate_disclosure_1() %>%   # Adds 30s overhead!
+    obliterate_misleading_fund_1()
+
+
+  # Identify sequences of interest
+  index_any$support_1 <- get_support_1(article_processed)
+  index_any$support_3 <- get_support_3(article_processed)
+  index_any$support_4 <- get_support_4(article_processed)
+  index_any$support_5 <- get_support_5(article_processed)
+  index_any$support_6 <- get_support_6(article_processed)
+  index_any$support_7 <- get_support_7(article_processed)
+  index_any$support_8 <- get_support_8(article_processed)
+  index_any$support_9 <- get_support_9(article_processed)
+  index_any$support_10 <- get_support_10(article_processed)
+  index_any$developed_1 <- get_developed_1(article_processed)
+  index_any$received_1 <- get_received_1(article_processed)
+  index_any$received_2 <- get_received_2(article_processed)
+  index_any$recipient_1 <- get_recipient_1(article_processed)
+  index_any$authors_1 <- get_authors_1(article_processed)
+  index_any$authors_2 <- get_authors_2(article_processed)
+  index_any$thank_1 <- get_thank_1(article_processed)
+  index_any$thank_2 <- get_thank_2(article_processed)
+  index_any$fund_1 <- get_fund_1(article_processed)
+  index_any$fund_2 <- get_fund_2(article_processed)
+  index_any$fund_3 <- get_fund_3(article_processed)
+  index_any$supported_1 <- get_supported_1(article_processed)
+  index_any$financial_1 <- get_financial_1(article_processed)
+  index_any$financial_2 <- get_financial_2(article_processed)
+  index_any$financial_3 <- get_financial_3(article_processed)
+  index_any$grant_1 <- get_grant_1(article_processed)
+  index_any$french_1 <- get_french_1(article_processed)
+  index_any$common_1 <- get_common_1(article_processed)
+  index_any$common_2 <- get_common_2(article_processed)
+  index_any$common_3 <- get_common_3(article_processed)
+  index_any$common_4 <- get_common_4(article_processed)
+  index_any$common_5 <- get_common_5(article_processed)
+  index_any$acknow_1 <- get_acknow_1(article_processed)
+  index_any$disclosure_1 <- get_disclosure_1(article_processed)
+  index_any$disclosure_2 <- get_disclosure_2(article_processed)
+
+  index <- unlist(index_any) %>% unique() %>% sort()
+
+  # Remove potential mistakes
+  if (!!length(index)) {
+
+    # Funding info can be within COI statements, as per Ioannidis
+    # Comment out until problems arise
+    # if (length(unlist(index_any[c("authors_2")]))) {
+    #   is_coi <- negate_conflict_1(article_processed[min(index) - 1])
+    #   index <- index[!is_coi]
+    # }
+
+
+    # Difficult to make it work properly because it does not
+    # disclosures <- c("disclosure_1", "disclosure_2")
+    # if (!!length(unlist(index_any[disclosures]))) {
+    #
+    #   for (i in seq_along(disclosures)) {
+    #
+    #     ind <- index_any[[disclosures[i]]]
+    #     is_coi_disclosure <- negate_disclosure_1(article_processed[ind])
+    #     index_any[[disclosures[i]]] <- ind[!is_coi_disclosure]
+    #
+    #   }
+    #
+    # }
+
+    is_absent <- negate_absence_1(article_processed[index])
+    index <- index[!is_absent]
+
+    # Currently removed b/c I made the disclosure functions more robust to
+    #     statements like "Financial disclosure. Nothing to disclose.
+    # disclosures <- unique(unlist(index_any[c("disclosure_1", "disclosure_2")]))
+    # if (!!length(disclosures)) {
+    #
+    #   if (length(disclosures) == 1) {
+    #
+    #     is_disclosure <- negate_disclosure_2(paragraphs[index])
+    #     index <- index[!is_disclosure]
+    #
+    #   } else {
+    #
+    #     disclosure_text <- paste(article_processed[disclosures], collapse = " ")
+    #     is_disclosure <- negate_disclosure_2(disclosure_text)
+    #     index <- setdiff(index, disclosures)
+    #
+    #   }
+    # }
+  }
+
+  if (!!length(index)) {
+
+    out$is_explicit_fund <- !!length(unlist(index_any))
+    out$is_fund_pred <- !!length(index)
+    out$fund_text <- article[index] %>% paste(collapse = " ")
+
+    index_any %<>% purrr::map(function(x) !!length(x))
+
+    return(c(relevance_ls, out, index_any, index_ack))
+  }
+
+
+  # Identify potentially missed signals
+  i <- which(article %in% c(article_ls$ack, article_ls$footnotes))
+
+  if (!!length(i)) {
+
+    index_ack$fund_ack <- get_fund_acknow(article_processed[i])
+    index_ack$project_ack <- get_project_acknow(article_processed[i])
+
+    index <- i[unlist(index_ack) %>% unique() %>% sort()]
+    index_ack %<>% purrr::map(function(x) !!length(x))
+
+  }
+
+
+  out$is_fund_pred <- !!length(index)
+  out$fund_text <- article[index] %>% paste(collapse = " ")
+
+  index_any %<>% purrr::map(function(x) !!length(x))
+
+  if (out$is_fund_pred) {
+
+    out$is_explicit_fund <- FALSE
+
+  }
+
+  # Placed here to give a chance to the title to populate the statement field
+  if (!out$is_fund_pred & pmc_fund_ls$is_fund_pmc_group) {
+
+    out$is_fund_pred <- TRUE
+    out$fund_text <- pmc_fund_ls$fund_pmc_source
+    out$is_explicit_fund <- FALSE
+
+    return(c(relevance_ls, out, index_any, index_ack))
+
+  }
+
+  if (!out$is_fund_pred & pmc_fund_ls$is_fund_pmc_anysource) {
+
+    out$is_fund_pred <- TRUE
+    out$fund_text <- pmc_fund_ls$fund_pmc_anysource
+    out$is_explicit_fund <- FALSE
+
+  }
+
+  return(c(relevance_ls, out, index_any, index_ack))
+}
+
+
+
+
+rt_fund_pmc2 <- function(article_xml) {
+
+  index <- integer()
+
+  # Way faster than index_any[["reg_title_pmc"]] <- NA
+  index_any <- list(
+    fund_group_pmc = NA,
+    fund_title_pmc = NA,
+    support_1 = NA,
+    support_3 = NA,
+    support_4 = NA,
+    support_5 = NA,
+    support_6 = NA,
+    support_7 = NA,
+    support_8 = NA,
+    support_9 = NA,
+    support_10 = NA,
+    developed_1 = NA,
+    received_1 = NA,
+    received_2 = NA,
+    recipient_1 = NA,
+    authors_1 = NA,
+    authors_2 = NA,
+    thank_1 = NA,
+    thank_2 = NA,
+    fund_1 = NA,
+    fund_2 = NA,
+    fund_3 = NA,
+    supported_1 = NA,
+    financial_1 = NA,
+    financial_2 = NA,
+    financial_3 = NA,
+    grant_1 = NA,
+    french_1 = NA,
+    common_1 = NA,
+    common_2 = NA,
+    common_3 = NA,
+    common_4 = NA,
+    common_5 = NA,
+    acknow_1 = NA,
+    disclosure_1 = NA,
+    disclosure_2 = NA
+  )
+
+  index_ack <- list(
+    fund_ack = NA,
+    project_ack = NA
+  )
+
+  out <- list(
+    pmid = NA,
+    pmcid_pmc = NA,
+    pmcid_uid = NA,
+    doi = NA,
+    is_relevant = NA,
+    is_fund_pred = FALSE,
+    is_fund_group_pmc = NA,
+    fund_statement_pmc = "",
+    fund_institute_pmc = "",
+    fund_source_pmc = "",
+    fund_anysource_pmc = "",
+    fund_text = "",
+    is_explicit = NA
+  )
+
+
+  # Capture fund-group elements
+  fund_group_pmc <- .get_fund_pmc_group(article_xml)
+
+  if (fund_group_pmc$is_fund_group_pmc) {
+
+    index_any$fund_group_pmc <- TRUE
+    out %<>% purrr::list_modify(!!!fund_group_pmc)
+
+    out$is_relevant <- TRUE
+    out$is_fund_pred <- TRUE
+
+    if (nchar(fund_group_pmc$fund_statement_pmc) > 0) {
+      return(tibble::as_tibble(c(out, index_any, index_ack)))
+    }
+  }
+
+
+  # Capture missed fund-source elements
+  out$fund_anysource_pmc <- .get_fund_pmc_source(article_xml)
+
+
+  # Go through titles
+  title_txt <- .get_fund_pmc_title(article_xml)
+  is_title <- !!length(title_txt)
+
+  if (is_title) {
+
+    index_any$fund_title_pmc <- TRUE
+    out$fund_text <- title_txt
+
+    out$is_relevant <- TRUE
+    out$is_explicit <- TRUE
+    out$is_fund_pred <- TRUE
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
+
+  }
+
+
+  # Extract article text into a vector
+  ack <- .xml_ack(article_xml)
+  body <- .xml_body(article_xml, get_last_two = T)
+  footnotes <- .xml_footnotes(article_xml) %>% obliterate_contribs()
+  article <- c(footnotes, body, ack)
+
+
+  # Check relevance
+  rel_regex <- "fund|support|financ|receive|grant|none|sponsor|fellowship"
+  article %<>% purrr::keep(~ str_detect(.x, regex(rel_regex, ignore_case = T)))
+
+  out$is_relevant <- !!length(article)
+
+  # Check for relevance
+  if (!out$is_relevant) {
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
+
+  }
+
+
+  # Text pre-processing
+  article_processed <-
+    article %>%
+    iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
+    obliterate_fullstop_1() %>%
+    obliterate_semicolon_1() %>%  # adds minimal overhead
+    obliterate_comma_1() %>%   # adds minimal overhead
+    obliterate_apostrophe_1() %>%
+    obliterate_punct_1() %>%
+    obliterate_line_break_1() %>%
+    obliterate_conflict_1() %>%
+    obliterate_conflict_2() %>%
+    obliterate_disclosure_1() %>%   # Adds 30s overhead!
+    obliterate_misleading_fund_1()
+
+
+  # Identify sequences of interest
+  index_any$fund_group_pmc <- integer()
+  index_any$fund_title_pmc <- integer()
+  index_any$support_1 <- get_support_1(article_processed)
+  index_any$support_3 <- get_support_3(article_processed)
+  index_any$support_4 <- get_support_4(article_processed)
+  index_any$support_5 <- get_support_5(article_processed)
+  index_any$support_6 <- get_support_6(article_processed)
+  index_any$support_7 <- get_support_7(article_processed)
+  index_any$support_8 <- get_support_8(article_processed)
+  index_any$support_9 <- get_support_9(article_processed)
+  index_any$support_10 <- get_support_10(article_processed)
+  index_any$developed_1 <- get_developed_1(article_processed)
+  index_any$received_1 <- get_received_1(article_processed)
+  index_any$received_2 <- get_received_2(article_processed)
+  index_any$recipient_1 <- get_recipient_1(article_processed)
+  index_any$authors_1 <- get_authors_1(article_processed)
+  index_any$authors_2 <- get_authors_2(article_processed)
+  index_any$thank_1 <- get_thank_1(article_processed)
+  index_any$thank_2 <- get_thank_2(article_processed)
+  index_any$fund_1 <- get_fund_1(article_processed)
+  index_any$fund_2 <- get_fund_2(article_processed)
+  index_any$fund_3 <- get_fund_3(article_processed)
+  index_any$supported_1 <- get_supported_1(article_processed)
+  index_any$financial_1 <- get_financial_1(article_processed)
+  index_any$financial_2 <- get_financial_2(article_processed)
+  index_any$financial_3 <- get_financial_3(article_processed)
+  index_any$grant_1 <- get_grant_1(article_processed)
+  index_any$french_1 <- get_french_1(article_processed)
+  index_any$common_1 <- get_common_1(article_processed)
+  index_any$common_2 <- get_common_2(article_processed)
+  index_any$common_3 <- get_common_3(article_processed)
+  index_any$common_4 <- get_common_4(article_processed)
+  index_any$common_5 <- get_common_5(article_processed)
+  index_any$acknow_1 <- get_acknow_1(article_processed)
+  index_any$disclosure_1 <- get_disclosure_1(article_processed)
+  index_any$disclosure_2 <- get_disclosure_2(article_processed)
+
+  index <- unlist(index_any) %>% unique() %>% sort()
+
+  # Remove potential mistakes
+  if (!!length(index)) {
+
+    # Funding info can be within COI statements, as per Ioannidis
+    # Comment out until problems arise
+    # if (length(unlist(index_any[c("authors_2")]))) {
+    #   is_coi <- negate_conflict_1(article_processed[min(index) - 1])
+    #   index <- index[!is_coi]
+    # }
+
+
+    # Difficult to make it work properly because it does not
+    # disclosures <- c("disclosure_1", "disclosure_2")
+    # if (!!length(unlist(index_any[disclosures]))) {
+    #
+    #   for (i in seq_along(disclosures)) {
+    #
+    #     ind <- index_any[[disclosures[i]]]
+    #     is_coi_disclosure <- negate_disclosure_1(article_processed[ind])
+    #     index_any[[disclosures[i]]] <- ind[!is_coi_disclosure]
+    #
+    #   }
+    #
+    # }
+
+    is_absent <- negate_absence_1(article_processed[index])
+    index <- index[!is_absent]
+
+    # Currently removed b/c I made the disclosure functions more robust to
+    #     statements like "Financial disclosure. Nothing to disclose.
+    # disclosures <- unique(unlist(index_any[c("disclosure_1", "disclosure_2")]))
+    # if (!!length(disclosures)) {
+    #
+    #   if (length(disclosures) == 1) {
+    #
+    #     is_disclosure <- negate_disclosure_2(paragraphs[index])
+    #     index <- index[!is_disclosure]
+    #
+    #   } else {
+    #
+    #     disclosure_text <- paste(article_processed[disclosures], collapse = " ")
+    #     is_disclosure <- negate_disclosure_2(disclosure_text)
+    #     index <- setdiff(index, disclosures)
+    #
+    #   }
+    # }
+  }
+
+  if (!!length(index)) {
+
+    out$is_explicit <- !!length(unlist(index_any))
+    out$is_fund_pred <- !!length(index)
+    out$fund_text <- article[index] %>% paste(collapse = " ")
+
+    index_any %<>% purrr::map(function(x) !!length(x))
+
+    return(tibble::as_tibble(c(out, index_any, index_ack)))
+  }
+
+
+  # Identify potentially missed signals
+  i <- which(article %in% c(ack, footnotes))
+
+  if (!!length(i)) {
+
+    index_ack$fund_ack <- get_fund_acknow(article_processed[i])
+    index_ack$project_ack <- get_project_acknow(article_processed[i])
+
+    index <- i[unlist(index_ack) %>% unique() %>% sort()]
+    index_ack %<>% purrr::map(function(x) !!length(x))
+
+  }
+
+
+  out$is_fund_pred <- !!length(index)
+  out$fund_text <- article[index] %>% paste(collapse = " ")
+
+  index_any %<>% purrr::map(function(x) !!length(x))
+
+  if (out$is_fund_pred) {
+
+    out$is_explicit <- FALSE
+
+  }
+
+  # Placed here to give a chance to the title to populate the statement field
+  if (!out$is_fund_pred & fund_group_pmc$is_fund_group_pmc) {
 
     index_any$fund_group_pmc <- TRUE
     out$is_fund_pred <- TRUE
