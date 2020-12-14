@@ -32,8 +32,9 @@ devtools::install_github("serghiou/rtransparent")
 ```
 
 
-## Naming convention
-Functions that work on txt files extracted from PDFs do not end in `_pmc`. Functions that work on XML files from NLM end in `_pmc`. To run all functions on PMC use the `rt_all_pmc` function. To get all meta-data from PMC articles, use the `rt_meta_pmc` function.
+## Usage
+
+Inspect the vignette to learn how to use this package. Note this naming convention: functions that work on txt files extracted from PDFs do not end in `_pmc`. Functions that work on XML files from NLM end in `_pmc`. To run all functions on PMC use the `rt_all_pmc` function. To get all meta-data from PMC articles, use the `rt_meta_pmc` function.
 
 
 ## Coming soon
@@ -42,5 +43,9 @@ Functions that work on txt files extracted from PDFs do not end in `_pmc`. Funct
 2. Commenting - more comments will be added to explain non-trivial aspects of the code.
 3. Vignette - a vignette explaining how to use the code is coming.
 
+
+## Getting help
+
+If you encounter a bug, please file an issue with a minimal reproducible example on GitHub. For questions and other discussion, please use community.rstudio.com or the manipulatr mailing list.
 
 </div>
