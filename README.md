@@ -1,9 +1,23 @@
 # rtransparent
 
 <div align="justify">
+  
+## Overview
+
+rtransparent is a package that you can use to automatically identify and extract indicators of transparency (data availability, code availability, statements of conflicts of interest, statements of funding, statements of protocol registration) from the TXT and PMC XML version of published research articles in biomedicine.
 
 
-## How to install
+## Authors
+
+Stylianos (Stelios) Serghiou (sstelios@stanford.edu). This package also utilizes functions from the `oddpub` package of Nico Riedel (nico.riedel@bihealth.de).
+
+
+## Publication
+
+`rtransparent` was validated and subsequently used to extract indicators of transparency from the entire open access literature from PubMed Central. This work is available as a preprint on bioRxiv at: https://www.biorxiv.org/content/10.1101/2020.10.30.361618v1.
+
+
+## Installation
 
 First, install the `oddpub` package.
 
