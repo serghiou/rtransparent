@@ -46,6 +46,6 @@ Inspect the vignette to learn how to use this package. Note this naming conventi
 
 ## Getting help
 
-If you encounter a bug, please file an issue with a minimal reproducible example on GitHub. For questions and other discussion, please use community.rstudio.com or the manipulatr mailing list.
+If you encounter a bug, please file an issue with a minimal reproducible example [here](https://github.com/serghiou/rtransparent/issues) and please Label it as a "bug" (option on the right of your window). For help on how to use the package, please file an issue with a clearly actionable question [here](https://github.com/serghiou/rtransparent/issues) and label it as "help wanted." For all other questions and discussion, please email the author.
 
 </div>
