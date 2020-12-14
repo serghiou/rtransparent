@@ -853,234 +853,17 @@
 }
 
 
-rt_coi_pmc <- function(filename, remove_ns = F) {
-
-  index <- integer()
-  synonyms <- .create_synonyms()
-
-  xpath <- c(
-    "front/article-meta/article-id[@pub-id-type = 'pmid']",
-    "front/article-meta/article-id[@pub-id-type = 'pmc']",
-    "front/article-meta/article-id[@pub-id-type = 'pmc-uid']",
-    "front/article-meta/article-id[@pub-id-type = 'doi']"
-  )
-
-  # Way faster than index_any[["reg_title_pmc"]] <- NA
-  index_any <- list(
-    coi_fn_pmc = NA,
-    coi_title_pmc = NA,
-    coi_1 = NA,
-    coi_2 = NA,
-    disclosure_1 = NA,
-    commercial_1 = NA,
-    benefit_1 = NA,
-    consultant_1 = NA,
-    grants_1 = NA,
-    brief_1 = NA
-  )
-
-  index_ack <- list(
-    fees_1 = NA,
-    consults_1 = NA,
-    connect_1 = NA,
-    connect_2 = NA,
-    commercial_ack_1 = NA,
-    rights_1 = NA,
-    founder_1 = NA,
-    advisor_1 = NA,
-    paid_1 = NA,
-    board_1 = NA,
-    no_coi_1 = NA,
-    no_funder_role_1 = NA
-  )
-
-  out <- list(
-    pmid = NA,
-    pmcid_pmc = NA,
-    pmcid_uid = NA,
-    doi = NA,
-    is_relevant = NA,
-    is_relevant_hi = NA,
-    is_relevant_lo = NA,
-    is_coi_pred = FALSE,
-    coi_text = "",
-    is_explicit = NA
-  )
-
-
-  if (remove_ns) {
-
-    article_xml <-
-      filename %>%
-      read_xml() %>%
-      xml_ns_strip()
-
-  } else {
-
-    article_xml <-
-      filename %>%
-      read_xml()
-
-  }
-  # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
-
-
-  # Extract IDs
-  out %<>% purrr::list_modify(!!!map(xpath, ~ .get_text(article_xml, .x, T)))
-
-
-  # Capture coi fn elements
-  out$coi_text <- .get_coi_pmc_fn(article_xml)
-  index_any$coi_fn_pmc <- nchar(out$coi_text) > 0
-
-  if (index_any$coi_fn_pmc) {
-
-    out$is_relevant <- TRUE
-    out$is_coi_pred <- TRUE
-
-    return(tibble::as_tibble(c(out, index_any, index_ack)))
-  }
-
-
-  # Go through titles
-  title_txt <- .get_coi_pmc_title(article_xml, synonyms)
-  is_title <- nchar(title_txt) > 0
-
-  if (is_title) {
-
-    index_any$coi_title_pmc <- TRUE
-    out$coi_text <- title_txt
-
-    out$is_relevant <- TRUE
-    out$is_explicit <- TRUE
-    out$is_coi_pred <- TRUE
-
-    return(tibble::as_tibble(c(out, index_any, index_ack)))
-
-  }
-
-
-  # Extract article text into a vector
-  ack <- .xml_ack(article_xml)
-  body <- .xml_body(article_xml, get_last_two = T)
-  footnotes <- .xml_footnotes(article_xml) %>% obliterate_contribs()
-  article <- c(footnotes, body, ack)
-
-
-  # Check relevance
-  hi <- "conflict|compet|disclos|declar|\\bcommercial"
-  lo <- "fee(|s)\\b|honorari|\\bboard\\b|consult|relation|connection|\\bfinancial|\\b(co|co-)founder|\\bpaid\\b|speaker|\\bemployee|member\\b|funder"
-
-  hi_relevance <- str_detect(article, regex(hi, ignore_case = T))
-  lo_relevance <- str_detect(article, regex(lo, ignore_case = T))
-
-  article <- article[(hi_relevance + lo_relevance) > 0]
-  # rel_regex <- paste(hi_regex, lo_regex, sep = "|")
-  # article %<>% purrr::keep(~ str_detect(.x, regex(rel_regex, ignore_case = T)))
-
-  out$is_relevant_hi <- any(hi_relevance)
-  out$is_relevant_lo <- any(lo_relevance)
-  out$is_relevant <- with(out, any(c(is_relevant_hi, is_relevant_lo)))
-
-  # Check for relevance
-  if (!out$is_relevant) {
-
-    return(tibble::as_tibble(c(out, index_any, index_ack)))
-
-  }
-
-
-  # Text pre-processing
-  article_processed <-
-    article %>%
-    iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
-    trimws() %>%
-    obliterate_fullstop_1() %>%
-    obliterate_semicolon_1() %>%  # adds minimal overhead
-    obliterate_comma_1() %>%   # adds minimal overhead
-    obliterate_apostrophe_1() %>%
-    obliterate_punct_1() %>%
-    obliterate_line_break_1() %>%
-    .obliterate_honoraria_1(synonyms)
-
-  index_any$coi_fn_pmc <- integer()
-  index_any$coi_title_pmc <- integer()
-  index_any$coi_1 <- .which_coi_1(article_processed, synonyms)
-  index_any$coi_2 <- .which_coi_2(article_processed, synonyms)
-  index_any$disclosure_1 <- .which_disclosure_1(article_processed, synonyms)
-  index_any$commercial_1 <- .which_commercial_1(article_processed, synonyms)
-  index_any$benefit_1 <- .which_benefit_1(article_processed, synonyms)
-  index_any$consultant_1 <- .which_consultant_1(article_processed, synonyms)
-  index_any$grants_1 <- .which_grants_1(article_processed)
-  index_any$brief_1 <- .which_brief(article_processed)
-  index <- unlist(index_any) %>% unique() %>% sort()
-
-
-  if (!!length(index)) {
-
-    out$is_explicit <- !!length(unlist(index_any))
-    out$is_coi_pred <- !!length(index)
-    out$coi_text <- article[index] %>% paste(collapse = " ")
-
-    index_any %<>% purrr::map(function(x) !!length(x))
-
-
-    if (length(index) == 1) {
-      coi_only <- synonyms$conflict_title %>% .encase %>% .title_strict
-      is_coi_only <- stringr::str_detect(out$coi_text, coi_only)
-
-      if (is_coi_only & !is.na(article[index + 1])) {
-
-        out$coi_text <- article[c(index, index + 1)] %>% paste(collapse = ": ")
-
-      }
-    }
-
-    return(tibble::as_tibble(c(out, index_any, index_ack)))
-  }
-
-
-  # Identify potentially missed signals
-  i <- which(article %in% c(ack, footnotes))
-
-  if (!!length(i)) {
-
-    index_ack$fees_1 <- .which_fees_1(article_processed[i], synonyms)
-    index_ack$consults_1 <- .which_consults_1(article_processed[i], synonyms)
-    index_ack$connect_1 <- .which_connections_1(article_processed[i], synonyms)
-    index_ack$connect_2 <- .which_connections_2(article_processed[i], synonyms)
-    index_ack$commercial_ack_1 <-
-      .which_commercial_ack_1(article_processed[i], synonyms)
-    index_ack$rights_1 <- .which_rights_1(article_processed[i], synonyms)
-    index_ack$founder_1 <- .which_founder_1(article_processed[i], synonyms)
-    index_ack$advisor_1 <- .which_advisor_1(article_processed[i], synonyms)
-    index_ack$paid_1 <- .which_paid_1(article_processed[i], synonyms)
-    index_ack$board_1 <- .which_board_1(article_processed[i], synonyms)
-    index_ack$no_coi_1 <- .which_no_coi_1(article_processed[i], synonyms)
-    index_ack$no_funder_role_1 <-
-      .which_no_funder_role_1(article_processed[i], synonyms)
-
-    index <- i[unlist(index_ack) %>% unique() %>% sort()]
-    index_ack %<>% purrr::map(function(x) !!length(x))
-
-  }
-
-  out$is_coi_pred <- !!length(index)
-  out$coi_text <- article[index] %>% paste(collapse = " ")
-
-  index_any %<>% purrr::map(function(x) !!length(x))
-
-  if (out$is_coi_pred) {
-
-    out$is_explicit <- FALSE
-
-  }
-
-  return(tibble::as_tibble(c(out, index_any, index_ack)))
-}
-
-
-
+#' Identify and extract Conflicts of Interest (COI) statements in PMC XML files.
+#'
+#' Takes a PMC XML file as a list of strings and returns data related to the
+#'     presence of a COI statement, including whether a COI statement
+#'     exists. If a Funding statement exists, it extracts it. This is a modified
+#'     version of the `rt_coi_pmc` designed for integration with `rt_all_pmc`.
+#'
+#' @param article_ls A PMC XML as a list of strings.
+#' @param pmc_coi_ls A list of results from the `.get_coi_pmc` function.
+#' @param dict A list of regular expressions for each concept.
+#' @return A dataframe of results.
 .rt_coi_pmc <- function(article_ls, pmc_coi_ls, dict) {
 
   index <- integer()
@@ -1141,7 +924,7 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
   article <-
     article_ls[c("ack", "body", "footnotes")] %>%
     unlist()
-    # unique()
+  # unique()
 
 
   relevance_ls <- .is_relevant_coi(article)
@@ -1248,13 +1031,35 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
 }
 
 
-
-
-rt_coi_pmc2 <- function(article_xml) {
+#' Identify and extract Conflicts of Interest (COI) statements in PMC XML files.
+#'
+#' Takes a PMC XML file and returns data related to the presence of a COI
+#'     statement, including whether a COI statement exists. If a COI statement
+#'     exists, it extracts it.
+#'
+#' @param filename The name of the PMC XML as a string.
+#' @param remove_ns TRUE if an XML namespace exists, else FALSE (default).
+#' @return A dataframe of results.
+#' @examples
+#' \dontrun{
+#' # Path to PMC XML.
+#' filepath <- "../inst/extdata/00003-PMID26637448-PMC4737611.xml"
+#'
+#' # Identify and extract meta-data and indicators of transparency.
+#' results_table <- rt_coi_pmc(filepath, remove_ns = T)
+#' }
+#' @export
+rt_coi_pmc <- function(filename, remove_ns = F) {
 
   index <- integer()
   synonyms <- .create_synonyms()
 
+  xpath <- c(
+    "front/article-meta/article-id[@pub-id-type = 'pmid']",
+    "front/article-meta/article-id[@pub-id-type = 'pmc']",
+    "front/article-meta/article-id[@pub-id-type = 'pmc-uid']",
+    "front/article-meta/article-id[@pub-id-type = 'doi']"
+  )
 
   # Way faster than index_any[["reg_title_pmc"]] <- NA
   index_any <- list(
@@ -1297,6 +1102,28 @@ rt_coi_pmc2 <- function(article_xml) {
     coi_text = "",
     is_explicit = NA
   )
+
+
+  if (remove_ns) {
+
+    article_xml <-
+      filename %>%
+      read_xml() %>%
+      xml_ns_strip()
+
+  } else {
+
+    article_xml <-
+      filename %>%
+      read_xml()
+
+  }
+  # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
+
+
+  # Extract IDs
+  out %<>% purrr::list_modify(!!!map(xpath, ~ .get_text(article_xml, .x, T)))
+
 
   # Capture coi fn elements
   out$coi_text <- .get_coi_pmc_fn(article_xml)
