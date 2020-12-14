@@ -1749,13 +1749,23 @@ obliterate_disclosure_1 <- function(article) {
 
 
 
-#' Identify funding statements
+#' Identify and extract Funding statements in PMC XML files.
 #'
-#' Returns the index with the elements of interest. More generic than _1.
+#' Takes a PMC XML file as a list of strings and returns data related to the
+#'     presence of a Funding statement, including whether a Funding statement
+#'     exists. If a Funding statement exists, it extracts it.
 #'
-#' @param filename A List with paragraphs of interest.
-#' @return A dataframe indicating whether a funding statement has been
-#'     identified and the funding statement.
+#' @param filename The name of the PMC XML as a string.
+#' @param remove_ns TRUE if an XML namespace exists, else FALSE (default).
+#' @return A dataframe of results.
+#' @examples
+#' \dontrun{
+#' # Path to PMC XML.
+#' filepath <- "../inst/extdata/00003-PMID26637448-PMC4737611.xml"
+#'
+#' # Identify and extract meta-data and indicators of transparency.
+#' results_table <- rt_fund_pmc(filepath, remove_ns = T)
+#' }
 #' @export
 rt_fund_pmc <- function(filename, remove_ns = F) {
 
@@ -2072,7 +2082,16 @@ rt_fund_pmc <- function(filename, remove_ns = F) {
 }
 
 
-
+#' Identify and extract Funding statements in PMC XML files.
+#'
+#' Takes a PMC XML file as a list of strings and returns data related to the
+#'     presence of a Funding statement, including whether a Funding statement
+#'     exists. If a Funding statement exists, it extracts it. This is a modified
+#'     version of the `rt_fund_pmc` designed for integration with `rt_all_pmc`.
+#'
+#' @param article_ls A PMC XML as a list of strings.
+#' @param pmc_fund_ls A list of results from the `.get_fund_pmc` function.
+#' @return A dataframe of results.
 .rt_fund_pmc <- function(article_ls, pmc_fund_ls) {
 
   index <- integer()

@@ -409,7 +409,7 @@ rt_data_pmc <- function(filename, remove_ns = T, specificity = "low") {
 }
 
 
-#' @param filename The filename of the XML file to be analyzed as a string.
+#' @param filenames A list of the XML filenames as strings.
 #' @param remove_ns Whether the namespace of the XML should be removed (T or F).
 #' @param specificity How specific should the extraction of text from the XML
 #'     be? If "low" then this is a as sensitive as possible (it extracts all

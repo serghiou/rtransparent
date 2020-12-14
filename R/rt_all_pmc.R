@@ -222,10 +222,26 @@
 }
 
 
-# metadata-all: 78ms
-# metadata-unique: 75ms (only the ones not captured already)
-# metadata-lean: 60ms (only the absolute basics for cool analyses)
-# no metadata: 56ms
+#' Identify and extract statements of COI, Funding and Registration.
+#'
+#' Takes a PMC XML and returns relevant meta-data, as well as whether any
+#'     statements of Conflicts of Interest (COI), Funding or Protocol
+#'     Registration. If any such statements are found, it also extracts the
+#'     relevant text.
+#'
+#' @param filename The name of the PMC XML as a string.
+#' @param remove_ns TRUE if an XML namespace exists, else FALSE (default).
+#' @param all_meta TRUE extracts all meta-data, FALSE extracts some (default).
+#' @return A dataframe of results.
+#' @examples
+#' \dontrun{
+#' # Path to PMC XML.
+#' filepath <- "../inst/extdata/00003-PMID26637448-PMC4737611.xml"
+#'
+#' # Identify and extract meta-data and indicators of transparency.
+#' results_table <- rt_all_pmc(filepath, remove_ns = T, all_meta = T)
+#' }
+#' @export
 rt_all_pmc <- function(filename, remove_ns = F, all_meta = F) {
 
   # A lot of the PMC XML files are malformed
@@ -243,6 +259,10 @@ rt_all_pmc <- function(filename, remove_ns = F, all_meta = F) {
   id_ls$filename <- filename
 
   # Meta-data
+  # metadata-all: 78ms
+  # metadata-unique: 75ms (only the ones not captured already)
+  # metadata-lean: 60ms (only the absolute basics for cool analyses)
+  # no metadata: 56ms
   if (all_meta) {
 
     meta_ls <- .xml_metadata_all(article_xml, as_list = T)

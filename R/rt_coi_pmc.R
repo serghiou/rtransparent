@@ -1,4 +1,4 @@
-#' Identify standard metions of COI statements
+#' Identify standard mentions of COI statements
 #'
 #' Extract mentions of COI statements that contain standard phrases, such as
 #'     "Conflicts of Interest".

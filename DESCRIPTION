@@ -22,3 +22,7 @@ Imports:
     xml2,
     oddpub
 RoxygenNote: 7.0.2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
