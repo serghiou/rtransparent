@@ -22,7 +22,7 @@ rt_all <- function(filename) {
   out_ls <- list(
     coi_df = rt_coi(filename) %>% dplyr::select(!(article:pmid)),
     fund_df = rt_fund(filename) %>% dplyr::select(!(article:pmid)),
-    out_ls$register_df = rt_register(filename)
+    register_df = rt_register(filename)
   )
 
   # Return dataframe of indicators
