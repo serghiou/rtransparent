@@ -212,12 +212,12 @@
   article %>%
     iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
     trimws() %>%
-    obliterate_fullstop_1() %>%
-    obliterate_semicolon_1() %>%  # adds minimal overhead
-    obliterate_comma_1() %>%   # adds minimal overhead
-    obliterate_apostrophe_1() %>%
-    obliterate_punct_1() %>%
-    obliterate_line_break_1()
+    .obliterate_fullstop_1() %>%
+    .obliterate_semicolon_1() %>%  # adds minimal overhead
+    .obliterate_comma_1() %>%   # adds minimal overhead
+    .obliterate_apostrophe_1() %>%
+    .obliterate_punct_1() %>%
+    .obliterate_line_break_1()
 
 }
 
