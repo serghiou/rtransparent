@@ -7,13 +7,13 @@
 
 First, install the `oddpub` package.
 
-```{r}
+```r
 devtools::install_github("quest-bih/oddpub")
 ```
 
 Then, install the `rtransparent` package.
 
-```{r}
+```r
 devtools::install_github("serghiou/rtransparent")
 ```
 
