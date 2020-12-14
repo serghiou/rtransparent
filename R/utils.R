@@ -4,7 +4,7 @@
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without misleading fullstops.
-obliterate_fullstop_1 <- function(article) {
+.obliterate_fullstop_1 <- function(article) {
 
   j_p_a_i <- "([A-Z])(\\.)\\s*([A-Z])(\\.)\\s*([A-Z])(\\.)"
 
@@ -30,7 +30,7 @@ obliterate_fullstop_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_semicolon_1 <- function(article) {
+.obliterate_semicolon_1 <- function(article) {
 
   article %>% stringr::str_replace_all("(\\(.*); (.*\\))", "\\1 - \\2")
 
@@ -43,7 +43,7 @@ obliterate_semicolon_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_comma_1 <- function(article) {
+.obliterate_comma_1 <- function(article) {
 
   article %>% stringr::str_replace_all(", ", " ")
 
@@ -58,7 +58,7 @@ obliterate_comma_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_apostrophe_1 <- function(article) {
+.obliterate_apostrophe_1 <- function(article) {
 
   article %>%
     stringr::str_replace_all("([a-zA-Z])'([a-zA-Z])", "\\1\\2") %>%
@@ -73,7 +73,7 @@ obliterate_apostrophe_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_hash_1 <- function(article) {
+.obliterate_hash_1 <- function(article) {
 
   article %>% stringr::str_replace_all("#", "")
 
@@ -86,7 +86,7 @@ obliterate_hash_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without backlashes.
-obliterate_punct_1 <- function(article) {
+.obliterate_punct_1 <- function(article) {
 
   punct <- '[~@#$%^&*{}_+"<>?/=]'  # not :()[] b/c they are informative
   article %>% stringr::str_replace_all(punct, "")
@@ -102,7 +102,7 @@ obliterate_punct_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs with no remaining line break tags.
-obliterate_line_break_1 <- function(article) {
+.obliterate_line_break_1 <- function(article) {
 
   article %>% stringr::str_replace_all("\n", " ")
 
@@ -115,9 +115,9 @@ obliterate_line_break_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without misleading fullstops.
-obliterate_refs_1 <- function(article) {
+.obliterate_refs_1 <- function(article) {
 
-  # Built like this to avoid distabilizing the algorithm
+  # Built like this to avoid destabilizing the algorithm
   article <- gsub("^.*\\([0-9]{4}\\).*$", "References", article)
   article <- gsub("^.* et al\\..*$", "References", article)
 
@@ -132,7 +132,7 @@ obliterate_refs_1 <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without mentions of financial COIs.
-obliterate_contribs <- function(article) {
+.obliterate_contribs <- function(article) {
 
   # Not obliterating "Authors' information" b/c some publications use it to
   # mention funds to each author - need a more sophisiticated approach if I
@@ -159,7 +159,7 @@ obliterate_contribs <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The index of the start and finish of this section.
-find_refs <- function(article) {
+.where_refs_txt <- function(article) {
 
   synonyms <- .create_synonyms()
   words <- c("References")
@@ -210,7 +210,7 @@ find_refs <- function(article) {
 #'
 #' @param article A List with paragraphs of interest.
 #' @return The index of the start and finish of this section.
-find_acknows <- function(article) {
+.where_acknows_txt <- function(article) {
 
   acknow_index <- get_acknow_2(article)
   fund_index <- get_fund_2(article)
@@ -241,6 +241,68 @@ find_acknows <- function(article) {
     }
   }
   return(from)
+}
+
+
+
+#' Find the Methods section
+#'
+#' Find the index of the start of the Methods section.
+#'
+#' @return Index of element with phrase of interest
+.where_methods_txt  <- function(article) {
+
+  method_index <- integer()
+
+  synonyms <- .create_synonyms()
+  words <- c("Methods", "Abstract", "Results", "Conclusion")
+
+  method_index <-
+    synonyms %>%
+    magrittr::extract(words[1]) %>%
+    lapply(.title_strict) %>%
+    lapply(stringr::str_sub, end = -2) %>%  # remove the $
+    # lapply(paste, "($|\\s+[A-Z]") %>%  # TODO: if too sensitive, uncomment
+    lapply(.encase) %>%
+    paste() %>%
+    grep(article, perl = T)
+
+  if (!!length(method_index)) {
+
+    method_index <- method_index[length(method_index)]
+    return(method_index)
+
+    # TODO: if too sensitive, uncomment
+    # is_abstract <-
+    #   synonyms %>%
+    #   magrittr::extract(words[2:4]) %>%
+    #   grepl(article[(method_index - 3):(method_index + 3)]) %>%
+    #   any()
+    #
+    # if (!is_abstract) {
+    #
+    #   return(method_index)
+    #
+    # }
+  }
+
+  method_index <-
+    synonyms %>%
+    magrittr::extract(words[1]) %>%
+    lapply(.title_strict, within_text = T) %>%
+    lapply(paste, "[A-Z]", sep = "\\s*") %>%
+    lapply(.encase) %>%
+    paste() %>%
+    grep(article, perl = T)
+
+  if (!!length(method_index)) {
+
+    method_index <- method_index[length(method_index)]
+
+  }
+
+  return(method_index)
+
 }
 
 
