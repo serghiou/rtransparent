@@ -2,6 +2,23 @@
 
 <div align="justify">
 
+
+## How to install
+
+First, install the `oddpub` package.
+
+```{r}
+devtools::install_github("quest-bih/oddpub")
+```
+
+Then, install the `rtransparent` package.
+
+```{r}
+devtools::install_github("serghiou/rtransparent")
+```
+
+
+## Naming convention
 Functions that work on txt files extracted from PDFs do not end in `_pmc`. Functions that work on XML files from NLM end in `_pmc`. To run all functions on PMC use the `rt_all_pmc` function. To get all meta-data from PMC articles, use the `rt_meta_pmc` function.
 
 
