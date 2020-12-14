@@ -3,6 +3,7 @@
 #' Extract the index of mentions such as: "The study is registered at
 #'     www.clinicaltrials.gov (NCT01624883)."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_ct_1 <- function(article) {
 
@@ -19,6 +20,7 @@ get_ct_1 <- function(article) {
 #'     ClinicalTrial.gov NCT01489592) was approved by the Ethics Committee of
 #'     Rennes University Hospital."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_ct_2 <- function(article) {
 
@@ -33,6 +35,7 @@ get_ct_2 <- function(article) {
 #'     meta-analysis with the PROSPERO database (www.crd.york.ac.uk/prosper
 #'     o)—registration no. CRD42014015595."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_prospero_1 <- function(article) {
 
@@ -50,6 +53,7 @@ get_prospero_1 <- function(article) {
 #'     Castellana Grotte (Ba), Italy, and it was part of a registered research
 #'     on https://www.clinicaltrials.gov, reg. number: NCT01244945."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registered_1 <- function(article) {
 
@@ -109,6 +113,7 @@ get_registered_1 <- function(article) {
 #' Extract the index of mentions such as: " EPGP is registered with
 #'     clinicaltrials.gov (NCT00552045)."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registered_2 <- function(article) {
 
@@ -130,6 +135,7 @@ get_registered_2 <- function(article) {
 #' Extract the index of mentions such as: "registered with Clinical Trials
 #'     (ChiCTR-IOR-14005438)"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registered_3 <- function(article) {
 
@@ -149,6 +155,7 @@ get_registered_3 <- function(article) {
 #'     Committee of the Capital Region of Denmark (H-3-2010-127), and all
 #'     subjects provided informed written consent to participate."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registered_4 <- function(article) {
 
@@ -176,6 +183,7 @@ get_registered_4 <- function(article) {
 #'     local ethics committee (Ref: DGRI CCTIRS MG/CP09.503, 9 July 2009) and
 #'     registered at ClinicalTrials.gov (NCT01195818)."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registered_5 <- function(article) {
 
@@ -231,6 +239,7 @@ get_registered_5 <- function(article) {
 #' Extract the index of mentions such as: "This trial and its protocol were not
 #'     registered on a publicly accessible registry."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_not_registered_1 <- function(article) {
 
@@ -252,6 +261,7 @@ get_not_registered_1 <- function(article) {
 #' Extract the index of mentions such as: "Trial registration number is
 #'     TCTR20151021001."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registration_1 <- function(article) {
 
@@ -278,6 +288,7 @@ get_registration_1 <- function(article) {
 #' Extract the index of mentions such as: "Trial registration number is
 #'     TCTR20151021001."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registration_2 <- function(article) {
 
@@ -303,6 +314,7 @@ get_registration_2 <- function(article) {
 #' Extract the index of mentions such as: "Public clinical trial registration
 #'     (www.clinicaltrials.gov) ID# NCT02720653"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registration_3 <- function(article) {
 
@@ -318,6 +330,7 @@ get_registration_3 <- function(article) {
 #'     Standard Randomised Controlled Trial Number (ISRCTN) registration is
 #'     ISRCTN 49204710."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registration_4 <- function(article) {
 
@@ -349,6 +362,7 @@ get_registration_4 <- function(article) {
 #'     Alliance, and an international aHUS patient registry (ClinicalTrials.gov
 #'     NCT01522183)."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_registry_1 <- function(article) {
 
@@ -385,6 +399,7 @@ get_registry_1 <- function(article) {
 #'
 #' Extract the index of mentions such as: "Study registration: ..."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_reg_title_1 <- function(article) {
 
@@ -438,6 +453,7 @@ get_reg_title_1 <- function(article) {
 #'
 #' Extract the index of mentions such as: "Trial registration: ..."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_reg_title_2 <- function(article) {
 
@@ -500,6 +516,7 @@ get_reg_title_2 <- function(article) {
 #' Extract the index of mentions such as: "Retrospective clinical trial
 #'     registration:"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_reg_title_3 <- function(article) {
 
@@ -571,8 +588,8 @@ get_reg_title_3 <- function(article) {
 
 #' Identify registration titles - specific
 #'
-#' Extract the index of mentions such as: "Clinical trial registration details:"
-#'
+#' Extract the index of mentions such as: "Clinical trial registration detail:"
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_reg_title_4 <- function(article) {
 
@@ -646,6 +663,7 @@ get_reg_title_4 <- function(article) {
 #' Extract the index of mentions such as: "The complete study protocol has been
 #'     published previously (Supplement 1)"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_protocol_1 <- function(article) {
 
@@ -667,6 +685,7 @@ get_protocol_1 <- function(article) {
 #' Extract the index of mentions such as: "Alliance for Clinical Trials in
 #'     Oncology (formerly Cancer and Leukemia Group B) Protocol #369901"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_protocol_2 <- function(article) {
 
@@ -682,6 +701,7 @@ get_protocol_2 <- function(article) {
 #'     Kidney Disease, and others; SPECS ClinicalTrials.gov number, NCT00443599;
 #'     Nutrition and Obesity Center at Harvard; NIH 5P30DK040561-17"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 get_funded_ct_1 <- function(article) {
 
@@ -705,6 +725,7 @@ get_funded_ct_1 <- function(article) {
 #'     participate This study was approved by the Institutional Review Board of
 #'     Chang Gung Memorial Hospital under registry number 201601023B0."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 negate_registry_1 <- function(article) {
 
@@ -724,6 +745,7 @@ negate_registry_1 <- function(article) {
 #'
 #' Negate title mentions that refer to unwanted text.
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 negate_reg_title_1 <- function(article) {
 
@@ -863,6 +885,7 @@ obliterate_hash_1 <- function(article) {
 #'
 #' Find the index of the start of the Methods section.
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 
 find_methods <- function(article) {

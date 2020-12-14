@@ -1290,26 +1290,26 @@ get_acknow_2 <- function(article) {
   # "back//fn-group//*[self::d1:title or self::d1:bold or self::d1:italic]"
   # back_matter <-
   #   article_xml %>%
-  #   xml_find_all(back_xpath)
+  #   xml2::xml_find_all(back_xpath)
 
   back_matter <-
     article_xml %>%
-    xml_find_all("back/*[not(name()='ref-list')]") %>%
-    xml_find_all(".//*[self::title or self::bold or self::italic or self::sup]")
+    xml2::xml_find_all("back/*[not(name()='ref-list')]") %>%
+    xml2::xml_find_all(".//*[self::title or self::bold or self::italic or self::sup]")
 
   a <-
     back_matter %>%
-    xml_text() %>%
-    str_which(fund_titles)
+    xml2::xml_text() %>%
+    stringr::str_which(fund_titles)
 
   if (!!length(a)) {
 
     b <-
       back_matter %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents() %>%
-      xml_text() %>%
+      xml2::xml_parent() %>%
+      xml2::xml_contents() %>%
+      xml2::xml_text() %>%
       paste(collapse = " ")
 
     return(b)
@@ -1318,21 +1318,21 @@ get_acknow_2 <- function(article) {
 
   front_matter <-
     article_xml %>%
-    xml_find_all("front//fn//*[self::title or self::bold or self::italic or self::sup]")
+    xml2::xml_find_all("front//fn//*[self::title or self::bold or self::italic or self::sup]")
 
   a <-
     front_matter %>%
-    xml_text() %>%
-    str_which(fund_titles)
+    xml2::xml_text() %>%
+    stringr::str_which(fund_titles)
 
   if (!!length(a)) {
 
     b <-
       front_matter %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents() %>%
-      xml_text() %>%
+      xml2::xml_parent() %>%
+      xml2::xml_contents() %>%
+      xml2::xml_text() %>%
       paste(collapse = " ")
 
     return(b)
@@ -1343,21 +1343,21 @@ get_acknow_2 <- function(article) {
 
   body_matter <-
     article_xml %>%
-    xml_find_all("body/sec//*[self::title or self::bold or self::italic or self::sup]")
+    xml2::xml_find_all("body/sec//*[self::title or self::bold or self::italic or self::sup]")
 
   a <-
     body_matter %>%
-    xml_text() %>%
-    str_which(fund_titles)
+    xml2::xml_text() %>%
+    stringr::str_which(fund_titles)
 
   if (!!length(a)) {
 
     b <-
       body_matter %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents() %>%
-      xml_text() %>%
+      xml2::xml_parent() %>%
+      xml2::xml_contents() %>%
+      xml2::xml_text() %>%
       paste(collapse = " ")
 
     return(b)
@@ -1387,7 +1387,7 @@ get_acknow_2 <- function(article) {
 
   fund_group <-
     article_xml %>%
-    xml_find_all("front/article-meta/funding-group")
+    xml2::xml_find_all("front/article-meta/funding-group")
 
   if (!!length(fund_group)) {
 
@@ -1395,21 +1395,21 @@ get_acknow_2 <- function(article) {
 
     fund_pmc$fund_statement_pmc <-
       fund_group %>%
-      xml_find_all(".//funding-statement") %>%
-      xml_text() %>%
+      xml2::xml_find_all(".//funding-statement") %>%
+      xml2::xml_text() %>%
       paste(collapse = "")
 
     fund_pmc$fund_institute_pmc <-
       fund_group %>%
-      xml_find_all(".//institution") %>%
-      xml_contents() %>%
-      xml_text() %>%
+      xml2::xml_find_all(".//institution") %>%
+      xml2::xml_contents() %>%
+      xml2::xml_text() %>%
       paste(collapse = "; ")
 
     fund_pmc$fund_source_pmc <-
       fund_group %>%
-      xml_find_all(".//funding-source") %>%
-      xml_text() %>%
+      xml2::xml_find_all(".//funding-source") %>%
+      xml2::xml_text() %>%
       paste(collapse = "; ")
   }
 
@@ -1437,9 +1437,9 @@ get_acknow_2 <- function(article) {
 .get_fund_pmc_source <- function(article_xml) {
 
   article_xml %>%
-    xml_find_all("body//funding-source | back//funding-source") %>%
-    xml_contents() %>%
-    xml_text() %>%
+    xml2::xml_find_all("body//funding-source | back//funding-source") %>%
+    xml2::xml_contents() %>%
+    xml2::xml_text() %>%
     paste(collapse = "; ")
 
 }
@@ -1858,12 +1858,12 @@ obliterate_disclosure_1 <- function(article) {
     article %>%
     iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
     trimws() %>%
-    obliterate_fullstop_1() %>%
-    obliterate_semicolon_1() %>%  # adds minimal overhead
-    obliterate_comma_1() %>%   # adds minimal overhead
-    obliterate_apostrophe_1() %>%
-    obliterate_punct_1() %>%
-    obliterate_line_break_1() %>%
+    .obliterate_fullstop_1() %>%
+    .obliterate_semicolon_1() %>%  # adds minimal overhead
+    .obliterate_comma_1() %>%   # adds minimal overhead
+    .obliterate_apostrophe_1() %>%
+    .obliterate_punct_1() %>%
+    .obliterate_line_break_1() %>%
     obliterate_conflict_1() %>%
     obliterate_conflict_2() %>%
     obliterate_disclosure_1() %>%   # Adds 30s overhead!
@@ -2114,21 +2114,21 @@ rt_fund_pmc <- function(filename, remove_ns = F) {
 
     article_xml <-
       filename %>%
-      read_xml() %>%
-      xml_ns_strip()
+      xml2::read_xml() %>%
+      xml2::xml_ns_strip()
 
   } else {
 
     article_xml <-
       filename %>%
-      read_xml()
+      xml2::read_xml()
 
   }
   # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
 
 
   # Extract IDs
-  out %<>% purrr::list_modify(!!!map(xpath, ~ .get_text(article_xml, .x, T)))
+  out %<>% purrr::list_modify(!!!purrr::map(xpath, ~ .get_text(article_xml, .x, T)))
 
 
   # Capture fund-group elements
@@ -2173,7 +2173,7 @@ rt_fund_pmc <- function(filename, remove_ns = F) {
   # Extract article text into a vector
   ack <- .xml_ack(article_xml)
   body <- .xml_body(article_xml, get_last_two = T)
-  footnotes <- .xml_footnotes(article_xml) %>% obliterate_contribs()
+  footnotes <- .xml_footnotes(article_xml) %>% .obliterate_contribs()
   article <- c(footnotes, body, ack)
 
 
@@ -2195,12 +2195,12 @@ rt_fund_pmc <- function(filename, remove_ns = F) {
   article_processed <-
     article %>%
     iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
-    obliterate_fullstop_1() %>%
-    obliterate_semicolon_1() %>%  # adds minimal overhead
-    obliterate_comma_1() %>%   # adds minimal overhead
-    obliterate_apostrophe_1() %>%
-    obliterate_punct_1() %>%
-    obliterate_line_break_1() %>%
+    .obliterate_fullstop_1() %>%
+    .obliterate_semicolon_1() %>%  # adds minimal overhead
+    .obliterate_comma_1() %>%   # adds minimal overhead
+    .obliterate_apostrophe_1() %>%
+    .obliterate_punct_1() %>%
+    .obliterate_line_break_1() %>%
     obliterate_conflict_1() %>%
     obliterate_conflict_2() %>%
     obliterate_disclosure_1() %>%   # Adds 30s overhead!

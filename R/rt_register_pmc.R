@@ -3,6 +3,7 @@
 #' Extract the index of mentions such as: "The study is registered at
 #'     www.clinicaltrials.gov (NCT01624883)."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 .which_ct_1 <- function(article) {
 
@@ -19,14 +20,16 @@
 #'     ClinicalTrial.gov NCT01489592) was approved by the Ethics Committee of
 #'     Rennes University Hospital."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_ct_2 <- function(article, synonyms) {
+.which_ct_2 <- function(article, dict) {
 
   the_study <- "(This|The|It|There) ([a-zA-Z0-9]+\\s){0,2}(randomi(z|s)ed|study|trial|was a|is a|were)"
   ct_nct <- "([Cc]linical[Tt]rial.* NCT[0-9]{8}|ISRCTN[0-9]{8}|ChiCTR-IOR-[0-9]{5})"
 
   c(the_study, ct_nct) %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -36,8 +39,10 @@
 #'
 #' Extract the index of mentions such as: "Registered on ClinicalTrials.gov (NCT12345678)."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_ct_3 <- function(article, synonyms) {
+.which_ct_3 <- function(article, dict) {
 
   ct_nct <- c(
     "(^|\\.)[a-zA-Z0-9\\s,]+[Cc]linical[Tt]rials",
@@ -45,7 +50,7 @@
   )
 
   ct_nct %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 }
 
@@ -56,6 +61,7 @@
 #'     meta-analysis with the PROSPERO database (www.crd.york.ac.uk/prosper
 #'     o)—registration no. CRD42014015595."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 .which_prospero_1 <- function(article) {
 
@@ -73,54 +79,56 @@
 #'     Castellana Grotte (Ba), Italy, and it was part of a registered research
 #'     on https://www.clinicaltrials.gov, reg. number: NCT01244945."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registered_1 <- function(article, synonyms) {
+.which_registered_1 <- function(article, dict) {
 
   words <- c("this", "research_lower_strict", "and", "registered_registration")
   # Too generic without research & registered, or if including registration
 
   this_research <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(1, 2)]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
     paste(collapse = .max_words(" ", 5, space_first = F))
 
   this_research_registered <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(1, 2, 4)]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
     paste(collapse = .max_words(" ", 5, space_first = F))
 
   and_registered <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(3:4)]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
     paste(collapse = .max_words(" ", 5, space_first = F))
 
   research_and_registered <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[2]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
-    paste(and_registered, sep = synonyms$txt)
+    paste(and_registered, sep = dict$txt)
 
   this_research_and_registered <-
     this_research %>%
-    paste(and_registered, sep = synonyms$txt)
+    paste(and_registered, sep = dict$txt)
 
   # c(this_research_registered, research_and_registered) %>%
   #   lapply(.encase) %>%
   #   .encase() %>%
-  #   paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = synonyms$txt) %>%
+  #   paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = dict$txt) %>%
   #   grep(article, perl = T)
 
   c(this_research_registered, this_research_and_registered) %>%
     lapply(.encase) %>%
     .encase() %>%
-    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = synonyms$txt) %>%
+    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -131,15 +139,17 @@
 #' Extract the index of mentions such as: " EPGP is registered with
 #'     clinicaltrials.gov (NCT00552045)."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registered_2 <- function(article, synonyms) {
+.which_registered_2 <- function(article, dict) {
 
   c("(^|\\.\\s*)(Ethical|Approval|(|The )[A-Z][A-Z]+)",
     "(registered|registration)",
     "([Tt]rial|[Ss]tudy)"
   ) %>%
-    paste(collapse = synonyms$txt) %>%
-    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
+    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -150,11 +160,13 @@
 #' Extract the index of mentions such as: "registered with Clinical Trials
 #'     (ChiCTR-IOR-14005438)"
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registered_3 <- function(article, synonyms) {
+.which_registered_3 <- function(article, dict) {
 
   c("([Tt]rial|[Pp]rotocol) (registered|registration) (with\\b|under\\b|on\\b|at\\b|as\\b)") %>%
-    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = synonyms$txt) %>%
+    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -167,20 +179,22 @@
 #'     Committee of the Capital Region of Denmark (H-3-2010-127), and all
 #'     subjects provided informed written consent to participate."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registered_4 <- function(article, synonyms) {
+.which_registered_4 <- function(article, dict) {
 
   words <- c("this", "registered", "research_lower_strict")
   # Too generic without research & registered, or if including registration
 
-  synonyms$this <- append(synonyms$this, "\\b[Ww]e")
+  dict$this <- append(dict$this, "\\b[Ww]e")
 
-  synonyms %>%
+  dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
     paste(collapse = .max_words(" ", 5, space_first = F)) %>%
-    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = synonyms$txt) %>%
+    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -193,36 +207,38 @@
 #'     local ethics committee (Ref: DGRI CCTIRS MG/CP09.503, 9 July 2009) and
 #'     registered at ClinicalTrials.gov (NCT01195818)."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registered_5 <- function(article, synonyms) {
+.which_registered_5 <- function(article, dict) {
 
   words <- c("this", "research_strict", "and", "registered_registration")
   SOME <- "\\([a-zA-Z]+\\)"
   # Too generic without research & registered, or if including registration
 
   SOME_research <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[2]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
     paste(SOME, .)
 
   the_SOME_research <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[1]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
-    paste(SOME_research, sep = synonyms$txt)
+    paste(SOME_research, sep = dict$txt)
 
   the_SOME_research_registered <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[4]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
     paste(the_SOME_research, ., sep = .max_words(" ", 5, space_first = F))
 
   and_registered <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(3:4)]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
@@ -230,13 +246,13 @@
 
   the_SOME_research_and_registered <-
     the_SOME_research %>%
-    paste(and_registered, sep = synonyms$txt)
+    paste(and_registered, sep = dict$txt)
 
 
   c(the_SOME_research_registered, the_SOME_research_and_registered) %>%
     lapply(.encase) %>%
     .encase() %>%
-    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = synonyms$txt) %>%
+    paste("([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -247,12 +263,14 @@
 #' Extract the index of mentions such as: "This trial and its protocol were not
 #'     registered on a publicly accessible registry."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_not_registered_1 <- function(article, synonyms) {
+.which_not_registered_1 <- function(article, dict) {
 
   words <- c("this", "research_lower_strict")
 
-  synonyms %>%
+  dict %>%
     magrittr::extract(words) %>%
     lapply(.bound, location = "both") %>%
     lapply(.encase) %>%
@@ -267,13 +285,15 @@
 #' Extract the index of mentions such as: "Trial registration number is
 #'     TCTR20151021001."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registration_1 <- function(article, synonyms) {
+.which_registration_1 <- function(article, dict) {
 
   words <- c("research_strict", "registration")  # Too generic without these
 
   research_registration <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
@@ -281,7 +301,7 @@
     paste0("(:|-+)")
 
   c(research_registration, "([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})") %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -292,20 +312,22 @@
 #' Extract the index of mentions such as: "Trial registration number is
 #'     TCTR20151021001."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registration_2 <- function(article, synonyms) {
+.which_registration_2 <- function(article, dict) {
 
   words <- c("Research_strict", "registration")
 
   research_registration <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
     paste(collapse = " ")
 
   c(research_registration, "([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})") %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -316,6 +338,7 @@
 #' Extract the index of mentions such as: "Public clinical trial registration
 #'     (www.clinicaltrials.gov) ID# NCT02720653"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 .which_registration_3 <- function(article) {
 
@@ -331,14 +354,16 @@
 #'     Standard Randomised Controlled Trial Number (ISRCTN) registration is
 #'     ISRCTN 49204710."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registration_4 <- function(article, synonyms) {
+.which_registration_4 <- function(article, dict) {
 
   words <- c("This", "research_lower_strict", "registration")
   # Too generic without research & registered, or if including registration
 
   this_research <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(1, 2)]) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
@@ -347,7 +372,7 @@
   c(this_research) %>%
     lapply(.encase) %>%
     .encase() %>%
-    paste("registration", "([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = synonyms$txt) %>%
+    paste("registration", "([A-Z]{2}\\s*[0-9]{2}|[0-9]{5})", sep = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -361,26 +386,28 @@
 #'     Alliance, and an international aHUS patient registry (ClinicalTrials.gov
 #'     NCT01522183)."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_registry_1 <- function(article, synonyms) {
+.which_registry_1 <- function(article, dict) {
 
   words <- c("research_lower_strict", "registry")  # Too generic without these
 
   research_registry <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
-    paste(collapse = synonyms$txt)
+    paste(collapse = dict$txt)
 
   a <-
     c(research_registry, "[\\s,;:]+([A-Z]{2,10}\\s*[0-9]{2}|[0-9]{5})") %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 
   if (!!length(a)) {
 
-    is_false <- .negate_registry_1(article[a], synonyms)
+    is_false <- .negate_registry_1(article[a], dict)
     a <- a[!is_false]
 
   }
@@ -396,8 +423,10 @@
 #'
 #' Extract the index of mentions such as: "Study registration: ..."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_reg_title_1 <- function(article, synonyms) {
+.which_reg_title_1 <- function(article, dict) {
 
   b <- integer()
   d <- integer()
@@ -405,7 +434,7 @@
   words <- c("registration_title")
 
   a <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.title_strict) %>%
@@ -438,7 +467,7 @@
   }
 
   a <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.title_strict, within_text = T) %>%
@@ -461,6 +490,7 @@
 #'
 #' Extract the index of mentions such as: "Trial registration: ..."
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 .which_reg_title_2 <- function(article) {
 
@@ -528,8 +558,10 @@
 #' Extract the index of mentions such as: "Retrospective clinical trial
 #'     registration:"
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_reg_title_3 <- function(article, synonyms) {
+.which_reg_title_3 <- function(article, dict) {
 
   b <- integer()
   d <- integer()
@@ -605,10 +637,12 @@
 
 #' Identify registration titles - specific
 #'
-#' Extract the index of mentions such as: "Clinical trial registration details:"
+#' Extract the index of mentions such as: "Clinical trial registration detail:"
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_reg_title_4 <- function(article, synonyms) {
+.which_reg_title_4 <- function(article, dict) {
 
   b <- integer()
   d <- integer()
@@ -684,7 +718,6 @@
 #'
 #' Extract the index of mentions such as: "Trial registration: ..."
 #'
-#' @param article The text as a vector of strings.
 #' @return Index of element with phrase of interest
 .create_register_pmc_title <- function() {
 
@@ -717,16 +750,18 @@
 #' Extract the index of mentions such as: "The complete study protocol has been
 #'     published previously (Supplement 1)"
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_protocol_1 <- function(article, synonyms) {
+.which_protocol_1 <- function(article, dict) {
 
   words <- c("study protocol", "published", "previously")
 
-  synonyms %>%
+  dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -737,6 +772,7 @@
 #' Extract the index of mentions such as: "Alliance for Clinical Trials in
 #'     Oncology (formerly Cancer and Leukemia Group B) Protocol #369901"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 .which_protocol_2 <- function(article) {
 
@@ -752,14 +788,16 @@
 #'     Kidney Disease, and others; SPECS ClinicalTrials.gov number, NCT00443599;
 #'     Nutrition and Obesity Center at Harvard; NIH 5P30DK040561-17"
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_funded_ct_1 <- function(article, synonyms) {
+.which_funded_ct_1 <- function(article, dict) {
 
 
   # Anything more general contributed more false than true matches
   funded_by_SOME_ct_NCT <- paste0(
     "[Ff]unded by",
-    synonyms$txt,
+    dict$txt,
     "[A-Z]{2,7}.{0,20}[Cc]linical[Tt]rial.{0,20}NCT[0-9]{8}"
   )
 
@@ -774,14 +812,16 @@
 #'     participate This study was approved by the Institutional Review Board of
 #'     Chang Gung Memorial Hospital under registry number 201601023B0."
 #'
+#' @param article A string or a list of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.negate_registry_1 <- function(article, synonyms) {
+.negate_registry_1 <- function(article, dict) {
 
-  research <- synonyms$research %>% .bound %>% .encase
-  registry <- synonyms$registry %>% .bound %>% .encase
+  research <- dict$research %>% .bound %>% .encase
+  registry <- dict$registry %>% .bound %>% .encase
   code <- "[\\s,;:]+([A-Z]{2,10}\\s*[0-9]{2}|[0-9]{5})"
 
-  paste(research, "approv", registry, code, sep = synonyms$txt) %>%
+  paste(research, "approv", registry, code, sep = dict$txt) %>%
     grepl(article, perl = T)
 
 }
@@ -791,6 +831,7 @@
 #'
 #' Negate title mentions that refer to unwanted text.
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 .negate_reg_title_1 <- function(article) {
 
@@ -803,6 +844,7 @@
 #'
 #' Negate mentions such as "Clinical Trial Registration: N/A"
 #'
+#' @param article A string or a list of strings.
 #' @return Index of element with phrase of interest
 .negate_reg_title_2 <- function(article) {
 
@@ -874,7 +916,7 @@
   # "back//fn-group//*[self::d1:title or self::d1:bold or self::d1:italic]"
   back_footnote <-
     article_xml %>%
-    xml_find_all("back//fn-group//*[self::title or self::bold or self::italic]")
+    xml2::xml_find_all("back//fn-group//*[self::title or self::bold or self::italic]")
 
   a <-
     back_footnote %>%
@@ -886,9 +928,9 @@
     b <-
       back_footnote %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents() %>%
-      xml_text() %>%
+      xml2::xml_parent() %>%
+      xml2::xml_contents() %>%
+      xml2::xml_text() %>%
       paste(collapse = " ")
 
     return(b)
@@ -897,11 +939,11 @@
 
   abstract <-
     article_xml %>%
-    xml_find_all("front//abstract//*[self::title or self::bold or self::italic]")
+    xml2::xml_find_all("front//abstract//*[self::title or self::bold or self::italic]")
 
   a <-
     abstract %>%
-    xml_text() %>%
+    xml2::xml_text() %>%
     stringr::str_which(title_regex)
 
   if (!!length(a)) {
@@ -909,9 +951,9 @@
     b <-
       abstract %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents() %>%
-      xml_text() %>%
+      xml2::xml_parent() %>%
+      xml2::xml_contents() %>%
+      xml2::xml_text() %>%
       paste(collapse = " ")
 
     return(b)
@@ -920,11 +962,11 @@
 
   front_footnote <-
     article_xml %>%
-    xml_find_all("front/article-meta//fn//*[self::title or self::bold or self::italic]")
+    xml2::xml_find_all("front/article-meta//fn//*[self::title or self::bold or self::italic]")
 
   a <-
     front_footnote %>%
-    xml_text() %>%
+    xml2::xml_text() %>%
     stringr::str_which(title_regex)
 
   if (!!length(a)) {
@@ -932,9 +974,9 @@
     b <-
       front_footnote %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents() %>%
-      xml_text() %>%
+      xml2::xml_parent() %>%
+      xml2::xml_contents() %>%
+      xml2::xml_text() %>%
       paste(collapse = " ")
 
     return(b)
@@ -1224,21 +1266,21 @@ rt_register_pmc <- function(filename, remove_ns = F) {
 
     article_xml <-
       filename %>%
-      read_xml() %>%
-      xml_ns_strip()
+      xml2::read_xml() %>%
+      xml2::xml_ns_strip()
 
   } else {
 
     article_xml <-
       filename %>%
-      read_xml()
+      xml2::read_xml()
 
   }
   # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
 
 
   # Extract IDs
-  out %<>% purrr::list_modify(!!!map(xpath, ~ .get_text(article_xml, .x, T)))
+  out %<>% purrr::list_modify(!!!purrr::map(xpath, ~ .get_text(article_xml, .x, T)))
   # out <-
   #   xpath %>%
   #   lapply(.get_text, article_xml = article_xml, find_first = T) %>%
@@ -1409,25 +1451,25 @@ rt_register_pmc <- function(filename, remove_ns = F) {
   # Way faster than: out[["is_NCT"]] <- ...
   out$is_NCT <- purrr::some(article, stringr::str_detect, "NCT[0-9]{8}")
 
-  synonyms <- .create_synonyms()
+  dict <- .create_synonyms()
   index_any$reg_title_pmc <- integer()
   index_any$prospero_1 <- .which_prospero_1(article_processed)
-  index_any$registered_1 <- .which_registered_1(article_processed, synonyms)
-  index_any$registered_2 <- .which_registered_2(article_processed, synonyms)
-  index_any$registered_3 <- .which_registered_3(article_processed, synonyms)
-  index_any$registered_4 <- .which_registered_4(article_processed, synonyms)
-  index_any$registered_5 <- .which_registered_5(article_processed, synonyms)
-  index_any$not_registered_1 <- .which_not_registered_1(article_processed, synonyms)
-  index_any$registration_1 <- .which_registration_1(article_processed, synonyms)
-  index_any$registration_2 <- .which_registration_2(article_processed, synonyms)
+  index_any$registered_1 <- .which_registered_1(article_processed, dict)
+  index_any$registered_2 <- .which_registered_2(article_processed, dict)
+  index_any$registered_3 <- .which_registered_3(article_processed, dict)
+  index_any$registered_4 <- .which_registered_4(article_processed, dict)
+  index_any$registered_5 <- .which_registered_5(article_processed, dict)
+  index_any$not_registered_1 <- .which_not_registered_1(article_processed, dict)
+  index_any$registration_1 <- .which_registration_1(article_processed, dict)
+  index_any$registration_2 <- .which_registration_2(article_processed, dict)
   index_any$registration_3 <- .which_registration_3(article_processed)
-  index_any$registration_4 <- .which_registration_4(article_processed, synonyms)
-  index_any$registry_1 <- .which_registry_1(article_processed, synonyms)
-  index_any$reg_title_1 <- .which_reg_title_1(article_processed, synonyms)
-  index_any$reg_title_2 <- .which_reg_title_2(article_processed, synonyms)
-  index_any$reg_title_3 <- .which_reg_title_3(article_processed, synonyms)
-  index_any$reg_title_4 <- .which_reg_title_4(article_processed, synonyms)
-  index_any$funded_ct_1 <- .which_funded_ct_1(article_processed, synonyms)
+  index_any$registration_4 <- .which_registration_4(article_processed, dict)
+  index_any$registry_1 <- .which_registry_1(article_processed, dict)
+  index_any$reg_title_1 <- .which_reg_title_1(article_processed, dict)
+  index_any$reg_title_2 <- .which_reg_title_2(article_processed)
+  index_any$reg_title_3 <- .which_reg_title_3(article_processed, dict)
+  index_any$reg_title_4 <- .which_reg_title_4(article_processed, dict)
+  index_any$funded_ct_1 <- .which_funded_ct_1(article_processed, dict)
   index <- unlist(index_any) %>% unique() %>% sort()
 
   # Tidier but takes a median 11.0 ms vs current, which takes 10.6 ms
@@ -1506,9 +1548,9 @@ rt_register_pmc <- function(filename, remove_ns = F) {
     #
     # article %<>% purrr::keep(magrittr::is_in, methods)
 
-    index_method$ct_2 <- .which_ct_2(article_processed[i], synonyms)
-    index_method$ct_3 <- .which_ct_3(article_processed[i], synonyms)
-    index_method$protocol_1 <- .which_protocol_1(article_processed[i], synonyms)
+    index_method$ct_2 <- .which_ct_2(article_processed[i], dict)
+    index_method$ct_3 <- .which_ct_3(article_processed[i], dict)
+    index_method$protocol_1 <- .which_protocol_1(article_processed[i], dict)
 
     index <- i[unlist(index_method) %>% unique() %>% sort()]
     index_method %<>% purrr::map(function(x) !!length(x))

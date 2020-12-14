@@ -199,7 +199,7 @@ rt_coi <- function(filename) {
   vals <- paste(val1, val2, val3, val4, sep = "|")
   if (grepl(vals, coi_text)) {
     # Make sure that we are not missing the title
-    new_n <- str_count(coi_text, "[cC]ompeting|[cC]onflict")
+    new_n <- stringr::str_count(coi_text, "[cC]ompeting|[cC]onflict")
     # Identify all statements that are not preceded by a title
     # and extract everything from "The author" onwards
     if (new_n == 1 & length(c(is_disclosure, is_declare, is_dual)) == 0) {
@@ -209,7 +209,7 @@ rt_coi <- function(filename) {
     # Do not extract info after the last such sentence, if such info exists.
     # Only do this if "author" is mentioned once.
     # (e.g. 0089, 0097, 0137, 0231)
-    if (str_count(coi_text, "author") < 2) {
+    if (stringr::str_count(coi_text, "author") < 2) {
       val1 <- "(^.*The author.+no.*competing.+interest.*?\\.) [A-Z].*$"
       val2 <- "(^.*The author.+no.*conflict.+interest.*?\\.) [A-Z].*$"
       val3 <- "(^.*All authors.+no.*conflict.+interest.*?\\.) [A-Z].*$"

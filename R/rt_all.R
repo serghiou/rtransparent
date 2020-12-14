@@ -17,6 +17,9 @@
 #' @export
 rt_all <- function(filename) {
 
+  # Avoid automated checking warning in R package development
+  article <- pmid <- NULL
+
   # Extract indicators
   # TODO Modify functions to avoid loading the TXT file multiple times.
   out_ls <- list(

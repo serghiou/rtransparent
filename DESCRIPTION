@@ -1,7 +1,7 @@
 Package: rtransparent
 Type: Package
 Title: Identifies indicators of transparency
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(person("Stylianos", "Serghiou", role = c("aut", "cre"),
                      email = "stelios.serghiou@gmail.com"))
 Description: More about what it does (maybe more than one line)
@@ -12,16 +12,19 @@ LazyData: true
 URL: http://github.com/serghiou/rtransparent
 BugReports: http://github.com/serghiou/rtransparent/issues
 Imports: 
+    dplyr,
     magrittr,
+    oddpub,
+    purrr,
     readr,
-    utf8,
+    rlang,
     stringr,
     tibble,
-    rlang,
-    purrr,
+    tidyselect,
+    tokenizers,
+    utf8,
     xml2,
-    oddpub
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     rmarkdown

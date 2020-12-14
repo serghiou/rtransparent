@@ -17,7 +17,7 @@
     stringr::str_squish() %>%
     stringr::str_replace_all("s\\s+([0-9])", "s\\1") %>%
     .obliterate_contribs() %>%
-    oddpub:::.correct_tokenization()
+    .correct_tokenization()
 
 }
 
@@ -79,8 +79,8 @@
   unwanted_xpath <- paste(unwanted_xpaths, collapse = " | ")
 
   article_xml %>%
-    xml_find_all(unwanted_xpath) %>%
-    xml_remove()
+    xml2::xml_find_all(unwanted_xpath) %>%
+    xml2::xml_remove()
 }
 
 
@@ -95,7 +95,7 @@
     methods <- .xml_methods(article_xml, with_refs = F)
     footnotes <-
       .xml_footnotes(article_xml, all = T) %>%
-      obliterate_contribs()
+      .obliterate_contribs()
 
     article <- c(footnotes, methods, ack, suppl)
 
@@ -108,7 +108,7 @@
     article1 <-
       article_xml %>%
       xml2::xml_find_all(".//p | .//ext-link") %>%
-      # xml_find_all(".//text()[normalize-space()]") %>%
+      # xml2::xml_find_all(".//text()[normalize-space()]") %>%
       xml2::xml_text()
 
     # Required - a version of footnotes
@@ -128,8 +128,8 @@
 
     article <-
       article_xml %>%
-      xml_find_all(".//text()[normalize-space()]") %>%
-      xml_text() %>%
+      xml2::xml_find_all(".//text()[normalize-space()]") %>%
+      xml2::xml_text() %>%
       paste(collapse = " ")
 
     return(article)
@@ -236,7 +236,7 @@ rt_data_pmc_specific <- function(filename) {
 
   article_xml <- xml2::read_xml(filename) %>% xml2::xml_ns_strip()
 
-  out %<>% purrr::list_modify(!!!map(xpath, ~ .get_text(article_xml, .x, T)))
+  out %<>% purrr::list_modify(!!!purrr::map(xpath, ~ .get_text(article_xml, .x, T)))
 
   if (nchar(out$doi) == 0) {
 
@@ -281,14 +281,14 @@ rt_data_pmc_specific <- function(filename) {
   unwanted_xpath <- paste(unwanted_xpaths, collapse = " | ")
 
   article_xml %>%
-    xml_find_all(unwanted_xpath) %>%
-    xml_remove(free = T)
+    xml2::xml_find_all(unwanted_xpath) %>%
+    xml2::xml_remove(free = T)
 
   # Processing time is only marginally higher than combining xpaths into one
   ack <- .xml_ack(article_xml)
   suppl <- .xml_suppl(article_xml)
   methods <- .xml_methods(article_xml, with_refs = F)
-  footnotes <- .xml_footnotes(article_xml, all = T) %>% obliterate_contribs()
+  footnotes <- .xml_footnotes(article_xml, all = T) %>% .obliterate_contribs()
   article <- c(footnotes, methods, ack, suppl)
 
 
@@ -296,11 +296,11 @@ rt_data_pmc_specific <- function(filename) {
   data <- "\\b[Dd]ata\\b|[Dd]ataset|\\b[Ff]ile\\b|download|[Ss]har|[Aa]vailabl"
   code <- "\\b[Cc]ode\\b|\\b[Ss]cript\\b|GitHub|BitBucket"
 
-  has_data <- stringr::str_detect(article, regex(data, ignore_case = T))
-  has_code <- stringr::str_detect(article, regex(code, ignore_case = T))
+  has_data <- stringr::str_detect(article, stringr::regex(data, ignore_case = T))
+  has_code <- stringr::str_detect(article, stringr::regex(code, ignore_case = T))
 
-  # has_data <- stringr::str_which(article, regex(data, ignore_case = T))
-  # has_code <- stringr::str_which(article, regex(code, ignore_case = T))
+  # has_data <- stringr::str_which(article, stringr::regex(data, ignore_case = T))
+  # has_code <- stringr::str_which(article, stringr::regex(code, ignore_case = T))
 
   # out$is_relevant_data <- !!length(has_data)
   # out$is_relevant_code <- !!length(has_code)
@@ -322,12 +322,9 @@ rt_data_pmc_specific <- function(filename) {
   # names(article_tokens) <- out$doi
 
   indicators <- oddpub::open_data_search(article_tokens)
-  sentences <- oddpub::open_data_sentences(article_tokens)
-
-  adjudication <- suppressMessages(dplyr::full_join(indicators, sentences))
   out <- tibble::as_tibble(out)
 
-  dplyr::bind_cols(out, adjudication) %>% dplyr::select(-article)
+  dplyr::bind_cols(out, indicators) %>% dplyr::select(-article)
 }
 
 
@@ -392,7 +389,7 @@ rt_data_code_pmc <- function(filename, remove_ns = T, specificity = "low") {
   # Tokenize
   article_tokens <-
     article %>%
-    obliterate_fullstop_1() %>%
+    .obliterate_fullstop_1() %>%
     .tokenize() %>%
     list() %>%
     rlang::set_names(id_df$doi)
@@ -453,6 +450,9 @@ rt_data_code_pmc_list <- function(filenames,
                                   remove_ns = T,
                                   specificity = "low") {
 
+  # Avoid automated checking warning in R package development
+  doi <- NULL
+
   article_xmls <-
     filenames %>%
     purrr::map(~ tryCatch(.get_xml(.x, remove_ns), error = function(e) e))
@@ -490,7 +490,7 @@ rt_data_code_pmc_list <- function(filenames,
   # Tokenize (fast)
   articles_tokens <-
     articles %>%
-    purrr::map(obliterate_fullstop_1) %>%
+    purrr::map(.obliterate_fullstop_1) %>%
     purrr::map(.tokenize) %>%
     rlang::set_names(id_dfs$doi)
 
@@ -547,18 +547,21 @@ rt_data_code_pmc_list <- function(filenames,
 # will default to the sensitive for now.
 rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
 
+  # Avoid automated checking warning in R package development
+  doi <- is_research <- is_review <- a <- article1 <- NULL
+
   if (remove_ns) {
 
     article_xmls <-
       filenames %>%
-      map(xml2::read_xml) %>%
-      map(xml2::xml_ns_strip)  # This is slow
+      purrr::map(xml2::read_xml) %>%
+      purrr::map(xml2::xml_ns_strip)  # This is slow
 
   } else {
 
     article_xmls <-
       filenames %>%
-      map(xml2::read_xml)
+      purrr::map(xml2::read_xml)
 
   }
 
@@ -579,7 +582,7 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
   id_df <-
     article_xmls %>%
     purrr::map_dfr(.get_id) %>%
-    mutate(doi = ifelse(nchar(doi) == 0, "not found", doi))
+    dplyr::mutate(doi = ifelse(nchar(doi) == 0, "not found", doi))
 
 
   .get_type <- function(article_xml) {
@@ -602,11 +605,12 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
     is_research <- magrittr::is_in(type, research_types)
     is_review <- magrittr::is_in(type, review_types)
 
-    tibble(is_research, is_review)
+    tibble::tibble(is_research, is_review)
   }
 
   type_df <- purrr::map_dfr(article_xmls, .get_type)
-  is_type <- type_df %>% mutate(a = is_research | is_review) %>% pull(a)
+  is_type <-
+    type_df %>% dplyr::mutate(a = is_research | is_review) %>% dplyr::pull(a)
 
 
   .remove_elements <- function(article_xml, extensive = T) {
@@ -639,8 +643,8 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
     unwanted_xpath <- paste(unwanted_xpaths, collapse = " | ")
 
     article_xml %>%
-      xml_find_all(unwanted_xpath) %>%
-      xml_remove()
+      xml2::xml_find_all(unwanted_xpath) %>%
+      xml2::xml_remove()
     }
   }
 
@@ -659,7 +663,7 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
       methods <- .xml_methods(article_xml, with_refs = F)
       footnotes <-
         .xml_footnotes(article_xml, all = T) %>%
-        obliterate_contribs()
+        .obliterate_contribs()
 
       article <- c(footnotes, methods, ack, suppl)
 
@@ -667,14 +671,14 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
 
       article1 <-
         article_xml %>%
-        xml_find_all(".//p | .//ext-link") %>%
-        # xml_find_all(".//text()[normalize-space()]") %>%
-        xml_text()
+        xml2::xml_find_all(".//p | .//ext-link") %>%
+        # xml2::xml_find_all(".//text()[normalize-space()]") %>%
+        xml2::xml_text()
 
       # Required - a version of footnotes
       article2 <-
         article_xml %>%
-        xml_find_all(".//custom-meta | .//notes") %>%
+        xml2::xml_find_all(".//custom-meta | .//notes") %>%
         purrr::map(~ xml_contents(.x) %>% xml_text) %>%
         purrr::map_chr(paste, collapse = ": ")
 
@@ -721,8 +725,8 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
     code <- paste(code_synonyms, collapse = "|")
 
 
-    has_data <- stringr::str_detect(article, regex(data, ignore_case = T))
-    has_code <- stringr::str_detect(article, regex(code, ignore_case = T))
+    has_data <- stringr::str_detect(article, stringr::regex(data, ignore_case = T))
+    has_code <- stringr::str_detect(article, stringr::regex(code, ignore_case = T))
 
     is_relevant_data <- any(has_data)
     is_relevant_code <- any(has_code)
@@ -742,7 +746,7 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
   relevance_df <- purrr::map_dfr(articles, .check_relevance, any = F)
 
 
-  articles %<>% purrr::map(obliterate_fullstop_1)
+  articles %<>% purrr::map(.obliterate_fullstop_1)
 
   # No speed difference
   # article <- article[has_data]
@@ -755,28 +759,26 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
 
   # These are slow
   indicator_df <- oddpub::open_data_search(articles_tokenized)
-  sentences_df <- oddpub::open_data_sentences(articles_tokenized)
 
-
-  meta_df <- bind_cols(id_df, type_df)
+  meta_df <- dplyr::bind_cols(id_df, type_df)
 
   relevant_df <-
     meta_df %>%
-    # filter(is_type) %>%
-    bind_cols(relevance_df, indicator_df, sentences_df)
+    # dplyr::filter(is_type) %>%
+    dplyr::bind_cols(relevance_df, indicator_df)
 
-  bind_rows(meta_df %>% filter(!is_type), relevant_df) %>% select(-article1)
+  dplyr::bind_rows(meta_df %>% dplyr::filter(!is_type), relevant_df) %>%
+    dplyr::select(-article1)
 }
 
 
 .pdf_load <- function(filenames) {
 
-  out_list <-
-    filenames %>%
-    lapply(read_lines) %>%
+  filenames %>%
+    lapply(readr::read_lines) %>%
     lapply(function(x) iconv(x, from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "")) %>%
     lapply(.tokenize) %>%
-    {set_names(., sample(length(.)))}
+    {rlang::set_names(., sample(length(.)))}
 }
 
 
@@ -787,14 +789,14 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
 
     article_xml <-
       filename %>%
-      read_xml() %>%
-      xml_ns_strip()
+      xml2::read_xml() %>%
+      xml2::xml_ns_strip()
 
   } else {
 
     article_xml <-
       filename %>%
-      read_xml()
+      xml2::read_xml()
 
   }
 
@@ -840,20 +842,20 @@ rt_data_pmc_specific_list <- function(filenames, remove_ns = T) {
   unwanted_xpath <- paste(unwanted_xpaths, collapse = " | ")
 
   article_xml %>%
-    xml_find_all(unwanted_xpath) %>%
-    xml_remove(free = T)
+    xml2::xml_find_all(unwanted_xpath) %>%
+    xml2::xml_remove(free = T)
 
   article <-
     article_xml %>%
-    xml_find_all(".//text()[normalize-space()]") %>%  # adds space b/t elements
-    xml_text() %>%
+    xml2::xml_find_all(".//text()[normalize-space()]") %>%  # adds space b/t elements
+    xml2::xml_text() %>%
     paste(collapse = " ")
 
 
   new_name <-
     filename %>%
-    str_replace("xml", "txt") %>%
-    str_replace("XMLs", "xml_to_txt")
+    stringr::str_replace("xml", "txt") %>%
+    stringr::str_replace("XMLs", "xml_to_txt")
 
   write(article, new_name)
 }
@@ -864,8 +866,8 @@ rt_data_pmc_txt <- function(filename_txt) {
 
   filename_xml <-
     filename_txt %>%
-    str_replace("xml_to_txt", "XMLs") %>%
-    str_replace("txt", "xml")
+    stringr::str_replace("xml_to_txt", "XMLs") %>%
+    stringr::str_replace("txt", "xml")
 
 
   xpath <- c(
@@ -887,11 +889,11 @@ rt_data_pmc_txt <- function(filename_txt) {
   )
 
 
-  article_xml <- filename_xml %>% read_xml()
-  article <- filename_txt %>% read_lines()
+  article_xml <- filename_xml %>% xml2::read_xml()
+  article <- filename_txt %>% readr::read_lines()
 
 
-  out %<>% purrr::list_modify(!!!map(xpath, ~ .get_text(article_xml, .x, T)))
+  out %<>% purrr::list_modify(!!!purrr::map(xpath, ~ .get_text(article_xml, .x, T)))
 
   if (nchar(out$doi) == 0) {
 
@@ -904,8 +906,8 @@ rt_data_pmc_txt <- function(filename_txt) {
   data <- "\\b[Dd]ata\\b|[Dd]ataset|\\b[Ff]ile\\b|download|[Ss]har|[Aa]vailabl"
   code <- "\\b[Cc]ode\\b|\\b[Ss]cript\\b|GitHub|BitBucket"
 
-  has_data <- stringr::str_detect(article, regex(data, ignore_case = T))
-  has_code <- stringr::str_detect(article, regex(code, ignore_case = T))
+  has_data <- stringr::str_detect(article, stringr::regex(data, ignore_case = T))
+  has_code <- stringr::str_detect(article, stringr::regex(code, ignore_case = T))
 
   out$is_relevant_data <- any(has_data)
   out$is_relevant_code <- any(has_code)
@@ -919,10 +921,7 @@ rt_data_pmc_txt <- function(filename_txt) {
 
 
   indicators <- oddpub::open_data_search(article_tokens)
-  sentences <- oddpub::open_data_sentences(article_tokens)
-
-  adjudication <- suppressMessages(dplyr::full_join(indicators, sentences))
   out <- tibble::as_tibble(out)
 
-  dplyr::bind_cols(out, adjudication) %>% dplyr::select(-article)
+  dplyr::bind_cols(out, indicators) %>% dplyr::select(-article)
 }

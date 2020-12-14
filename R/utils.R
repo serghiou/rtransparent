@@ -2,6 +2,8 @@
 #'
 #' Returns the list of paragraphs without potentially misleading fullstops.
 #'
+
+
 #' @param article A List with paragraphs of interest.
 #' @return The list of paragraphs without misleading fullstops.
 .obliterate_fullstop_1 <- function(article) {
@@ -96,7 +98,7 @@
 }
 
 
-#' Remove "\n"
+#' Remove break of line tags.
 #'
 #' Removes missed breaks of line
 #'
@@ -145,12 +147,53 @@
   contribs_intxt <- paste0(contribs, "\\s*(:|-|\\.)", txt, "\\.")
 
   article %>%
-    str_replace_all(contribs_title, "") %>%
-    str_replace_all(contribs_intxt, "")
+    stringr::str_replace_all(contribs_title, "") %>%
+    stringr::str_replace_all(contribs_intxt, "")
     # not very effective without removing full stops
 
 }
 
+
+# Function copied from the oddpub package included here to avoid using `:::`.
+# Need to use here because this package is re-implementing tokenization.
+# Author: Nico Riedel.
+.correct_tokenization <- function(PDF_text)
+{
+  PDF_text_corrected <- PDF_text
+  sentence_paste_idx <- PDF_text %>%
+    stringr::str_sub(-13, -1) %>%
+    stringr::str_detect("accession nr.|accession no.|ccession nos.|ccession nrs.") %>%
+    which()
+
+  #for all indicies do a pairwise pasting
+  if(length(sentence_paste_idx) > 0)
+  {
+    for(i in 1:length(sentence_paste_idx))
+    {
+      PDF_text_corrected <- .paste_idx(PDF_text_corrected, sentence_paste_idx[i]-(i-1))
+    }
+  }
+
+  return(PDF_text_corrected)
+}
+
+#helper function for .correct_tokenization
+#pastes together sentences where tokenization needs to be corrected by index
+.paste_idx <- function(PDF_text, idx)
+{
+  #create dummy sentences such that the indexing always works correctly,
+  #even with only one element in PDF_text
+  PDF_text_pasted <- c("x", PDF_text, "x")
+  idx <- idx + 1 #shift idx due to dummy sentence
+
+  PDF_text_pasted <- c(PDF_text_pasted[1:(idx-1)],
+                       paste(PDF_text_pasted[idx], PDF_text_pasted[idx+1]),
+                       PDF_text_pasted[(idx+2):length(PDF_text_pasted)])
+  #remove dummy elemets
+  PDF_text_pasted <- PDF_text_pasted[c(-1, -length(PDF_text_pasted))]
+
+  return(PDF_text_pasted)
+}
 
 
 #' Find the index of the references
@@ -249,6 +292,7 @@
 #'
 #' Find the index of the start of the Methods section.
 #'
+#' @param article The text as a vector of strings.
 #' @return Index of element with phrase of interest
 .where_methods_txt  <- function(article) {
 
@@ -356,6 +400,7 @@
 #'
 #' @param x A vector of strings.
 #' @param n_max Number of maximum words allowed
+#' @param space_first If TRUE space first (default), else space last.
 #' @return A vector of bounded strings.
 .max_words <- function(x, n_max = 3, space_first = T) {
 
@@ -425,6 +470,7 @@
 #'     capital and the rest can be any case.
 #'
 #' @param x A vector of strings.
+#' @param location Whether to "start", "end" or "both" with a capital letter.
 #' @return A string pattern.
 .first_capital <- function(x, location = "both") {
 

@@ -4,17 +4,18 @@
 #'     "Conflicts of Interest".
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_coi_1 <- function(article, synonyms) {
+.which_coi_1 <- function(article, dict) {
 
   a <-
-    synonyms$conflict_title %>%
+    dict$conflict_title %>%
     .encase() %>%
     grep(article, ignore.case = T)
 
   if (!!length(a)) {
 
-    a %<>% purrr::keep(~ .negate_coi_1(article[.x], synonyms))
+    a %<>% purrr::keep(~ .negate_coi_1(article[.x], dict))
 
   }
 
@@ -29,10 +30,11 @@
 #'     that we have no financial or other conflicts of interest."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_coi_2 <- function(article, synonyms) {
+.which_coi_2 <- function(article, dict) {
 
-  txt <- synonyms$txt
+  txt <- dict$txt
 
   conflict_1 <- "no "
   conflict_2 <- "(conflict|competing)"
@@ -55,19 +57,20 @@
 #'     Nothing to disclose.
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of element with phrase of interest
-.which_disclosure_1 <- function(article, synonyms) {
+.which_disclosure_1 <- function(article, dict) {
 
   a <- agrep("disclosure", article, ignore.case = T)
   is_financial <- agrepl("financial disclosure", article[a])
 
   if (any(is_financial)) {
 
-    a %<>% purrr::keep(~ .negate_disclosure_1(article[.x], synonyms))
+    a %<>% purrr::keep(~ .negate_disclosure_1(article[.x], dict))
 
   } else {
 
-    a %<>% purrr::keep(~ .negate_disclosure_2(article[.x], synonyms))
+    a %<>% purrr::keep(~ .negate_disclosure_2(article[.x], dict))
 
   }
 
@@ -83,10 +86,11 @@
 #'     relationship with GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_commercial_1 <- function(article, synonyms) {
+.which_commercial_1 <- function(article, dict) {
 
-  txt <- synonyms$txt
+  txt <- dict$txt
 
   commerce_0 <- "([Aa]uthor|[Ee]ditor|[Rr]eviewer|[Ss]tudy|party|has |have |No)"
   commerce_1 <- "(commerically|commercial|financial)"
@@ -109,10 +113,11 @@
 #'     nature from GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_benefit_1 <- function(article, synonyms) {
+.which_benefit_1 <- function(article, dict) {
 
-  txt <- synonyms$txt
+  txt <- dict$txt
 
   benefit_regex_1 <-
     paste0("received", txt, "benefit", txt, "from", txt, "commercial")
@@ -137,10 +142,11 @@
 #' Identify mentions such as "SS is a consultant for GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_consultant_1 <- function(article, synonyms) {
+.which_consultant_1 <- function(article, dict) {
 
-  txt <- synonyms$txt
+  txt <- dict$txt
 
   consultant_0 <- "( is a| are)"
   consultant_1 <- "consultant(|s)"
@@ -187,27 +193,28 @@
 #' Identify mentions such as: "SS has received fees from GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_fees_1 <- function(article, synonyms) {
+.which_fees_1 <- function(article, dict) {
 
   words <- c("received_strict", "stock", "fees")
 
   fees <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(2, 3)]) %>%
     unlist() %>%
     .bound() %>%
     .encase()
 
   received <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[1]) %>%
     unlist() %>%
     .bound() %>%
     .encase()
 
   c(received, fees) %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -218,13 +225,14 @@
 #' Identify mentions such as: "SS consults for GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_consults_1 <- function(article, synonyms) {
+.which_consults_1 <- function(article, dict) {
 
   words <- c("consult_all", "speaker")
 
   consults <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     unlist() %>%
     .bound() %>%
@@ -235,8 +243,8 @@
     .bound(location = "both") %>%
     .encase
 
-  name_consults <- paste("[A-Z]\\s*[A-Z]", consults, of, sep = synonyms$txt)
-  consults_name <- paste(consults, "[A-Z]+", sep = synonyms$txt)
+  name_consults <- paste("[A-Z]\\s*[A-Z]", consults, of, sep = dict$txt)
+  consults_name <- paste(consults, "[A-Z]+", sep = dict$txt)
 
   c(name_consults, consults_name) %>%
     .encase() %>%
@@ -251,23 +259,24 @@
 #' Identify mentions such as: "SS has a financial relationship with GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_connections_1 <- function(article, synonyms) {
+.which_connections_1 <- function(article, dict) {
 
-  txt <- synonyms$txt
+  txt <- dict$txt
   words <- c("relationship", "related", "relationship_strict", "related_strict")
   commercial <- "\\bcommercial(|ly)"
   financial <- "\\bfinancial(|y)"
 
   commercial_relation <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(1, 2)]) %>%
     unlist %>%
     .bound %>%
     .encase
 
   financial_relation <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(3, 4)]) %>%
     unlist %>%
     .bound %>%
@@ -289,14 +298,15 @@
 #' Identify mentions such as: "SS declares a relationship with GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_connections_2 <- function(article, synonyms) {
+.which_connections_2 <- function(article, dict) {
 
   declare <- "(disclose(|s)|declare(|s)) (|a|an|no)"
   words <- c("disclose", "relationship")
 
   connection <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[2]) %>%
     unlist %>%
     .bound %>%
@@ -315,21 +325,22 @@
 #' Identify mentions such as: "This study was commercially funded."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_commercial_ack_1 <- function(article, synonyms) {
+.which_commercial_ack_1 <- function(article, dict) {
 
-  txt <- synonyms$txt
+  txt <- dict$txt
   words <- c("commercial", "funded", "interests")
 
   interests <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[c(2, 3)]) %>%
     unlist() %>%
     .bound() %>%
     .encase()
 
   commercial <-
-    # synonyms %>%
+    # dict %>%
     # magrittr::extract(words[1]) %>%
     "commercial(|ly)" %>%
     unlist() %>%
@@ -358,20 +369,20 @@
 #' Identify mentions such as: "SS has the rights to the presented tool."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_rights_1 <- function(article, synonyms) {
+.which_rights_1 <- function(article, dict) {
 
   words <- c("received_strict", "proprietary")
 
-  synonyms %>%
+  dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T, ignore.case = T)
 
 }
-
 
 
 #' Identify founders
@@ -379,16 +390,17 @@
 #' Identify mentions such as: "SS is a founding member of GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_founder_1 <- function(article, synonyms) {
+.which_founder_1 <- function(article, dict) {
 
   words <- c("founder", "for_of")
 
-  synonyms %>%
+  dict %>%
     magrittr::extract(words) %>%
     lapply(.bound) %>%
     lapply(.encase) %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T, ignore.case = T)
 
 }
@@ -400,18 +412,18 @@
 #' Identify mentions such as: "SS is a scientific advisor of GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_advisor_1 <- function(article, synonyms) {
+.which_advisor_1 <- function(article, dict) {
 
-  sci_advisor <- paste("scientific", "advisor", sep = synonyms$txt)
-  of <- synonyms$for_of %>% unlist %>% .bound %>% .encase
+  sci_advisor <- paste("scientific", "advisor", sep = dict$txt)
+  of <- dict$for_of %>% unlist %>% .bound %>% .encase
 
   c(sci_advisor, of) %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, ignore.case = T, perl = T)
 
 }
-
 
 
 #' Identify payments
@@ -419,13 +431,13 @@
 #' Identify mentions such as: "SS was paid by GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_paid_1 <- function(article, synonyms) {
+.which_paid_1 <- function(article, dict) {
 
   grep(" paid ", article, ignore.case = T, perl = T)
 
 }
-
 
 
 #' Identify board membership
@@ -433,10 +445,11 @@
 #' Identify mentions such as: "SS is a member of the board for GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_board_1 <- function(article, synonyms) {
+.which_board_1 <- function(article, dict) {
 
-  txt <- synonyms$txt
+  txt <- dict$txt
 
   partake_synonyms <- c("member(|ship)", "serve(|s|d)", "participate(|s|d)")
   partake <- paste0("(", paste(partake_synonyms, collapse = "|"), ") ")
@@ -456,8 +469,9 @@
 #' Identify mentions such as: "SS was paid by GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_no_coi_1 <- function(article, synonyms) {
+.which_no_coi_1 <- function(article, dict) {
 
   grep("[Nn]o[a-zA-Z\\s]+conflict", article, perl = T)
 
@@ -470,22 +484,23 @@
 #' Identify mentions such as: "SS was paid by GSK."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return Index of elements with phrase of interest
-.which_no_funder_role_1 <- function(article, synonyms) {
+.which_no_funder_role_1 <- function(article, dict) {
 
   words <- c("is_have", "role")
   funders <- "(The [Ff]unders|Funders)"
   no <- c("no", "not") %>% .bound(location = "both") %>% .encase
 
   had <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[1]) %>%
     unlist %>%
     .bound(location = "both") %>%
     .encase
 
   role <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words[2]) %>%
     unlist %>%
     c("involved") %>%
@@ -495,7 +510,7 @@
   in_prep <- "\\bin\\b"
 
   c(funders, had, no, role, in_prep) %>%
-    paste(collapse = synonyms$txt) %>%
+    paste(collapse = dict$txt) %>%
     grep(article, perl = T)
 
 }
@@ -508,11 +523,12 @@
 #'      commoner."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return A boolean indicating whether a disclosure should be retained.
-.negate_coi_1 <- function(article, synonyms) {
+.negate_coi_1 <- function(article, dict) {
 
-  no <- synonyms$no %>% .bound() %>% .encase()
-  no_conflict <- paste(no, "conflict|compet", sep = synonyms$txt)
+  no <- dict$no %>% .bound() %>% .encase()
+  no_conflict <- paste(no, "conflict|compet", sep = dict$txt)
 
   has_capital_c <- grepl("C(?i)onflict(?-i)|C(?i)ompet(?-i)", article, perl = T)
   has_negation <- grepl(no_conflict, article)
@@ -530,12 +546,13 @@
 #'      keep statements such as "The authors disclose not funding received."
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return A boolean indicating whether a disclosure should be retained.
-.negate_disclosure_1 <- function(article, synonyms) {
+.negate_disclosure_1 <- function(article, dict) {
 
   words <- c("no_financial_disclosure", "consult_all", "speaker", "proprietary")
 
-  synonyms %>%
+  dict %>%
     magrittr::extract(words) %>%
     unlist() %>%
     .encase() %>%
@@ -550,11 +567,12 @@
 #' Remove mentions of disclosures such as "Patient Information Disclosure".
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return A boolean indicating whether a disclosure should be retained.
-.negate_disclosure_2 <- function(article, synonyms) {
+.negate_disclosure_2 <- function(article, dict) {
 
   has_capital_d <- grepl("Disclos|DISCLOS", article)
-  has_negation <- grepl(.encase(synonyms$No), article)
+  has_negation <- grepl(.encase(dict$No), article)
   has_author <- grepl("[Aa]uthor[a-zA-Z\\s-]*[dD]isclo", article, perl = T)
   has_punct <- grepl("disclosure(|s)[.:;,]", article, ignore.case = T)
   has_online <- grepl("\\bonline\\b", article, ignore.case = T)
@@ -569,12 +587,13 @@
 #' Remove mentions of honoraria such as "Patients received honoraria".
 #'
 #' @param article The text as a vector of strings.
+#' @param dict A list of regular expressions for each concept.
 #' @return A boolean indicating whether a disclosure should be retained.
-.obliterate_honoraria_1 <- function(article, synonyms) {
+.obliterate_honoraria_1 <- function(article, dict) {
 
   honorary_1 <- "([Pp]articipant|[Pp]rovider|[Ss]ubject|[Pp]atient|[Ff]amil)"
   honorary_2 <- "[Hh]onorari(um|a)"
-  honorary_regex <- paste0(honorary_1, synonyms$txt, honorary_2)
+  honorary_regex <- paste0(honorary_1, dict$txt, honorary_2)
 
   gsub(honorary_regex, "", article, perl = T)
 
@@ -587,8 +606,9 @@
 #' Extract XML titles related to COI statements and all text children.
 #'
 #' @param article_xml The text as an xml_document.
+#' @param dict A list of regular expressions for each concept.
 #' @return The title and its related text as a string.
-.get_coi_pmc_title <- function(article_xml, synonyms) {
+.get_coi_pmc_title <- function(article_xml, dict) {
 
   b <- ""
   words <- c("conflict_title", "disclosure_coi_title")
@@ -598,7 +618,7 @@
   # suffix <- "(?-i)(| \\(COI\\)| \\w+)"
 
   coi_titles <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     unlist %>%
     # .title %>%  # If I uncomment, add the "disclosure" synonyms as postfix
@@ -622,13 +642,13 @@
   # TODO: Turn into a function applied to the back, front and body matters
   back_matter <-
     article_xml %>%
-    xml_find_all("back/*[not(name()='ref-list')]") %>%
-    xml_find_all(".//*[self::title or self::bold or self::italic or self::sup]")
+    xml2::xml_find_all("back/*[not(name()='ref-list')]") %>%
+    xml2::xml_find_all(".//*[self::title or self::bold or self::italic or self::sup]")
 
   a <-
     back_matter %>%
-    xml_text() %>%
-    str_which(regex(coi_titles, ignore_case = T))
+    xml2::xml_text() %>%
+    stringr::str_which(stringr::regex(coi_titles, ignore_case = T))
 
   if (!!length(a)) {
 
@@ -645,24 +665,24 @@
     a <-
       back_matter %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents()
+      xml2::xml_parent() %>%
+      xml2::xml_contents()
 
     if (length(a) == 1) {
 
       b <-
         a %>%
-        xml_parent() %>%
-        xml_parent() %>%
-        xml_contents() %>%
-        xml_text() %>%
+        xml2::xml_parent() %>%
+        xml2::xml_parent() %>%
+        xml2::xml_contents() %>%
+        xml2::xml_text() %>%
         paste(collapse = ": ")
 
     } else {
 
       b <-
         a %>%
-        xml_text() %>%
+        xml2::xml_text() %>%
         paste(collapse = " ")
     }
 
@@ -672,36 +692,36 @@
 
   front_matter <-
     article_xml %>%
-    xml_find_all("front//fn//*[self::title or self::bold or self::italic or self::sup]")
+    xml2::xml_find_all("front//fn//*[self::title or self::bold or self::italic or self::sup]")
 
   a <-
     front_matter %>%
-    xml_text() %>%
-    str_which(regex(coi_titles, ignore_case = T))
+    xml2::xml_text() %>%
+    stringr::str_which(stringr::regex(coi_titles, ignore_case = T))
 
   if (!!length(a)) {
 
     a <-
       front_matter %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents()
+      xml2::xml_parent() %>%
+      xml2::xml_contents()
 
     if (length(a) == 1) {
 
       b <-
         a %>%
-        xml_parent() %>%
-        xml_parent() %>%
-        xml_contents() %>%
-        xml_text() %>%
+        xml2::xml_parent() %>%
+        xml2::xml_parent() %>%
+        xml2::xml_contents() %>%
+        xml2::xml_text() %>%
         paste(collapse = ": ")
 
     } else {
 
       b <-
         a %>%
-        xml_text() %>%
+        xml2::xml_text() %>%
         paste(collapse = " ")
 
     }
@@ -711,7 +731,7 @@
 
 
   coi_titles <-
-    synonyms %>%
+    dict %>%
     magrittr::extract(words) %>%
     unlist %>%
     # .title_strict %>%
@@ -719,36 +739,36 @@
 
   body_matter <-
     article_xml %>%
-    xml_find_all("body/sec//*[self::title or self::bold or self::italic or self::sup]")
+    xml2::xml_find_all("body/sec//*[self::title or self::bold or self::italic or self::sup]")
 
   a <-
     body_matter %>%
-    xml_text() %>%
-    str_which(regex(coi_titles, ignore_case = T))
+    xml2::xml_text() %>%
+    stringr::str_which(stringr::regex(coi_titles, ignore_case = T))
 
   if (!!length(a)) {
 
     a <-
       body_matter %>%
       magrittr::extract(a) %>%
-      xml_parent() %>%
-      xml_contents()
+      xml2::xml_parent() %>%
+      xml2::xml_contents()
 
     if (length(a) == 1) {
 
       b <-
         a %>%
-        xml_parent() %>%
-        xml_parent() %>%
-        xml_contents() %>%
-        xml_text() %>%
+        xml2::xml_parent() %>%
+        xml2::xml_parent() %>%
+        xml2::xml_contents() %>%
+        xml2::xml_text() %>%
         paste(collapse = ": ")
 
     } else {
 
       b <-
         a %>%
-        xml_text() %>%
+        xml2::xml_text() %>%
         paste(collapse = " ")
     }
   }
@@ -764,7 +784,7 @@
 #'
 #' @param article_xml The text as an xml_document.
 #' @return The title and its related text as a string.
-.get_coi_pmc_fn <- function(article_xml, remove_ns = T) {
+.get_coi_pmc_fn <- function(article_xml) {
 
   fn_xpaths <- c(
     "back//fn[@fn-type = 'conflict' or @fn-type = 'COI-statement']",
@@ -775,9 +795,9 @@
 
   coi_fn <-
     article_xml %>%
-    xml_find_all(fn_xpath) %>%
-    xml_contents() %>%
-    xml_text() %>%
+    xml2::xml_find_all(fn_xpath) %>%
+    xml2::xml_contents() %>%
+    xml2::xml_text() %>%
     paste0(collapse = ": ")
 
   if (nchar(coi_fn) == 0) {
@@ -791,8 +811,8 @@
 
     coi_fn <-
       article_xml %>%
-      xml_find_all(sec_xpath) %>%
-      purrr::map(function(x) xml_contents(x) %>% xml_text()) %>%
+      xml2::xml_find_all(sec_xpath) %>%
+      purrr::map(function(x) xml2::xml_contents(x) %>% xml2::xml_text()) %>%
       purrr::map_chr(paste, collapse = ": ") %>%
       paste(collapse = " ")
   }
@@ -943,12 +963,12 @@
     article %>%
     iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
     trimws() %>%
-    obliterate_fullstop_1() %>%
-    obliterate_semicolon_1() %>%  # adds minimal overhead
-    obliterate_comma_1() %>%   # adds minimal overhead
-    obliterate_apostrophe_1() %>%
-    obliterate_punct_1() %>%
-    obliterate_line_break_1() %>%
+    .obliterate_fullstop_1() %>%
+    .obliterate_semicolon_1() %>%  # adds minimal overhead
+    .obliterate_comma_1() %>%   # adds minimal overhead
+    .obliterate_apostrophe_1() %>%
+    .obliterate_punct_1() %>%
+    .obliterate_line_break_1() %>%
     .obliterate_honoraria_1(dict)
 
 
@@ -1052,7 +1072,7 @@
 rt_coi_pmc <- function(filename, remove_ns = F) {
 
   index <- integer()
-  synonyms <- .create_synonyms()
+  dict <- .create_synonyms()
 
   xpath <- c(
     "front/article-meta/article-id[@pub-id-type = 'pmid']",
@@ -1108,21 +1128,21 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
 
     article_xml <-
       filename %>%
-      read_xml() %>%
-      xml_ns_strip()
+      xml2::read_xml() %>%
+      xml2::xml_ns_strip()
 
   } else {
 
     article_xml <-
       filename %>%
-      read_xml()
+      xml2::read_xml()
 
   }
   # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
 
 
   # Extract IDs
-  out %<>% purrr::list_modify(!!!map(xpath, ~ .get_text(article_xml, .x, T)))
+  out %<>% purrr::list_modify(!!!purrr::map(xpath, ~ .get_text(article_xml, .x, T)))
 
 
   # Capture coi fn elements
@@ -1139,7 +1159,7 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
 
 
   # Go through titles
-  title_txt <- .get_coi_pmc_title(article_xml, synonyms)
+  title_txt <- .get_coi_pmc_title(article_xml, dict)
   is_title <- nchar(title_txt) > 0
 
   if (is_title) {
@@ -1159,7 +1179,7 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
   # Extract article text into a vector
   ack <- .xml_ack(article_xml)
   body <- .xml_body(article_xml, get_last_two = T)
-  footnotes <- .xml_footnotes(article_xml) %>% obliterate_contribs()
+  footnotes <- .xml_footnotes(article_xml) %>% .obliterate_contribs()
   article <- c(footnotes, body, ack)
 
 
@@ -1167,8 +1187,8 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
   hi <- "conflict|compet|disclos|declar|\\bcommercial"
   lo <- "fee(|s)\\b|honorari|\\bboard\\b|consult|relation|connection|\\bfinancial|\\b(co|co-)founder|\\bpaid\\b|speaker|\\bemployee|member\\b|funder"
 
-  hi_relevance <- str_detect(article, regex(hi, ignore_case = T))
-  lo_relevance <- str_detect(article, regex(lo, ignore_case = T))
+  hi_relevance <- stringr::str_detect(article, stringr::regex(hi, ignore_case = T))
+  lo_relevance <- stringr::str_detect(article, stringr::regex(lo, ignore_case = T))
 
   article <- article[(hi_relevance + lo_relevance) > 0]
   # rel_regex <- paste(hi_regex, lo_regex, sep = "|")
@@ -1191,22 +1211,22 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
     article %>%
     iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first
     trimws() %>%
-    obliterate_fullstop_1() %>%
-    obliterate_semicolon_1() %>%  # adds minimal overhead
-    obliterate_comma_1() %>%   # adds minimal overhead
-    obliterate_apostrophe_1() %>%
-    obliterate_punct_1() %>%
-    obliterate_line_break_1() %>%
-    .obliterate_honoraria_1(synonyms)
+    .obliterate_fullstop_1() %>%
+    .obliterate_semicolon_1() %>%  # adds minimal overhead
+    .obliterate_comma_1() %>%   # adds minimal overhead
+    .obliterate_apostrophe_1() %>%
+    .obliterate_punct_1() %>%
+    .obliterate_line_break_1() %>%
+    .obliterate_honoraria_1(dict)
 
   index_any$coi_fn_pmc <- integer()
   index_any$coi_title_pmc <- integer()
-  index_any$coi_1 <- .which_coi_1(article_processed, synonyms)
-  index_any$coi_2 <- .which_coi_2(article_processed, synonyms)
-  index_any$disclosure_1 <- .which_disclosure_1(article_processed, synonyms)
-  index_any$commercial_1 <- .which_commercial_1(article_processed, synonyms)
-  index_any$benefit_1 <- .which_benefit_1(article_processed, synonyms)
-  index_any$consultant_1 <- .which_consultant_1(article_processed, synonyms)
+  index_any$coi_1 <- .which_coi_1(article_processed, dict)
+  index_any$coi_2 <- .which_coi_2(article_processed, dict)
+  index_any$disclosure_1 <- .which_disclosure_1(article_processed, dict)
+  index_any$commercial_1 <- .which_commercial_1(article_processed, dict)
+  index_any$benefit_1 <- .which_benefit_1(article_processed, dict)
+  index_any$consultant_1 <- .which_consultant_1(article_processed, dict)
   index_any$grants_1 <- .which_grants_1(article_processed)
   index_any$brief_1 <- .which_brief(article_processed)
   index <- unlist(index_any) %>% unique() %>% sort()
@@ -1222,7 +1242,7 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
 
 
     if (length(index) == 1) {
-      coi_only <- synonyms$conflict_title %>% .encase %>% .title_strict
+      coi_only <- dict$conflict_title %>% .encase %>% .title_strict
       is_coi_only <- stringr::str_detect(out$coi_text, coi_only)
 
       if (is_coi_only & !is.na(article[index + 1])) {
@@ -1241,20 +1261,20 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
 
   if (!!length(i)) {
 
-    index_ack$fees_1 <- .which_fees_1(article_processed[i], synonyms)
-    index_ack$consults_1 <- .which_consults_1(article_processed[i], synonyms)
-    index_ack$connect_1 <- .which_connections_1(article_processed[i], synonyms)
-    index_ack$connect_2 <- .which_connections_2(article_processed[i], synonyms)
+    index_ack$fees_1 <- .which_fees_1(article_processed[i], dict)
+    index_ack$consults_1 <- .which_consults_1(article_processed[i], dict)
+    index_ack$connect_1 <- .which_connections_1(article_processed[i], dict)
+    index_ack$connect_2 <- .which_connections_2(article_processed[i], dict)
     index_ack$commercial_ack_1 <-
-      .which_commercial_ack_1(article_processed[i], synonyms)
-    index_ack$rights_1 <- .which_rights_1(article_processed[i], synonyms)
-    index_ack$founder_1 <- .which_founder_1(article_processed[i], synonyms)
-    index_ack$advisor_1 <- .which_advisor_1(article_processed[i], synonyms)
-    index_ack$paid_1 <- .which_paid_1(article_processed[i], synonyms)
-    index_ack$board_1 <- .which_board_1(article_processed[i], synonyms)
-    index_ack$no_coi_1 <- .which_no_coi_1(article_processed[i], synonyms)
+      .which_commercial_ack_1(article_processed[i], dict)
+    index_ack$rights_1 <- .which_rights_1(article_processed[i], dict)
+    index_ack$founder_1 <- .which_founder_1(article_processed[i], dict)
+    index_ack$advisor_1 <- .which_advisor_1(article_processed[i], dict)
+    index_ack$paid_1 <- .which_paid_1(article_processed[i], dict)
+    index_ack$board_1 <- .which_board_1(article_processed[i], dict)
+    index_ack$no_coi_1 <- .which_no_coi_1(article_processed[i], dict)
     index_ack$no_funder_role_1 <-
-      .which_no_funder_role_1(article_processed[i], synonyms)
+      .which_no_funder_role_1(article_processed[i], dict)
 
     index <- i[unlist(index_ack) %>% unique() %>% sort()]
     index_ack %<>% purrr::map(function(x) !!length(x))
