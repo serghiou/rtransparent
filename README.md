@@ -4,7 +4,7 @@
   
 ## Overview
 
-rtransparent is an R package that automatically identifies and extracts indicators of transparency (data availability, code availability, statements of conflicts of interest, statements of funding, statements of protocol registration) from TXT and PMC XML versions of published research articles in biomedicine.
+`rtransparent` is an R package that automatically identifies and extracts indicators of transparency (data availability, code availability, statements of conflicts of interest, statements of funding, statements of protocol registration) from TXT and PMC XML versions of published research articles in biomedicine.
 
 
 ## Authors
