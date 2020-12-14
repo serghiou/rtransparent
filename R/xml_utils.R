@@ -967,69 +967,10 @@
 }
 
 
-
-.xml_methods <- function(article) {
-
-  # Systematic reviews also have methods and are not consistently marked as such
-  # is_research <-
-  #   article %>%
-  #   xml_find_first("//article[@article-type = 'research-article']") %>%
-  #   rlang::is_empty()
-  #
-  # # Stop if not research
-  # if (!is_research) {
-  #
-  #   return(character())
-  #
-  # }
-
+.xml_methods <- function(article_xml, with_refs = T) {
 
   # TODO Misses methods sections such as "Experimental section"
   # Use the same approach as in title_pmc to better capture what is needed
-
-  # "body/sec[@sec-type = 'materials|methods' or @sec-type = 'methods']"
-  xpath_methods <- "body/sec[contains(@sec-type, 'methods')]"
-  xpath_a <- "body/sec[title/"
-  xpath_b <- "text()[contains(translate(., 'ETHOD', 'ethod'), 'ethod')]]"
-
-  # Remove labels
-  article %>%
-    xml_find_all(xpath = "//label") %>%
-    xml_remove(free = T)
-
-
-  methods <-
-    article %>%
-    xml_find_all(xpath = xpath_methods)
-
-
-  if (!!length(methods)) {
-
-    a <-
-      methods %>%
-      xml_find_all(xpath = ".//p") %>%
-      {magrittr::extract(., 1:min(2, length(.)))} %>%
-      xml_text()
-
-    return(a)
-
-  }
-
-  article %>%
-    xml_find_all(xpath = paste0(xpath_a, xpath_b)) %>%
-    xml_find_all(xpath = ".//p") %>%
-    {magrittr::extract(., 1:min(2, length(.)))} %>%
-    xml_text()
-
-}
-
-
-
-
-
-
-
-.xml_methods <- function(article_xml, with_refs = T) {
 
   # "body/sec[@sec-type = 'materials|methods' or @sec-type = 'methods']"
   xpath_methods <- "body/sec[contains(@sec-type, 'methods')]"
