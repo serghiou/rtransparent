@@ -111,12 +111,9 @@ dplyr::glimpse(all_indicators)
 
 ## Data
 
-First, let us download the PMC XML file for the same article: [Reproducible research practices, transparency, and open access data in the biomedical literature, 2015–2017](https://doi.org/10.1371/journal.pbio.2006930). To do that, I will be using the `metareadr` package and the PMC ID (PubMed Central ID) of this article (PMC 6245499).
+First, let us download the PMC XML file for the same article: [Reproducible research practices, transparency, and open access data in the biomedical literature, 2015–2017](https://doi.org/10.1371/journal.pbio.2006930). To do that, I will be using the `metareadr` package and the PMC ID (PubMed Central ID) of this article (PMC 6245499) (download this package using `devtools::install_github("serghiou/metareadr")`.
 
 ```{r}
-# Install
-devtools::install_github("serghiou/metareadr")
-
 # Download XML file
 metareadr::mt_read_pmcoa(pmcid = "6245499", file_name = "PMID30457984.xml")
 ```

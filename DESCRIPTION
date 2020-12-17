@@ -25,9 +25,12 @@ Imports:
     tidyselect,
     tokenizers,
     utf8,
-    xml2,
+    xml2
 RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     rmarkdown
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr,
+    metareadr
+    
