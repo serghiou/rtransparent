@@ -38,7 +38,10 @@ rt_read_pdf <- function(filepath){
     }
   )
 
-  # Collapse into appropriate format and return
+  # Collapse into appropriate format
   txt_as_string <- paste(txt_as_vector, collapse = "\n")
-  return(txt_as_string)
+
+  # Convert character vector into ASCII to ease text processing
+  txt <- iconv(txt_as_string, from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "")
+  return(txt)
 }
