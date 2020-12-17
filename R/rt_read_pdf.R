@@ -7,7 +7,7 @@
 #'     This function was taken from the package `oddpub` by Nico Riedel and
 #'     hereby modified for the purposes of this package.
 #'
-#' @param filename The name of the TXT file as a string.
+#' @param filepath The path to the TXT file as a string.
 #' @return A character object.
 #' @examples
 #' \dontrun{

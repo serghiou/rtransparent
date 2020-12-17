@@ -7,7 +7,7 @@
 rt_read_pdf(filepath)
 }
 \arguments{
-\item{filename}{The name of the TXT file as a string.}
+\item{filepath}{The path to the TXT file as a string.}
 }
 \value{
 A character object.
