@@ -1,0 +1,182 @@
+---
+title: "Introduction to rtransparent"
+author: Stylianos Serghiou
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+description: >
+  A demonstration of how to use the `rtransparent` package to extract indicators of transparency from published articles in biomedicine.
+vignette: >
+  %\VignetteIndexEntry{rtransparent}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE 
+)
+```
+
+
+`rtransparent` can be used to analyze TXT and PMC XML files. This vignette illustrates how to access example data and use this package to identify and extract indicators of transparency.
+
+```{r setup}
+# Load rtransparent
+library(rtransparent)
+```
+
+
+Note that to run the following code you need to have installed the `dplyr` and `metareadr` packages.
+
+
+
+
+# TXT files
+
+## Data
+
+First, I downloaded the PDF of the open access publication [Reproducible research practices, transparency, and open access data in the biomedical literature, 2015–2017](https://doi.org/10.1371/journal.pbio.2006930) and saved it as "PMID30457984-PMC6245499.pdf" - note that this could also be done programmatically by using the fantastic package [fulltext](https://docs.ropensci.org/fulltext/). Now, let us convert this into a TXT file. Note that for this function to work you need to have installed the poppler PDF rendering library. This can be a pain, but the easiest way to do this is by [using Homebrew](https://formulae.brew.sh/formula/poppler).
+
+```{r, results = 'hold'}
+# Extract txt from pdf
+article <- rt_read_pdf("../inst/extdata/PMID30457984-PMC6245499.pdf")
+
+# Print the first 200 characters
+cat(substr(article, start = 1, stop = 200))
+
+# Save
+write(article, "PMID30457984.txt")
+```
+
+Note that the package automatically takes the name of the file as the PMID (PubMed ID) when reading the TXT file. As such, either name your file using its PMID (as I have done here), or disregard the column "pmid" in the resulting dataframes (see below).
+
+
+## Detect indicators of transparency
+
+Search for any availability of data or code. Note that this is done by utilizing Nico Riedel's great package `oddpub`.
+
+```{r}
+data_code <- rt_data_code("PMID30457984.txt")
+
+# Glimpse
+dplyr::glimpse(data_code)
+```
+
+
+Search for mention of Conflicts of interest (COI).
+
+```{r}
+coi <- rt_coi("PMID30457984.txt")
+
+# Glimpse
+dplyr::glimpse(coi)
+```
+
+
+Search for mention of Funding.
+
+```{r}
+fund <- rt_fund("PMID30457984.txt")
+
+# Glimpse
+dplyr::glimpse(fund)
+```
+
+
+Search for mention of Protocol registration.
+
+```{r}
+register <- rt_register("PMID30457984.txt")
+
+# Glimpse
+dplyr::glimpse(register)
+```
+
+
+Search for all of COI, Funding and Protocol registration concurrently. Note that the functions for data and code utilize the `oddpub` package. As such, they use a slightly different approach to parallelization, which was necessary in running this function across millions of articles, which was not compatible with the rest of the functions. This is why the data and code functions were not implemented within the `rt_all` function.
+
+```{r}
+all_indicators <- rt_all("PMID30457984.txt")
+
+# Glimpse
+dplyr::glimpse(all_indicators)
+```
+
+
+
+# PMC XML files
+
+## Data
+
+First, let us download the PMC XML file for the same article: [Reproducible research practices, transparency, and open access data in the biomedical literature, 2015–2017](https://doi.org/10.1371/journal.pbio.2006930). To do that, I will be using the `metareadr` package and the PMC ID (PubMed Central ID) of this article (PMC 6245499).
+
+```{r}
+# Install
+devtools::install_github("serghiou/metareadr")
+
+# Download XML file
+metareadr::mt_read_pmcoa(pmcid = "6245499", file_name = "PMID30457984.xml")
+```
+
+
+## Detect indicators of transparency
+
+Search for any availability of data or code. Note that this is done by utilizing Nico Riedel's package `oddpub`. Note also the use of the `remove_ns` argument to remove the PMC XML namespace - this is not required if using the new version of `metareadr`, but illustrated in case you are using an old version or downloading these files by yourself.
+
+```{r}
+data_code <- rt_data_code_pmc("PMID30457984.xml", remove_ns = T)
+
+# Glimpse
+dplyr::glimpse(data_code)
+```
+
+
+Search for mention of Conflicts of interest (COI).
+
+```{r}
+coi <- rt_coi_pmc("PMID30457984.xml", remove_ns = T)
+
+# Glimpse
+dplyr::glimpse(coi)
+```
+
+
+Search for mention of Funding.
+
+```{r}
+fund <- rt_fund_pmc("PMID30457984.xml",  remove_ns = T)
+
+# Glimpse
+dplyr::glimpse(fund)
+```
+
+
+Search for mention of Protocol registration.
+
+```{r}
+register <- rt_register_pmc("PMID30457984.xml",  remove_ns = T)
+
+# Glimpse
+dplyr::glimpse(register)
+```
+
+Search for all of COI, Funding and Protocol registration concurrently. Note that the functions for data and code utilize the `oddpub` package. As such, they use a slightly different approach to parallelization, which was necessary in running this function across millions of articles, which was not compatible with the rest of the functions. This is why the data and code functions were not implemented within the `rt_all` function.
+
+
+```{r}
+all_indicators <- rt_all_pmc("PMID30457984.xml",  remove_ns = T)
+
+# Glimpse
+dplyr::glimpse(all_indicators)
+```
+
+
+Remove downloaded files.
+
+```{r}
+file.remove("PMID30457984.txt", "PMID30457984.xml")
+```
+
