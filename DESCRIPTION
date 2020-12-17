@@ -1,11 +1,13 @@
 Package: rtransparent
 Type: Package
 Title: Identifies indicators of transparency
-Version: 0.2.0
+Version: 0.2.5
 Authors@R: c(person("Stylianos", "Serghiou", role = c("aut", "cre"),
                      email = "stelios.serghiou@gmail.com"))
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Use this package to identify indicators of transparency within the
+    published literature. It can identify and extract text related to
+    indicators of transparency from specifically formatted TXT files and from
+    PMC XML files (i.e. XML files downloaed from the PubMed Central).
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
