@@ -232,13 +232,14 @@
 #' @param filename The name of the PMC XML as a string.
 #' @param remove_ns TRUE if an XML namespace exists, else FALSE (default).
 #' @param all_meta TRUE extracts all meta-data, FALSE extracts some (default).
-#' @return A dataframe of results. It returns the unique article identifiers,
-#'     whether each indicator of COI, Funding or Registration was identified,
-#'    whether it was identified through a dedicated XML tag (such variables
-#'    include "pmc" in their name) and whether each labelling function
-#'    identified relevant text or not. The labeling functions are returned to
-#'     add flexibility in how this package is used; for example, future
-#'     definitions of Registration may differ from the one we used. If a
+#' @return A dataframe of results. It returns the unique identifiers of the
+#'     article, whether each of 3 indicators of transparency (COI, Funding or
+#'     Registration) was identified, the relevant text identified, whether it
+#'     was identified through a dedicated XML tag (such variables include "pmc"
+#'     in their name, e.g. “fund_pmc_source”) and whether each labelling
+#'     function identified relevant text or not. The labeling functions are
+#'     returned to add flexibility in how this package is used; for example,
+#'     future definitions of Registration may differ from the one we used. If a
 #'     labelling function returns NA it means that it was not run.
 #' @examples
 #' \dontrun{
