@@ -5,7 +5,14 @@
 #'     found, it also extracts the relevant text.
 #'
 #' @param filename The name of the TXT as a string.
-#' @return A dataframe of results.
+#' @return A dataframe of results. It returns the PMID of the article (if this
+#'     was part of the filename and preceded by "PMID"), whether each indicator
+#'     of COI, Funding or Registration was identified, the identified text and
+#'     whether each labelling function identified relevant text or not. The
+#'     labeling functions are returned to add flexibility in how this package is
+#'     used; for example, future definitions of Registration may differ from the
+#'     one we used. If a labelling function returns NA it means that it was not
+#'     run.
 #' @examples
 #' \dontrun{
 #' # Path to TXT.

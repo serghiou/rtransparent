@@ -2025,7 +2025,15 @@ obliterate_disclosure_1 <- function(article) {
 #'
 #' @param filename The name of the PMC XML as a string.
 #' @param remove_ns TRUE if an XML namespace exists, else FALSE (default).
-#' @return A dataframe of results.
+#' @return A dataframe of results. It returns all unique article identifiers,
+#'     whether this article was deemed relevant to funding (e.g. was the word
+#'     "fund" found within the text), whether a funding statement was found,
+#'     whether a statement within the PMC tags dedicated to funding was found,
+#'     the text identified, whether this text is explicit (i.e. whether it
+#'     clearly indicated that funding was received) and whether each of the
+#'     labeling functions identified the text or not. The functions are
+#'     returned to add flexibility in how this package is used; for example,
+#'     future definitions of Funding may differ from the one we used.
 #' @examples
 #' \dontrun{
 #' # Path to PMC XML.
@@ -2139,6 +2147,8 @@ rt_fund_pmc <- function(filename, remove_ns = F) {
       return(tibble::as_tibble(c(out, index_any, index_ack)))
     }
   }
+  out$is_fund_group_pmc <- FALSE
+  index_any$fund_group_pmc <- FALSE
 
 
   # Capture missed fund-source elements

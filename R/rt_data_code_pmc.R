@@ -342,7 +342,11 @@ rt_data_pmc_specific <- function(filename) {
 #'     text). If "moderate", then it extracts all paragraphs. If "high", then it
 #'     only extracts text from specific locations (footnotes, methods,
 #'     supplements).
-#' @return A dataframe of results. Takes a median of 200ms per article.
+#' @return A dataframe of results. It returns unique IDs of the article,
+#'     whether this article is deemed a research article, whether it is deemed
+#'     relevant to data or code, whether data or code was found, and if so, what
+#'     the text that suggested the presence of data or code was. Takes a median
+#'     of 200ms per article.
 #' @examples
 #' \dontrun{
 #' # Path to PMC XML
