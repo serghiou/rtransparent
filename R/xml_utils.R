@@ -1265,3 +1265,79 @@
   }
 
 }
+
+
+
+#' Reconfigure the PMC XML so that the top node is "article".
+#'
+#' PMC uses different XML top nodes, depending on what service is used to
+#'     download an article. This function standardizes the XML files so that
+#'     they all start from the same root.
+#'
+#' @param article_xml The article as an xml_document.
+#' @returns The xml_document reconfigure to start with the "article" node.
+.reroot_xml <- function(article_xml) {
+
+  top_node_name <- article_xml %>% xml2::xml_name()
+
+  if (top_node_name != "article") {
+
+    article_xml %>%
+      xml2::xml_find_all("//metadata") %>%
+      xml2::as_list() %>%
+      xml2::as_xml_document()
+  }
+}
+
+
+
+#' Read an XML file into an xml_document
+#'
+#' Returns the file as an xml_document.
+#'
+#' @param filename The filepath to the PMC XML file of interest.
+#' @param remove_ns Whether to remove the XML namespace or not (default = F).
+#' @return The PMC XML as an xml_document.
+.get_xml <- function(filename, remove_ns = F) {
+
+  if (remove_ns) {
+
+    article_xml <-
+      filename %>%
+      xml2::read_xml() %>%
+      xml2::xml_ns_strip()
+
+  } else {
+
+    article_xml <-
+      filename %>%
+      xml2::read_xml()
+
+  }
+
+  article_xml_with_correct_root <- .reroot_xml(article_xml)
+  return(article_xml_with_correct_root)
+}
+
+
+
+#' Extract PMIDs and DOIs
+#'
+#' Reads a PMC XML as an xml_document and extracts the DOI, PMID and PMCID as
+#'     a list.
+#'
+#' @param article_xml The article as an xml_document.
+#' @returns A list of PubMed IDs
+.get_ids <- function(article_xml) {
+
+  xpath <- c(
+    "front/article-meta/article-id[@pub-id-type = 'pmid']",
+    "front/article-meta/article-id[@pub-id-type = 'pmc']",
+    "front/article-meta/article-id[@pub-id-type = 'pmc-uid']",
+    "front/article-meta/article-id[@pub-id-type = 'doi']"
+  )
+
+  xpath %>%
+    purrr::map(~ .get_text(article_xml, .x, T)) %>%
+    rlang::set_names(c("pmid", "pmcid_pmc", "pmcid_uid", "doi"))
+}

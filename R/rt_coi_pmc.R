@@ -1124,21 +1124,14 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
   )
 
 
-  if (remove_ns) {
+  # A lot of the PMC XML files are malformed
+  article_xml <- tryCatch(.get_xml(filename, remove_ns), error = function(e) e)
 
-    article_xml <-
-      filename %>%
-      xml2::read_xml() %>%
-      xml2::xml_ns_strip()
+  if (inherits(article_xml, "error")) {
 
-  } else {
-
-    article_xml <-
-      filename %>%
-      xml2::read_xml()
+    return(tibble::tibble(filename, is_success = F))
 
   }
-  # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
 
 
   # Extract IDs
@@ -1207,6 +1200,7 @@ rt_coi_pmc <- function(filename, remove_ns = F) {
 
 
   # Text pre-processing
+  # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
   article_processed <-
     article %>%
     iconv(from = 'UTF-8', to = 'ASCII//TRANSLIT', sub = "") %>%   # keep first

@@ -2110,21 +2110,14 @@ rt_fund_pmc <- function(filename, remove_ns = F) {
   )
 
 
-  if (remove_ns) {
+  # A lot of the PMC XML files are malformed
+  article_xml <- tryCatch(.get_xml(filename, remove_ns), error = function(e) e)
 
-    article_xml <-
-      filename %>%
-      xml2::read_xml() %>%
-      xml2::xml_ns_strip()
+  if (inherits(article_xml, "error")) {
 
-  } else {
-
-    article_xml <-
-      filename %>%
-      xml2::read_xml()
+    return(tibble::tibble(filename, is_success = F))
 
   }
-  # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
 
 
   # Extract IDs
@@ -2171,6 +2164,7 @@ rt_fund_pmc <- function(filename, remove_ns = F) {
 
 
   # Extract article text into a vector
+  # .xml_preprocess(article_xml)  # 5x faster to obliterate within each section
   ack <- .xml_ack(article_xml)
   body <- .xml_body(article_xml, get_last_two = T)
   footnotes <- .xml_footnotes(article_xml) %>% .obliterate_contribs()
