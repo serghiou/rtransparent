@@ -10,14 +10,14 @@ rt_all(filename)
 \item{filename}{The name of the TXT as a string.}
 }
 \value{
-A dataframe of results. It returns the PMID of the article (if this
-    was part of the filename and preceded by "PMID"), whether each indicator
-    of COI, Funding or Registration was identified, the identified text and
-    whether each labelling function identified relevant text or not. The
-    labeling functions are returned to add flexibility in how this package is
-    used; for example, future definitions of Registration may differ from the
-    one we used. If a labelling function returns NA it means that it was not
-    run.
+A dataframe of results. A dataframe of results. It returns the PMID
+    of the article (if this was included in the filename and preced by
+    "PMID"), whether each of 3 indicators of transparency (COI, Funding or
+    Registration) was identified, the relevant text identified and whether
+    each labelling function identified relevant text or not. The labeling
+    functions are eturned to add flexibility in how this package is used; for
+    example, future definitions of Registration may differ from the one we
+    used. If a labelling function returns NA it means that it was not run.
 }
 \description{
 Takes a TXT file and examines whether any statements of Conflicts of Interest
