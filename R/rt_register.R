@@ -951,7 +951,15 @@ find_methods <- function(article) {
 #'     Registration statement exists, it extracts it.
 #'
 #' @param filename The name of the TXT file as a string.
-#' @return A dataframe of results.
+#' @return A dataframe of results. It returns the PMID (if this was part of the
+#'     filename and preceded by PMID), whether a registration statement was
+#'     found, the identified statement, whether the text was deemed relevant
+#'     (e.g. contained the word registration), whether a Methods section was
+#'     identified, whether an NCT number was identified, whether a registration
+#'     was explicitly identified (defunct) and whether each labeling function
+#'     identified a relevant text or not. The labeling functions are returned to
+#'     add flexibility in how this package is used; for example, future
+#'     definitions of Registration may differ from the one we used.
 #' @examples
 #' \dontrun{
 #' # Path to PMC XML.
@@ -1063,6 +1071,7 @@ rt_register <- function(filename) {
 
 
     # Apply a more sensitive search in Methods
+    index_method <- list()
     if (!length(index)) {
 
       # from <- find_methods(paragraphs_pruned)
@@ -1073,7 +1082,6 @@ rt_register <- function(filename) {
 
         paragraphs_pruned[from:to] %<>% lapply(obliterate_refs_1)
 
-        index_method <- list()
         index_method[["ct_2"]] <- get_ct_2(paragraphs_pruned[from:to])
         index_method[["protocol_1"]] <- get_protocol_1(paragraphs_pruned[from:to])
         index <- unlist(index_method) %>% magrittr::add(from - 1)
@@ -1098,14 +1106,20 @@ rt_register <- function(filename) {
 
   }
 
-  tibble::tibble(
-    article,
-    pmid,
-    is_register_pred,
-    register_text,
-    is_relevant,
-    is_method,
-    is_NCT,
-    is_explicit
-  )
+  index_any %<>% purrr::map(function(x) !!length(x))
+  index_method %<>% purrr::map(function(x) !!length(x))
+
+  results <-
+    tibble::tibble(
+      article,
+      pmid,
+      is_register_pred,
+      register_text,
+      is_relevant,
+      is_method,
+      is_NCT,
+      is_explicit
+    )
+
+  tibble::as_tibble(c(results, index_any, index_method))
 }

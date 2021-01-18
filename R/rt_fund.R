@@ -1488,7 +1488,11 @@ obliterate_refs_1 <- function(article) {
 #'     statement exists, it extracts it.
 #'
 #' @param filename The name of the TXT file as a string.
-#' @return A dataframe of results.
+#' @return A dataframe of results. It returns the PMID (if this was part of the
+#'     filename), whether a funding statement was found, what this statement
+#'     was and the name of the function that identified this text. The functions
+#'     are returned to add flexibility in how this package is used, such as
+#'     future definitions of COI that may differ from the one we used.
 #' @examples
 #' \dontrun{
 #' # Path to PMC XML.
@@ -1625,6 +1629,7 @@ rt_fund <- function(filename) {
 
 
   # Identify potentially missed signals
+  index_fund <- list()
   if (!length(index)) {
 
     from <- .where_acknows_txt(paragraphs_pruned)
@@ -1641,7 +1646,6 @@ rt_fund <- function(filename) {
 
       if (diff <= 100) {
 
-        index_fund <- list()
         index_fund[['fund']] <- get_fund_acknow(paragraphs_pruned[from:to])
         index_fund[['project']] <- get_project_acknow(paragraphs_pruned[from:to])
         index <- unlist(index_fund) %>% magrittr::add(from - 1)
@@ -1653,7 +1657,12 @@ rt_fund <- function(filename) {
   is_funded_pred <- !!length(index)
   funding_text <- paragraphs[index] %>% paste(collapse = " ")
 
+  index_any %<>% purrr::map(function(x) !!length(x))
+  index_fund %<>% purrr::map(function(x) !!length(x))
+
   article <- basename(filename) %>% stringr::word(sep = "\\.")
   pmid <- gsub("^.*PMID([0-9]+).*$", "\\1", filename)
-  tibble::tibble(article, pmid, is_funded_pred, funding_text)
+
+  results <- tibble::tibble(article, pmid, is_funded_pred, funding_text)
+  tibble::as_tibble(c(results, index_any, index_fund))
 }

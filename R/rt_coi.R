@@ -5,7 +5,8 @@
 #'     exists, it extracts it.
 #'
 #' @param filename The name of the TXT file as a string.
-#' @return A dataframe of results.
+#' @return A dataframe of results. It returns the filename, PMID (if it was part
+#'     of the file name), whether a COI was found and the text identified.
 #' @examples
 #' \dontrun{
 #' # Path to PMC XML.
