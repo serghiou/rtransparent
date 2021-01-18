@@ -10,7 +10,8 @@ rt_data_code(filename)
 \item{filename}{The name of the TXT file as a string.}
 }
 \value{
-A dataframe of results.
+A dataframe of results. It returns whether text suggesting the
+    presence of data or code was found, and if so, what this text was.
 }
 \description{
 Takes a TXT file and returns data related to the presence of Data and/or Code

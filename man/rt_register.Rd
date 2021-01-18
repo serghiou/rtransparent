@@ -10,7 +10,15 @@ rt_register(filename)
 \item{filename}{The name of the TXT file as a string.}
 }
 \value{
-A dataframe of results.
+A dataframe of results. It returns the PMID (if this was part of the
+    filename and preceded by PMID), whether a registration statement was
+    found, the identified statement, whether the text was deemed relevant
+    (e.g. contained the word registration), whether a Methods section was
+    identified, whether an NCT number was identified, whether a registration
+    was explicitly identified (defunct) and whether each labeling function
+    identified a relevant text or not. The labeling functions are returned to
+    add flexibility in how this package is used; for example, future
+    definitions of Registration may differ from the one we used.
 }
 \description{
 Takes a TXT file and returns data related to the presence of a Registration

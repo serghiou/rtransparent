@@ -10,7 +10,8 @@ rt_coi(filename)
 \item{filename}{The name of the TXT file as a string.}
 }
 \value{
-A dataframe of results.
+A dataframe of results. It returns the filename, PMID (if it was part
+    of the file name), whether a COI was found and the text identified.
 }
 \description{
 Takes a TXT file and returns data related to the presence of a COI

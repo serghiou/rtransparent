@@ -1,0 +1,1581 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2021-01-18T06:57:19Z</responseDate>
+  <request verb="GetRecord" identifier="oai:pubmedcentral.nih.gov:7071725" metadataPrefix="pmc">https:/www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:pubmedcentral.nih.gov:7071725</identifier>
+        <datestamp>2020-03-18</datestamp>
+        <setSpec>bmcmrm</setSpec>
+        <setSpec>pmc-open</setSpec>
+      </header>
+      <metadata>
+        <article xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" xsi:schemaLocation="https://jats.nlm.nih.gov/ns/archiving/1.2/ https://jats.nlm.nih.gov/archiving/1.2/xsd/JATS-archivearticle1.xsd" article-type="research-article">
+          <front>
+            <journal-meta>
+              <journal-id journal-id-type="nlm-ta">BMC Med Res Methodol</journal-id>
+              <journal-id journal-id-type="iso-abbrev">BMC Med Res Methodol</journal-id>
+              <journal-title-group>
+                <journal-title>BMC Medical Research Methodology</journal-title>
+              </journal-title-group>
+              <issn pub-type="epub">1471-2288</issn>
+              <publisher>
+                <publisher-name>BioMed Central</publisher-name>
+                <publisher-loc>London</publisher-loc>
+              </publisher>
+            </journal-meta>
+            <article-meta>
+              <article-id pub-id-type="accession">PMC7071725</article-id>
+              <article-id pub-id-type="pmcid">PMC7071725</article-id>
+              <article-id pub-id-type="pmc-uid">7071725</article-id>
+              <article-id pub-id-type="pmid">32171256</article-id>
+              <article-id pub-id-type="publisher-id">914</article-id>
+              <article-id pub-id-type="doi">10.1186/s12874-020-0914-6</article-id>
+              <article-categories>
+                <subj-group subj-group-type="heading">
+                  <subject>Research Article</subject>
+                </subj-group>
+              </article-categories>
+              <title-group>
+                <article-title>Evaluation of confounding in epidemiologic studies assessing alcohol consumption on the risk of ischemic heart disease</article-title>
+              </title-group>
+              <contrib-group>
+                <contrib contrib-type="author" corresp="yes">
+                  <contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-2816-6905</contrib-id>
+                  <name>
+                    <surname>Wallach</surname>
+                    <given-names>Joshua D.</given-names>
+                  </name>
+                  <address>
+                    <email>joshua.wallach@yale.edu</email>
+                  </address>
+                  <xref ref-type="aff" rid="Aff1">1</xref>
+                  <xref ref-type="aff" rid="Aff2">2</xref>
+                  <xref ref-type="aff" rid="Aff3">3</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                  <name>
+                    <surname>Serghiou</surname>
+                    <given-names>Stylianos</given-names>
+                  </name>
+                  <xref ref-type="aff" rid="Aff4">4</xref>
+                  <xref ref-type="aff" rid="Aff5">5</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                  <name>
+                    <surname>Chu</surname>
+                    <given-names>Lingzhi</given-names>
+                  </name>
+                  <xref ref-type="aff" rid="Aff1">1</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                  <name>
+                    <surname>Egilman</surname>
+                    <given-names>Alexander C.</given-names>
+                  </name>
+                  <xref ref-type="aff" rid="Aff2">2</xref>
+                  <xref ref-type="aff" rid="Aff3">3</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                  <name>
+                    <surname>Vasiliou</surname>
+                    <given-names>Vasilis</given-names>
+                  </name>
+                  <xref ref-type="aff" rid="Aff1">1</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                  <name>
+                    <surname>Ross</surname>
+                    <given-names>Joseph S.</given-names>
+                  </name>
+                  <xref ref-type="aff" rid="Aff3">3</xref>
+                  <xref ref-type="aff" rid="Aff6">6</xref>
+                  <xref ref-type="aff" rid="Aff7">7</xref>
+                  <xref ref-type="aff" rid="Aff8">8</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                  <name>
+                    <surname>Ioannidis</surname>
+                    <given-names>John P. A.</given-names>
+                  </name>
+                  <xref ref-type="aff" rid="Aff4">4</xref>
+                  <xref ref-type="aff" rid="Aff5">5</xref>
+                  <xref ref-type="aff" rid="Aff9">9</xref>
+                  <xref ref-type="aff" rid="Aff10">10</xref>
+                </contrib>
+                <aff id="Aff1"><label>1</label><institution-wrap><institution-id institution-id-type="GRID">grid.47100.32</institution-id><institution-id institution-id-type="ISNI">0000000419368710</institution-id><institution>Department of Environmental Health Sciences, </institution><institution>Yale School of Public Health, </institution></institution-wrap>60 College Street, 4th Floor, Room 411, New Haven, CT 06510 USA </aff>
+                <aff id="Aff2"><label>2</label><institution-wrap><institution-id institution-id-type="GRID">grid.47100.32</institution-id><institution-id institution-id-type="ISNI">0000000419368710</institution-id><institution>Collaboration for Research Integrity and Transparency (CRIT), </institution><institution>Yale School of Medicine, </institution></institution-wrap>New Haven, CT 06510 USA </aff>
+                <aff id="Aff3"><label>3</label><institution-wrap><institution-id institution-id-type="GRID">grid.422880.4</institution-id><institution-id institution-id-type="ISNI">0000 0004 0438 0805</institution-id><institution>Center for Outcomes Research and Evaluation, </institution><institution>Yale-New Haven Health System, </institution></institution-wrap>New Haven, CT 06510 USA </aff>
+                <aff id="Aff4"><label>4</label><institution-wrap><institution-id institution-id-type="GRID">grid.168010.e</institution-id><institution-id institution-id-type="ISNI">0000000419368956</institution-id><institution>Meta-Research Innovation Center at Stanford (METRICS), </institution><institution>Stanford School of Medicine, </institution></institution-wrap>1265 Welch Rd, MSOB X306, Stanford, CA 94305 USA </aff>
+                <aff id="Aff5"><label>5</label><institution-wrap><institution-id institution-id-type="GRID">grid.168010.e</institution-id><institution-id institution-id-type="ISNI">0000000419368956</institution-id><institution>Department of Epidemiology &amp; Population Health, </institution><institution>Stanford School of Medicine, </institution></institution-wrap>150 Governor’s Lane, Stanford, CA 94305 USA </aff>
+                <aff id="Aff6"><label>6</label><institution-wrap><institution-id institution-id-type="GRID">grid.47100.32</institution-id><institution-id institution-id-type="ISNI">0000000419368710</institution-id><institution>Section of General Medicine, Department of Internal Medicine, </institution><institution>Yale School of Medicine, </institution></institution-wrap>367 Cedar Street, Ste 405B, New Haven, CT 06510 USA </aff>
+                <aff id="Aff7"><label>7</label><institution-wrap><institution-id institution-id-type="GRID">grid.47100.32</institution-id><institution-id institution-id-type="ISNI">0000000419368710</institution-id><institution>National Clinician Scholars Program, </institution><institution>Yale School of Medicine, </institution></institution-wrap>367 Cedar Street, Ste 405B, New Haven, CT 06510 USA </aff>
+                <aff id="Aff8"><label>8</label><institution-wrap><institution-id institution-id-type="GRID">grid.47100.32</institution-id><institution-id institution-id-type="ISNI">0000000419368710</institution-id><institution>Department of Health Policy and Management, </institution><institution>Yale School of Public Health, </institution></institution-wrap>60 College Street, New Haven, CT 06510 USA </aff>
+                <aff id="Aff9"><label>9</label><institution-wrap><institution-id institution-id-type="GRID">grid.168010.e</institution-id><institution-id institution-id-type="ISNI">0000000419368956</institution-id><institution>Stanford Prevention Research Center, Department of Medicine, </institution><institution>Stanford University School of Medicine, </institution></institution-wrap>1265 Welch Rd, MSOB X306, Stanford, CA 94305 USA </aff>
+                <aff id="Aff10"><label>10</label><institution-wrap><institution-id institution-id-type="GRID">grid.168010.e</institution-id><institution-id institution-id-type="ISNI">0000000419368956</institution-id><institution>Department of Statistics, </institution><institution>Stanford University School of Humanities and Sciences, </institution></institution-wrap>Stanford, CA 94305 USA </aff>
+              </contrib-group>
+              <pub-date pub-type="epub">
+                <day>14</day>
+                <month>3</month>
+                <year>2020</year>
+              </pub-date>
+              <pub-date pub-type="pmc-release">
+                <day>14</day>
+                <month>3</month>
+                <year>2020</year>
+              </pub-date>
+              <pub-date pub-type="collection">
+                <year>2020</year>
+              </pub-date>
+              <volume>20</volume>
+              <elocation-id>64</elocation-id>
+              <history>
+                <date date-type="received">
+                  <day>24</day>
+                  <month>7</month>
+                  <year>2019</year>
+                </date>
+                <date date-type="accepted">
+                  <day>27</day>
+                  <month>1</month>
+                  <year>2020</year>
+                </date>
+              </history>
+              <permissions>
+                <copyright-statement>© The Author(s). 2020</copyright-statement>
+                <license license-type="OpenAccess">
+                  <license-p><bold>Open Access</bold>This article is distributed under the terms of the Creative Commons Attribution 4.0 International License (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link>), which permits unrestricted use, distribution, and reproduction in any medium, provided you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made. The Creative Commons Public Domain Dedication waiver (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/publicdomain/zero/1.0/">http://creativecommons.org/publicdomain/zero/1.0/</ext-link>) applies to the data made available in this article, unless otherwise stated.</license-p>
+                </license>
+              </permissions>
+              <abstract id="Abs1">
+                <sec>
+                  <title>Background</title>
+                  <p id="Par1">Among different investigators studying the same exposures and outcomes, there may be a lack of consensus about potential confounders that should be considered as matching, adjustment, or stratification variables in observational studies. Concerns have been raised that confounding factors may affect the results obtained for the alcohol-ischemic heart disease relationship, as well as their consistency and reproducibility across different studies. Therefore, we assessed how confounders are defined, operationalized, and discussed across individual studies evaluating the impact of alcohol on ischemic heart disease risk.</p>
+                </sec>
+                <sec>
+                  <title>Methods</title>
+                  <p id="Par2">For observational studies included in a recent alcohol-ischemic heart disease meta-analysis, we identified all variables adjusted, matched, or stratified for in the largest reported multivariate model (i.e. potential confounders). We recorded how the variables were measured and grouped them into higher-level confounder domains. Abstracts and Discussion sections were then assessed to determine whether authors considered confounding when interpreting their study findings.</p>
+                </sec>
+                <sec>
+                  <title>Results</title>
+                  <p id="Par3">85 of 87 (97.7%) studies reported multivariate analyses for an alcohol-ischemic heart disease relationship. The most common higher-level confounder domains included were smoking (79, 92.9%), age (74, 87.1%), and BMI, height, and/or weight (57, 67.1%). However, no two models adjusted, matched, or stratified for the same higher-level confounder domains. Most (74/87, 85.1%) articles mentioned or alluded to “confounding” in their Abstract or Discussion sections, but only one stated that their main findings were likely to be affected by residual confounding. There were five (5/87, 5.7%) authors that explicitly asked for caution when interpreting results.</p>
+                </sec>
+                <sec>
+                  <title>Conclusion</title>
+                  <p id="Par4">There is large variation in the confounders considered across observational studies evaluating the impact of alcohol on ischemic heart disease risk and almost all studies spuriously ignore or eventually dismiss confounding in their conclusions. Given that study results and interpretations may be affected by the mix of potential confounders included within multivariate models, efforts are necessary to standardize approaches for selecting and accounting for confounders in observational studies.</p>
+                </sec>
+              </abstract>
+              <kwd-group xml:lang="en">
+                <title>Keywords</title>
+                <kwd>Confounding</kwd>
+                <kwd>Bias</kwd>
+                <kwd>Observational studies</kwd>
+                <kwd>Alcohol exposure</kwd>
+                <kwd>Ischemic heart disease</kwd>
+                <kwd>Adjustment</kwd>
+              </kwd-group>
+              <custom-meta-group>
+                <custom-meta>
+                  <meta-name>issue-copyright-statement</meta-name>
+                  <meta-value>© The Author(s) 2020</meta-value>
+                </custom-meta>
+              </custom-meta-group>
+            </article-meta>
+          </front>
+          <body>
+            <sec id="Sec1">
+              <title>Background</title>
+              <p id="Par7">Over the past few years, there have been a growing number of studies outlining both harmful and potentially protective effects of alcohol consumption on the risk of various health-related outcomes, including ischemic heart disease [<xref ref-type="bibr" rid="CR1">1</xref>–<xref ref-type="bibr" rid="CR7">7</xref>]. Many of these studies, which have gained widespread attention in the media [<xref ref-type="bibr" rid="CR8">8</xref>, <xref ref-type="bibr" rid="CR9">9</xref>], have the potential to influence consumer behavior and can create uncertainty and false notions regarding healthy or unhealthy practices [<xref ref-type="bibr" rid="CR10">10</xref>, <xref ref-type="bibr" rid="CR11">11</xref>]. The burden of disease from alcohol is undoubtedly high [<xref ref-type="bibr" rid="CR8">8</xref>], but there is less clarity about estimates of risk (or even protection) with low levels of consumption [<xref ref-type="bibr" rid="CR6">6</xref>–<xref ref-type="bibr" rid="CR8">8</xref>, <xref ref-type="bibr" rid="CR12">12</xref>, <xref ref-type="bibr" rid="CR13">13</xref>]. Typically, the reported associations between alcohol and health-related outcomes come from observational studies, which have inherent methodological limitations that generate bias and confounding [<xref ref-type="bibr" rid="CR14">14</xref>, <xref ref-type="bibr" rid="CR15">15</xref>].</p>
+              <p id="Par8">Confounding is the bias resulting from the presence of common causes of exposures and outcomes [<xref ref-type="bibr" rid="CR14">14</xref>, <xref ref-type="bibr" rid="CR16">16</xref>, <xref ref-type="bibr" rid="CR17">17</xref>]; thus confounders can distort observed exposure-outcome associations [<xref ref-type="bibr" rid="CR14">14</xref>, <xref ref-type="bibr" rid="CR18">18</xref>, <xref ref-type="bibr" rid="CR19">19</xref>]. Although there are numerous techniques that can be used to account for confounding in observational research, it is very challenging to completely exclude the impact of unmeasured residual confounding [<xref ref-type="bibr" rid="CR17">17</xref>]. Furthermore, many potential confounders may be unknown to researchers and can be difficult to identify or measure. Among different investigators studying the same exposures and outcomes, there may be a lack of consensus about potential confounding variables that should be considered as matching (i.e. the selection of comparators or comparison groups with respect to one or more potential confounders), adjustment (i.e. the inclusion of potential confounders in multivariate analyses), or stratification variables (i.e. the fixing of levels of confounders by producing groups (strata) within which confounders do not vary and evaluating associations within stratum of the confounder(s)). As a result, individual studies may evaluate different confounders and/or report on certain subsets of a larger pool of potential variables in published articles.</p>
+              <p id="Par9">Recently, the Global Burden or Disease (GBD) 2016 Alcohol Collaborators published a meticulous systematic analysis of alcohol burden across the world, which included separate meta-analyses for 23 health outcomes [<xref ref-type="bibr" rid="CR8">8</xref>]. Ischemic heart disease was the only outcome with significant evidence for a J-shaped curve [<xref ref-type="bibr" rid="CR8">8</xref>], supporting previous claims that lower-volume alcohol intake may be associated with no harm or even protective effects [<xref ref-type="bibr" rid="CR9">9</xref>, <xref ref-type="bibr" rid="CR20">20</xref>, <xref ref-type="bibr" rid="CR21">21</xref>]. However, all of these results come from observational studies, where confounders may contribute to both favorable or unfavorable associations [<xref ref-type="bibr" rid="CR22">22</xref>]. For instance, it has been proposed that some or all of the U-or-J-shaped dose-response trends may be attributable to unmeasurable characteristics that are associated with alcohol consumption and cardiovascular outcomes [<xref ref-type="bibr" rid="CR13">13</xref>, <xref ref-type="bibr" rid="CR22">22</xref>]. While some meta-analyses have suggested that adjusting for common confounders, such as smoking, age, and sex, does not alter the observed effect estimates [<xref ref-type="bibr" rid="CR9">9</xref>], others claim that individual studies with adjusted effect estimates have lower (attenuated) protective effects [<xref ref-type="bibr" rid="CR20">20</xref>].</p>
+              <p id="Par10">Concerns have been raised that confounding factors may affect the results obtained for the alcohol-ischemic heart disease relationship, as well as their consistency and reproducibility across different studies [<xref ref-type="bibr" rid="CR21">21</xref>]. Therefore, we systematically assessed whether individual observational studies evaluating the impact of alcohol on ischemic heart disease considered the same, similar, or different confounders and how much heterogeneity existed on how these confounders were defined and operationalized in matching, stratifying, or adjusting for them in the analyses. Additionally, we examined how authors of the individual studies considered confounding bias when interpreting their findings.</p>
+            </sec>
+            <sec id="Sec2">
+              <title>Methods</title>
+              <sec id="Sec3">
+                <title>Design</title>
+                <sec id="Sec4">
+                  <title>Data identification and eligibility</title>
+                  <p id="Par11">We evaluated the individual studies included in the ischemic heart disease meta-analysis conducted by the GBD 2016 Alcohol Collaborators [<xref ref-type="bibr" rid="CR8">8</xref>]. We did not perform a separate systematic search because the GBD meta-analysis is recent and comprehensive. Briefly, the GBD authors performed a systematic review of the literature published between 1 January 1950 and 31 December 2016 using PubMed, the Global Health Data Exchange, and the references of previous meta-analyses. Studies were excluded if they: did not report on the association between alcohol use and ischemic heart disease; were not cohort, case-control, or case-crossover studies; did not report a relative measure of risk or cases and non-cases among the exposed and un-exposed; did not report dose-response amounts of alcohol use; and did not have study endpoints that met the case definition used in the GBD 2016 report [<xref ref-type="bibr" rid="CR8">8</xref>].</p>
+                </sec>
+                <sec id="Sec5">
+                  <title>Study characteristics</title>
+                  <p id="Par12">One author (JDW) manually screened all studies included in the ischemic heart disease meta-analyses performed by the GBD 2016 collaborators, and excluded articles that did not report any information about bivariate or multivariate analyses for an alcohol-ischemic heart disease relationship. For all eligible articles, we then recorded: the first author’s name; year of publication; study design (i.e. case-control or cohort); study location (i.e. North America, Europe, Asia, or Other), overall sample size, and name of the journal publishing the study. InCites™ Journal Citation Reports (JCR) was used to determine the 2017 JCR impact factor for each journal. As in previous evaluations, we recorded the most recent impact factor for each journal for consistency, despite the different publication dates of the eligible articles [<xref ref-type="bibr" rid="CR23">23</xref>–<xref ref-type="bibr" rid="CR25">25</xref>].</p>
+                </sec>
+                <sec id="Sec6">
+                  <title>Confounding variables</title>
+                  <p id="Par13">For all eligible articles, we screened the Methods and Results sections to identify the adjustment variables (i.e. potential confounders) included in the multivariable models analyzing the impact of alcohol exposure on ischemic heart disease. We recorded how the adjustment variables were measured (e.g. “age continuous” vs. “age categorical”) as well as their levels (e.g. age categorical: &lt; 50, &gt; 50 years). In studies with two or more multivariate models (e.g. a small model adjusted for age vs. a larger model adjusting for all statistically significant factors), we extracted the data from the largest model. We then recorded which variables were used as matching and stratification variables, but were not included as covariates in the multivariable models. However, with the exception of gender, we did not capture whether the analyses were restricted to certain values of specific variables, e.g. based on eligibility criteria. Lastly, all potential variables were then grouped into higher-level confounder domains (e.g. “age continuous” and “age categorical” into “age”).</p>
+                </sec>
+                <sec id="Sec7">
+                  <title>Confounding statements and bias consideration</title>
+                  <p id="Par14">Following the same protocol as a previous evaluation [<xref ref-type="bibr" rid="CR26">26</xref>], we screened the Abstract and Discussion sections of the included studies using six standardized pre-specified questions concerning confounding statements and bias consideration (Table <xref rid="Tab1" ref-type="table">1</xref>).
+<table-wrap id="Tab1"><label>Table 1</label><caption><p>Assessment of consideration of confounding bias in Abstracts and Discussion [<xref ref-type="bibr" rid="CR26">26</xref>]</p></caption><table frame="hsides" rules="groups"><tbody><tr><td colspan="2">1. “Do the authors mention confounding using explicitly the terms “confounder(s),” “confounding,” “confound,” or do they allude to it without using those terms, or is confounding not considered at all?” [<xref ref-type="bibr" rid="CR26">26</xref>]</td></tr><tr><td colspan="2">2. “Do the authors mention bias using explicitly the term “bias”?” [<xref ref-type="bibr" rid="CR26">26</xref>]</td></tr><tr><td colspan="2">3. “Do the authors mention specific confounders that have not been adjusted for? (If yes, what were the reasons? If not, were there unspecified unmeasured confounders without specifically stating which ones?” [<xref ref-type="bibr" rid="CR26">26</xref>]</td></tr><tr><td colspan="2">4. “Do the authors state that their main findings are likely, possibly, or unlikely affected by residual confounding?” [<xref ref-type="bibr" rid="CR26">26</xref>]</td></tr><tr><td colspan="2">5. “Do the authors state that their findings need to be interpreted with caution due to confounding?” [<xref ref-type="bibr" rid="CR26">26</xref>]</td></tr><tr><td colspan="2">6. “Do the authors call for caution or indicate limitations or uncertainty due to possible confounding or other bias in their conclusions?” [<xref ref-type="bibr" rid="CR26">26</xref>]</td></tr></tbody></table></table-wrap></p>
+                </sec>
+              </sec>
+              <sec id="Sec8">
+                <title>Analysis</title>
+                <p id="Par15">Descriptive statistics were used to characterize eligible articles and their consideration of confounding variables within our higher-level domain categories. Separate “data microarrays” were created to illustrate the confounders that were adjusted for by each article [<xref ref-type="bibr" rid="CR27">27</xref>]. Figures were created for higher-level confounder domains and articles were ordered in descending order based on the number of confounders considered within studies (x-axis) and times each confounder was considered across studies (y-axis). The figures were color coded to indicate whether each study adjusted, stratified, or matched for each confounder and whether each confounder was considered as a continuous or categorical variable. As suggested during peer review, we also examined the proportion of articles with confounding statements and bias consideration stratified by publication date (before 1990, 1990–1999, 2000–2009, 2010+). All analyses were conducted in R.</p>
+              </sec>
+            </sec>
+            <sec id="Sec9">
+              <title>Results</title>
+              <sec id="Sec10">
+                <title>Study description</title>
+                <p id="Par16">Among the 93 articles referenced by the GBD ischemic heart disease meta-analysis, six were excluded because they did not meet the selection criteria (duplicate (<italic>n</italic> = 2), non-English language (<italic>n</italic> = 1), could not be located by a librarian (<italic>n</italic> = 1), and did not explicitly report results from analyses evaluating the impact of alcohol on ischemic heart disease (<italic>n</italic> = 2)). Of the 87 remaining eligible articles (Additional file <xref rid="MOESM1" ref-type="media">1</xref>: Table S1), 78 were published in a journal with a 2017 JCR impact factor (median 6.1 (interquartile range [IQR], 4.2–18.9)) (Table <xref rid="Tab2" ref-type="table">2</xref>).
+<table-wrap id="Tab2"><label>Table 2</label><caption><p>Characteristics of 87 observational studies evaluating the impact of alcohol consumption on ischemic heart disease</p></caption><table frame="hsides" rules="groups"><thead><tr><th rowspan="2">Study characteristics</th><th colspan="3">No. (%)Median (Interquartile Range)</th></tr><tr><th>Cohort</th><th>Case-control</th><th>Total</th></tr></thead><tbody><tr><td>Number of studies</td><td>70</td><td>17</td><td>87</td></tr><tr><td colspan="4">Publication year</td></tr><tr><td><italic>&lt; 1990</italic></td><td>8 (11.4)</td><td>2 (11.8)</td><td>10 (11.5)</td></tr><tr><td><italic>1990–1999</italic></td><td>26 (37.1)</td><td>5 (29.4)</td><td>31 (35.6)</td></tr><tr><td><italic>2000–2009</italic></td><td>25 (35.7)</td><td>8 (47.1)</td><td>33 (37.9)</td></tr><tr><td><italic>2010+</italic></td><td>11 (15.7)</td><td>2 (11.8)</td><td>13 (14.9)</td></tr><tr><td colspan="4">Location</td></tr><tr><td><italic>North America</italic></td><td>33 (47.1)</td><td>4 (23.5)</td><td>37 (42.5)</td></tr><tr><td><italic>Europe</italic></td><td>24 (34.3)</td><td>9 (52.9)</td><td>33 (37.9)</td></tr><tr><td><italic>Asia</italic></td><td>9 (12.9)</td><td>1 (5.9)</td><td>10 (11.5)</td></tr><tr><td><italic>Other</italic></td><td>4 (5.7)</td><td>3 (17.7)</td><td>7 (8.1)</td></tr><tr><td colspan="4">Population</td></tr><tr><td><italic>All</italic></td><td>30 (42.9)</td><td>11 (64.7)</td><td>41 (47.1)</td></tr><tr><td><italic>Males only</italic></td><td>33 (47.1)</td><td>3 (17.7)</td><td>36 (41.4)</td></tr><tr><td><italic>Females only</italic></td><td>7 (10.0)</td><td>3 (17.7)</td><td>10 (11.5)</td></tr><tr><td> Sample size</td><td>11,957 (4843–49,566)</td><td>1602 (899–2710)</td><td>7735 (2634–36,191)</td></tr></tbody></table></table-wrap></p>
+                <p id="Par17">There were 70 (70 of 87, 80.5%) cohort and 17 (17 of 87, 19.5%) case-control studies (Table <xref rid="Tab2" ref-type="table">2</xref>), which included a median of 11,957 (IQR, 4843–49,566) and 1602 (IQR, 899–2710) participants, respectively. The majority of the studies were conducted in either North America (37, 42.5%) or Europe (33, 37.9%). Nearly half of the studies included both males and females (41, 47.1%). Two articles did not report results from multivariate regression analyses.</p>
+              </sec>
+              <sec id="Sec11">
+                <title>Confounders considered</title>
+                <p id="Par18">The largest models in the 85 articles conducting multivariate regression analyses included a median of 9 (IQR, 5–12) adjustment, stratification, and/or matching variables. The vast majority of the 760 total variables were adjustment variables (716, 94.2%); 27 (3.6%) were stratification variables and 17 (2.2%) were matching variables in case-control studies. The 760 variables could be divided into 88 higher-level confounder domains (e.g., “history of angina” and “myocardial infarction” as “heart disease/myocardial infarction/angina”) (Additional file <xref rid="MOESM2" ref-type="media">2</xref>: Figure S1). The five most commonly considered higher-level domains in the 85 articles were smoking (79, 92.9%), age (74, 87.1%), BMI, height, and/or weight (57, 67.1%), physical activity (40, 47.1%), and education (39, 45.9%) (Fig. <xref rid="Fig1" ref-type="fig">1</xref>). A total of 33 higher-level domains were only included in one article (Additional file <xref rid="MOESM2" ref-type="media">2</xref>: Figure S1). No two articles evaluating the impact of alcohol on ischemic heart disease adjusted, matched, or stratified for the exact same higher-level confounder domains (Fig. <xref rid="Fig2" ref-type="fig">2</xref>, Additional file <xref rid="MOESM3" ref-type="media">3</xref>: Figure S2).
+<fig id="Fig1"><label>Fig. 1</label><caption><p>The most common higher-level confounder domains considered in 85 observational studies on alcohol and ischemic heart disease risk. Refer to Additional file <xref rid="MOESM2" ref-type="media">2</xref>: Figure S1 for a larger data microarray</p></caption><graphic xlink:href="12874_2020_914_Fig1_HTML" id="MO1"/></fig><fig id="Fig2"><label>Fig. 2</label><caption><p>A “data microarray” illustrating the higher-level confounder domains considered in 85 observational studies on alcohol and ischemic heart disease risk. Domains are ordered based on how many times they were included in multivariate models. Colors represent whether domains were adjustment, stratification, or matching variables and how they were measured. Refer to Additional file <xref rid="MOESM3" ref-type="media">3</xref>: Figure S2 for a larger data microarray</p></caption><graphic xlink:href="12874_2020_914_Fig2_HTML" id="MO2"/></fig></p>
+                <p id="Par19">The 41 articles evaluating both males and females included a total of 391 variables, which could be divided into 65 higher-level confounder domains. The five most commonly considered higher-level domains in the 41 articles were smoking (39, 95.1%), age (35, 85.4%), sex (31, 75.6%), BMI, height, and/or weight (27, 65.9%), and education (23, 56.1%) (Fig. <xref rid="Fig3" ref-type="fig">3</xref>, Additional file <xref rid="MOESM4" ref-type="media">4</xref>: Figure S3). When limited to the 10 articles evaluating only female participants, there were 126 total variables, which could be divided into 37 higher-level confounder domains. The five most common domains were smoking (10, 100.0%), age (10, 100.0%), BMI, height, and/or weight (10, 100.0%), diabetes and diabetes treatment (9, 90.0%), and hypertensions and hypertension drugs (8, 80.0%). The 34 articles with only male participants contained 243 variables, which could be divided into 58 higher-level confounder domains. The five most common domains in the 34 articles were smoking (30, 88.2%), age (29, 85.3%), BMI, height, and/or weight (20, 58.8%), cholesterol/cholesterol treatment (16, 47.1), and systolic blood pressure (12, 35.3%).
+<fig id="Fig3"><label>Fig. 3</label><caption><p>A “data microarray” illustrating the higher-level confounder domains considered in 85 observational studies on alcohol exposure and ischemic heart disease, stratified by the type of population considered. Domains are ordered based on how many times they were included in multivariate models. Colors represent whether domains were adjustment, stratification, or matching variables and how they were measured. Refer to Additional file <xref rid="MOESM4" ref-type="media">4</xref>: Figure S3 for a larger data microarray</p></caption><graphic xlink:href="12874_2020_914_Fig3_HTML" id="MO3"/></fig></p>
+                <p id="Par20">Among the 74 articles with models that included age, one third (24, 32.0%) were categorical variables (Fig. <xref rid="Fig3" ref-type="fig">3</xref>), none of which had the exact same age levels. While most (68, 86.1%) of the 79 articles adjusting for smoking included smoking as a categorical variable, only 20 (20 of 68, 29.4%) were measured the exact same way (i.e., never smoking, former smoking, and current smoking). Of the 24 (24 of 65, 36.9%) models that included a measure of BMI as a categorical variable, eight (8 of 24, 33.3%) had cut-off levels that were used in at least one other study (<italic>n</italic> = 2 articles with &lt; 20.0, 20.0–24.9, 25.0–29.9, 30.0–34.9, 35.0+ kg/m<sup>2</sup> and <italic>n</italic> = 6 articles with &lt; 25, 25–29.9, 30+ kg/m<sup>2</sup>).</p>
+              </sec>
+              <sec id="Sec12">
+                <title>Confounding statements and bias considerations</title>
+                <p id="Par21">Across all 87 articles, 56 (64.4%) included a specific mention of confounding bias in their Abstract and/or Discussion sections (Table <xref rid="Tab3" ref-type="table">3</xref>). While another 18 (20.7%) articles alluded to the concept of confounding, without using any specific terminology, 13 (14.9%) did not mention or allude to confounding in their Abstract and/or Discussion sections. Over half (50, 57.5%) of the articles used the term “bias”. Among the eight mentions of bias that were related to the principle of confounding, three specifically included the words “confounding” or “confound”.
+<table-wrap id="Tab3"><label>Table 3</label><caption><p>Statements of confounding in studies assessing the impact of alcohol on ischemic heart disease</p></caption><table frame="hsides" rules="groups"><thead><tr><th rowspan="2">Question</th><th/></tr><tr><th>No. (%, 95 Confidence Interval)</th></tr></thead><tbody><tr><td>Total</td><td>87 (100)</td></tr><tr><td colspan="2">Term “Confounding” mentioned in Abstract or Discussion</td></tr><tr><td> Specific</td><td>56 (64.4, 54.0–74.7)</td></tr><tr><td> Alluded</td><td>18 (20.7, 12.6–29.9)</td></tr><tr><td> No</td><td>13 (14.9, 8.0–23.0)</td></tr><tr><td colspan="2">Term “Bias” used in Abstract or Discussion</td></tr><tr><td> Yes</td><td>50 (57.5, 47.1–67.8)</td></tr><tr><td> No</td><td>37 (42.5, 32.2–52.9)</td></tr><tr><td colspan="2">Specific mention of non-adjusted confounders</td></tr><tr><td> Yes</td><td>26 (29.9, 20.7–40.2)</td></tr><tr><td><italic>Not measured</italic></td><td>16 (61.5 42.3–80.8)</td></tr><tr><td><italic>Other reasons</italic></td><td>5 (19.2, 3.8–34.6)</td></tr><tr><td><italic>No reasons</italic></td><td>5 (19.2, 3.8–34.6)</td></tr><tr><td> No</td><td>61 (70.1, 59.8–79.3)</td></tr><tr><td colspan="2">Any mention that findings may be affected by confounding?</td></tr><tr><td> Likely</td><td>1 (1.2, 0.0–3.4)</td></tr><tr><td> Possibly</td><td>28 (32.2, 23.0–42.5)</td></tr><tr><td> Unlikely</td><td>15 (17.2, 9.2–25.3)</td></tr><tr><td> No statement</td><td>43 (49.4 39.1–59.8)</td></tr><tr><td colspan="2">Cautious interpretation needed</td></tr><tr><td> Yes</td><td>5 (5.7, 1.1–11.5)</td></tr><tr><td> No statement</td><td>82 (94.3, 88.5–98.9)</td></tr><tr><td colspan="2">Conclusions include any limitations regarding confounding</td></tr><tr><td> Yes</td><td>9 (10.3, 4.6–17.2)</td></tr><tr><td> No</td><td>78 (89.7, 82.8–95.4)</td></tr></tbody></table></table-wrap></p>
+                <p id="Par22">Nearly one-third (26, 29.9%) of the articles included a discussion regarding potential confounders for which there was no adjustment, and authors frequently (16 of 26, 61.5%) stated that these confounders had not been measured (Table <xref rid="Tab3" ref-type="table">3</xref>).</p>
+                <p id="Par23">Only one article specifically stated that their main findings were likely to be affected by residual confounding. Another 28 (32.2%) reported it was possible and 15 (17.2%) reported it was unlikely that their main findings were to be affected by residual confounding. There were five (5.7%) that explicitly asked for caution when interpreting results (Table <xref rid="Tab3" ref-type="table">3</xref>).</p>
+                <p id="Par24">Articles published after 2010 were more likely to include a specific mention of confounding (12 of 13, 92.3%), use the term “bias” (11 of 13, 84.6%), and ask for caution when interpreting results (2 of 13, 15.4%) (Additional file <xref rid="MOESM5" ref-type="media">5</xref>: Table S2).</p>
+              </sec>
+            </sec>
+            <sec id="Sec13">
+              <title>Discussion</title>
+              <p id="Par25">Our analysis suggests that there is substantial variation in how adjustment, stratification, and matching confounders are defined, operationalized, and discussed across observational studies evaluating the impact of alcohol consumption on the risk of ischemic heart disease. While the majority of articles accounted for smoking, age, and BMI, these variables were rarely measured the exactly same way, and no two models considered the same higher-level confounder domains. Two-thirds of the articles specifically mentioned confounding bias in their Abstract and/or Discussion sections, but less than 2% claimed that their main findings were likely to be affected by residual confounding. Very few articles called for cautious interpretation due to confounding. Given the lack of standardized approaches for selecting and adjusting for confounders, and the inadequate discussions regarding the importance of confounding, individual findings from observational studies assessing the impact of alcohol consumption on ischemic heart disease may need to be interpreted with caution.</p>
+              <p id="Par26">Most of the largest multivariate models in observational studies evaluating the impact of alcohol on the risk of ischemic heart disease accounted for smoking, age, BMI, and physical activity. Age and smoking are two of the most important risk factors for ischemic heart disease, and studies have regularly found that these variables confound the alcohol-ischemic heart disease relationship [<xref ref-type="bibr" rid="CR21">21</xref>]. Although evidence on the influence of physical activity and BMI are sparse [<xref ref-type="bibr" rid="CR21">21</xref>], a previous evaluation suggested that low BMI and leisure-time physical activity are more common among never-drinkers than among light drinkers [<xref ref-type="bibr" rid="CR28">28</xref>]. However, the authors noted that the differences were unlikely to be large enough to explain the lower risk observed among light drinkers compared to abstainers [<xref ref-type="bibr" rid="CR28">28</xref>]. Numerous studies have also indicated that drinking pattern and type of beverage are important confounders [<xref ref-type="bibr" rid="CR29">29</xref>]. However, we only identified three studies evaluating drinking history in their largest multivariate models. Furthermore, other proposed potential confounders, including cognitive function, dietary habits, and socioeconomic status [<xref ref-type="bibr" rid="CR12">12</xref>, <xref ref-type="bibr" rid="CR13">13</xref>, <xref ref-type="bibr" rid="CR30">30</xref>], were rarely evaluated. Overall, it is unclear whether the lack of consistency across articles reflects the fact that there is little consensus about which variables are potential confounders or the beliefs that the protective effect of alcohol consumption on the risk for cardiovascular disease is independent of how well studies control for confounding [<xref ref-type="bibr" rid="CR13">13</xref>, <xref ref-type="bibr" rid="CR29">29</xref>, <xref ref-type="bibr" rid="CR31">31</xref>, <xref ref-type="bibr" rid="CR32">32</xref>].</p>
+              <p id="Par27">We also found that articles rarely measured similar adjustment, matching, or stratification variables the same way. For instance, although standard categories for BMI have been proposed in the literature, only one-third of the categorical BMI variables in our sample had the same cut-off levels as at least one other study. These findings build upon previous concerns that it is often difficult to determine how categorical or continuous adjustment variables are treated in analyses [<xref ref-type="bibr" rid="CR33">33</xref>, <xref ref-type="bibr" rid="CR34">34</xref>]. Moreover, different treatment of variables, including incorrect adjustment for continuous confounders, can have an impact on the observed estimates or result in residual confounding [<xref ref-type="bibr" rid="CR35">35</xref>].</p>
+              <p id="Par28">There are a number of reasons that could explain the variability in the adjustment, stratification, and matching variables. Although it is possible that authors may not be able to measure all potential confounders, and therefore are prevented from considering them in multivariate models, it is more likely that there is a lack of consensus about what should be considered as matching, adjustment, or stratification variables. Furthermore, researchers may not be reviewing previously published models to determine potentially important confounders. Different studies may have different rigor in measuring some variables, and this can affect whether investigators want to use these variables in their analyses. It is also possible that certain models are preferentially reported or excluded due to biases and potential conflicts of interest, especially if the unreported multivariate models resulted in less desirable results [<xref ref-type="bibr" rid="CR27">27</xref>]. However, the optimal choice of covariates may be difficult to identify and consensus may be elusive even with the best intentions. While adjusting for a large number of potential confounders is often appropriate and necessary, it can be particularly challenging to differentiate between potential confounders and variables that may be in the path that explains the effect of a risk factor, which should not be adjusted for. Field-wide systematic exposure assessments may help standardize variable adjustments and identify the full range of potential effect estimates due to different modeling considerations (i.e., vibration of effects) [<xref ref-type="bibr" rid="CR36">36</xref>]. Small changes in modelling choices, including exposure and outcome definitions, covariates considered, and statistical methods, can have a major impact on effect estimates observed in observational studies, and can even flip the direction of effects [<xref ref-type="bibr" rid="CR36">36</xref>]. Furthermore, greater transparency when it comes to the choice, measurement, and impact of potential confounding variables is necessary. Without these efforts, the associations reported in observational studies of alcohol consumption on ischemic heart disease may need to be interpreted with great caution.</p>
+              <p id="Par29">Our findings, which suggest that meta-analyses of observational studies evaluating the impact of alcohol consumption on the risk of ischemic heart disease are unlikely to identify effect estimates that have been adjusted for the same variables, are generalizable to other fields. When it comes to performing meta-analyses of observational studies, there are no clear rules regarding the prioritization of adjusted or unadjusted effect estimates. According to the Cochrane Handbook for Systematic Reviews of Interventions, review authors should record both adjusted and unadjusted effect estimates, but “no general recommendation can be made for the selection of which adjustment estimate is preferable” [<xref ref-type="bibr" rid="CR37">37</xref>]. Instead, review authors are advised to consider the estimates from the models adjusted for the maximum number of covariates, the estimates from the primary models, or the estimates from the models with the largest number of confounders that are identified as important. Previous evaluations suggests that meta-analyses of observational studies evaluating the relationships between type 2 diabetes and cancer and environmental risk factors and dementia often only identify effect estimates from models that consider age and sex, despite a large number of other measurable confounders [<xref ref-type="bibr" rid="CR38">38</xref>, <xref ref-type="bibr" rid="CR39">39</xref>]. Other assessments indicate a lack of consistency among the adjustment variables considered across individuals studies included in meta-analyses [<xref ref-type="bibr" rid="CR40">40</xref>–<xref ref-type="bibr" rid="CR42">42</xref>]. To facilitate the inclusion of effect estimates in meta-analyses, the raw data of individual studies should be made available to review authors in order to generate effect estimates across studies using the same or similar confounders. However, raw data are currently rarely available for observational studies [<xref ref-type="bibr" rid="CR23">23</xref>, <xref ref-type="bibr" rid="CR25">25</xref>]. Even if they were available, it is likely that different datasets may vary substantially in what variables they have recorded.</p>
+              <p id="Par30">We found that most authors mentioned the concept of confounding, which is consistent with prior evaluations of considerations of confounding in epidemiological studies [<xref ref-type="bibr" rid="CR26">26</xref>]. However, we found that authors rarely explicitly state that their main findings should be interpreted with caution due to confounding. This is significantly lower than what has been previously observed among surveyed samples of high-impact observational studies and research focusing on medical interventions [<xref ref-type="bibr" rid="CR34">34</xref>, <xref ref-type="bibr" rid="CR43">43</xref>]. Moving forward, more transparent reporting and discussions regarding the selection of confounders, including the potential impact of residual confounding, are necessary to ensure that observational associations on the relationship between alcohol consumption and ischemic heart disease can be properly interpreted.</p>
+              <p id="Par31">This study has a number of potential limitations. First, our sample included 87 observational studies identified by a previous meta-analysis. Therefore, some articles may have been missed and the results may not be generalizable to all observational studies focusing on alcohol-health related outcomes. Although there may have been multiple reports of the same study, different authors evaluating the same data sources could have considered the same or different variables. Second, our study includes articles published between 1981 and 2015, and reporting practices may or may not have changed over time [<xref ref-type="bibr" rid="CR43">43</xref>]. Our post-hoc analysis suggests that articles published after 2010 were more likely to mention confounding and biases. While these findings may suggest improvements over time, our sample was not designed to assess trends. Third, for each article, we focused only on the covariates included in the largest model. However, it is possible that authors may have considered additional potential confounders that were not eventually included in the largest model. Moreover, some variables included in the largest models may have been considered as predictors worth capturing, instead of potential confounders. However, it is difficult to assess which variables were explicitly deemed to be potential confounders. Fourth, given the different patient populations, it also may not have made sense to adjust for the same characteristics in all studies (e.g., adjusting for sex in a study of only women). This is why we reported separate results for studies that included both genders, only men, and only women. It is possible that some additional confounders beyond gender were dealt with by restriction, i.e. by using eligibility criteria that restricted upfront the study population to have the same value for a potential confounder.</p>
+            </sec>
+            <sec id="Sec14">
+              <title>Conclusion</title>
+              <p id="Par32">Our evaluation shows that although most authors mention confounding bias when interpreting their study findings, they rarely call for results to be interpreted with caution. However, the high variation in how confounders were defined and handled suggests that the results and their interpretation in these studies may have been affected by definition and handling choices.</p>
+            </sec>
+            <sec sec-type="supplementary-material">
+              <title>Supplementary information</title>
+              <sec id="Sec15">
+                <p>
+                  <supplementary-material content-type="local-data" id="MOESM1">
+                    <media xlink:href="12874_2020_914_MOESM1_ESM.docx">
+                      <caption>
+                        <p><bold>Additional file 1: Table S1.</bold> Eligible studies.</p>
+                      </caption>
+                    </media>
+                  </supplementary-material>
+                  <supplementary-material content-type="local-data" id="MOESM2">
+                    <media xlink:href="12874_2020_914_MOESM2_ESM.jpg">
+                      <caption>
+                        <p><bold>Additional file 2.</bold> The higher-level confounder domains considered in 85 observational studies on alcohol and ischemic heart disease risk. </p>
+                      </caption>
+                    </media>
+                  </supplementary-material>
+                  <supplementary-material content-type="local-data" id="MOESM3">
+                    <media xlink:href="12874_2020_914_MOESM3_ESM.jpg">
+                      <caption>
+                        <p><bold>Additional file 3.</bold> The full “data microarray” illustrating the higher-level confounder domains considered in 85 observational studies on alcohol and ischemic heart disease risk. Domains are ordered based on how many times they were included in multivariate models. Colors represent whether domains were adjustment, stratification, or matching variables and how they were measured.</p>
+                      </caption>
+                    </media>
+                  </supplementary-material>
+                  <supplementary-material content-type="local-data" id="MOESM4">
+                    <media xlink:href="12874_2020_914_MOESM4_ESM.jpg">
+                      <caption>
+                        <p><bold>Additional file 4.</bold> The full “data microarray” illustrating the higher-level confounder domains considered in 85 observational studies on alcohol exposure and ischemic heart disease, stratified by the type of population considered. Domains are ordered based on how many times they were included in multivariate models. Colors represent whether domains were adjustment, stratification, or matching variables and how they were measured.</p>
+                      </caption>
+                    </media>
+                  </supplementary-material>
+                  <supplementary-material content-type="local-data" id="MOESM5">
+                    <media xlink:href="12874_2020_914_MOESM5_ESM.docx">
+                      <caption>
+                        <p><bold>Additional file 5: Table S2.</bold> Statements of confounding in studies assessing the impact of alcohol on ischemic heart disease by publication year.</p>
+                      </caption>
+                    </media>
+                  </supplementary-material>
+                </p>
+              </sec>
+            </sec>
+          </body>
+          <back>
+            <glossary>
+              <title>Abbreviations</title>
+              <def-list>
+                <def-item>
+                  <term>BMI</term>
+                  <def>
+                    <p id="Par5">Body mass index</p>
+                  </def>
+                </def-item>
+                <def-item>
+                  <term>GBD</term>
+                  <def>
+                    <p id="Par6">Global Burden or Disease</p>
+                  </def>
+                </def-item>
+              </def-list>
+            </glossary>
+            <fn-group>
+              <fn>
+                <p>
+                  <bold>Publisher’s Note</bold>
+                </p>
+                <p>Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.</p>
+              </fn>
+            </fn-group>
+            <sec>
+              <title>Supplementary information</title>
+              <p><bold>Supplementary information</bold> accompanies this paper at 10.1186/s12874-020-0914-6.</p>
+            </sec>
+            <ack>
+              <title>Acknowledgements</title>
+              <p>Not applicable.</p>
+            </ack>
+            <notes notes-type="author-contribution">
+              <title>Authors’ contributions</title>
+              <p>JDW and JPAI conceived the study. JDW extracted the data. JDW and SS analyzed the data. JDW, SS, LC, ACE, VV, JSR, and JPAI interpreted the results. JDW wrote the first draft and SS, LC, ACE, VV, JSR, and JPAI made revisions on the article. JDW, SS, LC, ACE, VV, JSR, and JPAI authors read and approved the final version of the article. JDW and JPAI are guarantors. JDW, SS, LC, ACE, VV, JSR, and JPAI authors had full access to all the data (including statistical reports and tables) in the study and can take responsibility for the integrity of the data and the accuracy of the data analysis. All authors read and approved the final manuscript.</p>
+            </notes>
+            <notes notes-type="funding-information">
+              <title>Funding</title>
+              <p>This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.</p>
+            </notes>
+            <notes notes-type="data-availability">
+              <title>Availability of data and materials</title>
+              <p>Data will be shared on <ext-link ext-link-type="uri" xlink:href="https://osf.io/zrdx7/">https://osf.io/zrdx7/</ext-link> upon publication.</p>
+            </notes>
+            <notes>
+              <title>Ethics approval and consent to participate</title>
+              <p id="Par33">Not applicable.</p>
+            </notes>
+            <notes>
+              <title>Consent for publication</title>
+              <p id="Par34">Not applicable.</p>
+            </notes>
+            <notes notes-type="COI-statement">
+              <title>Competing interests</title>
+              <p id="Par35">In the past 36 months, J.D.W. received research support through the Collaboration for Research Integrity and Transparency from the Laura and John Arnold Foundation and through the Yale-Mayo Clinical Center for Excellence in Regulatory Science and Innovation (CERSI; U01FD005938). S.S. and J.P.A.I. received research support through the Meta Research Innovation Center at Stanfrod (METRICS) from the Laura and John Arnold Foundations and through an unrestricted gift from Sue and Bob O’Donnell. L.C. received a scholarship from China Scholarship Council. A.C.E. received research support through the Collaboration for Research Integrity and Transparency from the Laura and John Arnold Foundation. V.V. received support through the National Institutes of Health. J.S.R. received research support through Yale from Johnson and Johnson to develop methods of clinical trial data sharing, from Medtronic, Inc. and the Food and Drug Administration (FDA) to develop methods for postmarket surveillance of medical devices (U01FD004585), from the Centers of Medicare and Medicaid Services (CMS) to develop and maintain performance measures that are used for public reporting, from the FDA to establish a Center for Excellence in Regulatory Science and Innovation (CERSI) at Yale University and the Mayo Clinic (U01FD005938), from the Blue Cross Blue Shield Association to better understand medical technology evaluation, from the Agency for Healthcare Research and Quality (R01HS022882), and from the Laura and John Arnold Foundation.</p>
+            </notes>
+            <ref-list id="Bib1">
+              <title>References</title>
+              <ref id="CR1">
+                <label>1.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>O'Keefe</surname>
+                      <given-names>JH</given-names>
+                    </name>
+                    <name>
+                      <surname>Bhatti</surname>
+                      <given-names>SK</given-names>
+                    </name>
+                    <name>
+                      <surname>Bajwa</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>DiNicolantonio</surname>
+                      <given-names>JJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Lavie</surname>
+                      <given-names>CJ</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Alcohol and cardiovascular health: the dose makes the poison … or the remedy</article-title>
+                  <source>Mayo Clin Proc</source>
+                  <year>2014</year>
+                  <volume>89</volume>
+                  <issue>3</issue>
+                  <fpage>382</fpage>
+                  <lpage>393</lpage>
+                  <pub-id pub-id-type="pmid">24582196</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR2">
+                <label>2.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Zhang</surname>
+                      <given-names>C</given-names>
+                    </name>
+                    <name>
+                      <surname>Qin</surname>
+                      <given-names>YY</given-names>
+                    </name>
+                    <name>
+                      <surname>Chen</surname>
+                      <given-names>Q</given-names>
+                    </name>
+                    <name>
+                      <surname>Jiang</surname>
+                      <given-names>H</given-names>
+                    </name>
+                    <name>
+                      <surname>Chen</surname>
+                      <given-names>XZ</given-names>
+                    </name>
+                    <name>
+                      <surname>Xu</surname>
+                      <given-names>CL</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Alcohol intake and risk of stroke: a dose-response meta-analysis of prospective studies</article-title>
+                  <source>Int J Cardiol</source>
+                  <year>2014</year>
+                  <volume>174</volume>
+                  <issue>3</issue>
+                  <fpage>669</fpage>
+                  <lpage>677</lpage>
+                  <pub-id pub-id-type="pmid">24820756</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR3">
+                <label>3.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Lin</surname>
+                      <given-names>Y</given-names>
+                    </name>
+                    <name>
+                      <surname>Kikuchi</surname>
+                      <given-names>S</given-names>
+                    </name>
+                    <name>
+                      <surname>Tamakoshi</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Wakai</surname>
+                      <given-names>K</given-names>
+                    </name>
+                    <name>
+                      <surname>Kawamura</surname>
+                      <given-names>T</given-names>
+                    </name>
+                    <name>
+                      <surname>Iso</surname>
+                      <given-names>H</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Alcohol consumption and mortality among middle-aged and elderly Japanese men and women</article-title>
+                  <source>Ann Epidemiol</source>
+                  <year>2005</year>
+                  <volume>15</volume>
+                  <issue>8</issue>
+                  <fpage>590</fpage>
+                  <lpage>597</lpage>
+                  <pub-id pub-id-type="pmid">16118003</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR4">
+                <label>4.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Bell</surname>
+                      <given-names>S</given-names>
+                    </name>
+                    <name>
+                      <surname>Daskalopoulou</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Rapsomaniki</surname>
+                      <given-names>E</given-names>
+                    </name>
+                    <name>
+                      <surname>George</surname>
+                      <given-names>J</given-names>
+                    </name>
+                    <name>
+                      <surname>Britton</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Bobak</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Association between clinically recorded alcohol consumption and initial presentation of 12 cardiovascular diseases: population based cohort study using linked health records</article-title>
+                  <source>BMJ.</source>
+                  <year>2017</year>
+                  <volume>356</volume>
+                  <fpage>j909</fpage>
+                  <pub-id pub-id-type="pmid">28331015</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR5">
+                <label>5.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Mukamal</surname>
+                      <given-names>KJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Conigrave</surname>
+                      <given-names>KM</given-names>
+                    </name>
+                    <name>
+                      <surname>Mittleman</surname>
+                      <given-names>MA</given-names>
+                    </name>
+                    <name>
+                      <surname>Camargo</surname>
+                      <given-names>CA</given-names>
+                    </name>
+                    <name>
+                      <surname>Stampfer</surname>
+                      <given-names>MJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Willett</surname>
+                      <given-names>WC</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Roles of drinking pattern and type of alcohol consumed in coronary heart disease in men</article-title>
+                  <source>N Engl J Med</source>
+                  <year>2003</year>
+                  <volume>348</volume>
+                  <issue>2</issue>
+                  <fpage>109</fpage>
+                  <lpage>118</lpage>
+                  <pub-id pub-id-type="pmid">12519921</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR6">
+                <label>6.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Goldberg</surname>
+                      <given-names>IJ</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>To drink or not to drink?</article-title>
+                  <source>N Engl J Med</source>
+                  <year>2003</year>
+                  <volume>348</volume>
+                  <issue>2</issue>
+                  <fpage>163</fpage>
+                  <lpage>164</lpage>
+                  <pub-id pub-id-type="pmid">12519927</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR7">
+                <label>7.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Kloner</surname>
+                      <given-names>RA</given-names>
+                    </name>
+                    <name>
+                      <surname>Rezkalla</surname>
+                      <given-names>SH</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>To drink or not to drink? That is the question</article-title>
+                  <source>Circulation</source>
+                  <year>2007</year>
+                  <volume>116</volume>
+                  <issue>11</issue>
+                  <fpage>1306</fpage>
+                  <lpage>1317</lpage>
+                  <pub-id pub-id-type="pmid">17846344</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR8">
+                <label>8.</label>
+                <mixed-citation publication-type="other">GBD 2016 Alcohol Collaborators. Alcohol use and burden for 195 countries and territories, 1990–2016: a systematic analysis for the Global Burden of Disease Study 2016. Lancet. 2018;392(10152):1015–35.</mixed-citation>
+              </ref>
+              <ref id="CR9">
+                <label>9.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Ronksley</surname>
+                      <given-names>PE</given-names>
+                    </name>
+                    <name>
+                      <surname>Brien</surname>
+                      <given-names>SE</given-names>
+                    </name>
+                    <name>
+                      <surname>Turner</surname>
+                      <given-names>BJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Mukamal</surname>
+                      <given-names>KJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Ghali</surname>
+                      <given-names>WA</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Association of alcohol consumption with selected cardiovascular disease outcomes: a systematic review and meta-analysis</article-title>
+                  <source>BMJ.</source>
+                  <year>2011</year>
+                  <volume>342</volume>
+                  <fpage>d671</fpage>
+                  <pub-id pub-id-type="pmid">21343207</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR10">
+                <label>10.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Brownell</surname>
+                      <given-names>KD</given-names>
+                    </name>
+                    <name>
+                      <surname>Warner</surname>
+                      <given-names>KE</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>The perils of ignoring history: big tobacco played dirty and millions died. How similar is big food?</article-title>
+                  <source>Milbank Q</source>
+                  <year>2009</year>
+                  <volume>87</volume>
+                  <issue>1</issue>
+                  <fpage>259</fpage>
+                  <lpage>294</lpage>
+                  <pub-id pub-id-type="pmid">19298423</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR11">
+                <label>11.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Macdonald</surname>
+                      <given-names>I</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Nonsense and non-science in nutrition</article-title>
+                  <source>Proc Nutr Soc</source>
+                  <year>1983</year>
+                  <volume>42</volume>
+                  <issue>3</issue>
+                  <fpage>513</fpage>
+                  <lpage>523</lpage>
+                  <pub-id pub-id-type="pmid">6318225</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR12">
+                <label>12.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Grønbaek</surname>
+                      <given-names>M</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Alcohol consumption and mortality. Type of drink has been shown to matter</article-title>
+                  <source>BMJ.</source>
+                  <year>1999</year>
+                  <volume>319</volume>
+                  <issue>7219</issue>
+                  <fpage>1267</fpage>
+                  <lpage>1268</lpage>
+                </element-citation>
+              </ref>
+              <ref id="CR13">
+                <label>13.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Grønbaek</surname>
+                      <given-names>M</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Factors influencing the relation between alcohol and cardiovascular disease</article-title>
+                  <source>Curr Opin Lipidol</source>
+                  <year>2006</year>
+                  <volume>17</volume>
+                  <issue>1</issue>
+                  <fpage>17</fpage>
+                  <lpage>21</lpage>
+                  <pub-id pub-id-type="pmid">16407711</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR14">
+                <label>14.</label>
+                <mixed-citation publication-type="other">Rothman K, Greenland S, Lash T. Modern epidemiology (3rd ed.). Philadelphia: Lippincott Williams &amp; Wilkins; 2008.</mixed-citation>
+              </ref>
+              <ref id="CR15">
+                <label>15.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Mann</surname>
+                      <given-names>CJ</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Observational research methods. Research design II: cohort, cross sectional, and case-control studies</article-title>
+                  <source>Emerg Med J</source>
+                  <year>2003</year>
+                  <volume>20</volume>
+                  <issue>1</issue>
+                  <fpage>54</fpage>
+                  <lpage>60</lpage>
+                  <pub-id pub-id-type="pmid">12533370</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR16">
+                <label>16.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Hernán</surname>
+                      <given-names>MA</given-names>
+                    </name>
+                    <name>
+                      <surname>Hernández-Díaz</surname>
+                      <given-names>S</given-names>
+                    </name>
+                    <name>
+                      <surname>Werler</surname>
+                      <given-names>MM</given-names>
+                    </name>
+                    <name>
+                      <surname>Mitchell</surname>
+                      <given-names>AA</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Causal knowledge as a prerequisite for confounding evaluation: an application to birth defects epidemiology</article-title>
+                  <source>Am J Epidemiol</source>
+                  <year>2002</year>
+                  <volume>155</volume>
+                  <issue>2</issue>
+                  <fpage>176</fpage>
+                  <lpage>184</lpage>
+                  <pub-id pub-id-type="pmid">11790682</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR17">
+                <label>17.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Hernán</surname>
+                      <given-names>MA</given-names>
+                    </name>
+                    <name>
+                      <surname>Robins</surname>
+                      <given-names>JM</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Estimating causal effects from epidemiological data</article-title>
+                  <source>J Epidemiol Community Health</source>
+                  <year>2006</year>
+                  <volume>60</volume>
+                  <issue>7</issue>
+                  <fpage>578</fpage>
+                  <lpage>586</lpage>
+                  <pub-id pub-id-type="pmid">16790829</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR18">
+                <label>18.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Greenland</surname>
+                      <given-names>S</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Randomization, statistics, and causal inference</article-title>
+                  <source>Epidemiology.</source>
+                  <year>1990</year>
+                  <volume>1</volume>
+                  <issue>6</issue>
+                  <fpage>421</fpage>
+                  <lpage>429</lpage>
+                  <pub-id pub-id-type="pmid">2090279</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR19">
+                <label>19.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>VanderWeele</surname>
+                      <given-names>TJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Ding</surname>
+                      <given-names>P</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Sensitivity analysis in observational research: introducing the E-value</article-title>
+                  <source>Ann Intern Med</source>
+                  <year>2017</year>
+                  <volume>167</volume>
+                  <issue>4</issue>
+                  <fpage>268</fpage>
+                  <lpage>274</lpage>
+                  <pub-id pub-id-type="pmid">28693043</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR20">
+                <label>20.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Corrao</surname>
+                      <given-names>G</given-names>
+                    </name>
+                    <name>
+                      <surname>Rubbiati</surname>
+                      <given-names>L</given-names>
+                    </name>
+                    <name>
+                      <surname>Bagnardi</surname>
+                      <given-names>V</given-names>
+                    </name>
+                    <name>
+                      <surname>Zambon</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Poikolainen</surname>
+                      <given-names>K</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Alcohol and coronary heart disease: a meta-analysis</article-title>
+                  <source>Addiction.</source>
+                  <year>2000</year>
+                  <volume>95</volume>
+                  <issue>10</issue>
+                  <fpage>1505</fpage>
+                  <lpage>1523</lpage>
+                  <pub-id pub-id-type="pmid">11070527</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR21">
+                <label>21.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Roerecke</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Rehm</surname>
+                      <given-names>J</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Alcohol consumption, drinking patterns, and ischemic heart disease: a narrative review of meta-analyses and a systematic review and meta-analysis of the impact of heavy drinking occasions on risk for moderate drinkers</article-title>
+                  <source>BMC Med</source>
+                  <year>2014</year>
+                  <volume>12</volume>
+                  <fpage>182</fpage>
+                  <pub-id pub-id-type="pmid">25567363</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR22">
+                <label>22.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Naimi</surname>
+                      <given-names>TS</given-names>
+                    </name>
+                    <name>
+                      <surname>Brown</surname>
+                      <given-names>DW</given-names>
+                    </name>
+                    <name>
+                      <surname>Brewer</surname>
+                      <given-names>RD</given-names>
+                    </name>
+                    <name>
+                      <surname>Giles</surname>
+                      <given-names>WH</given-names>
+                    </name>
+                    <name>
+                      <surname>Mensah</surname>
+                      <given-names>G</given-names>
+                    </name>
+                    <name>
+                      <surname>Serdula</surname>
+                      <given-names>MK</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Cardiovascular risk factors and confounders among nondrinking and moderate-drinking U.S. adults</article-title>
+                  <source>Am J Prev Med</source>
+                  <year>2005</year>
+                  <volume>28</volume>
+                  <issue>4</issue>
+                  <fpage>369</fpage>
+                  <lpage>373</lpage>
+                  <pub-id pub-id-type="pmid">15831343</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR23">
+                <label>23.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Iqbal</surname>
+                      <given-names>SA</given-names>
+                    </name>
+                    <name>
+                      <surname>Wallach</surname>
+                      <given-names>JD</given-names>
+                    </name>
+                    <name>
+                      <surname>Khoury</surname>
+                      <given-names>MJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Schully</surname>
+                      <given-names>SD</given-names>
+                    </name>
+                    <name>
+                      <surname>Ioannidis</surname>
+                      <given-names>JP</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Reproducible research practices and transparency across the biomedical literature</article-title>
+                  <source>PLoS Biol</source>
+                  <year>2016</year>
+                  <volume>14</volume>
+                  <issue>1</issue>
+                  <fpage>e1002333</fpage>
+                  <pub-id pub-id-type="pmid">26726926</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR24">
+                <label>24.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Wallach</surname>
+                      <given-names>J</given-names>
+                    </name>
+                    <name>
+                      <surname>Egilman</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Gopal</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Swami</surname>
+                      <given-names>N</given-names>
+                    </name>
+                    <name>
+                      <surname>Krumholz</surname>
+                      <given-names>H</given-names>
+                    </name>
+                    <name>
+                      <surname>Ross</surname>
+                      <given-names>J</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Biomedical journal speed and efficiency: a cross-sectional pilot survey of author experiences</article-title>
+                  <source>Res Integr Peer Rev</source>
+                  <year>2018</year>
+                  <volume>3</volume>
+                  <fpage>1</fpage>
+                  <pub-id pub-id-type="pmid">29451557</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR25">
+                <label>25.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Wallach</surname>
+                      <given-names>JD</given-names>
+                    </name>
+                    <name>
+                      <surname>Boyack</surname>
+                      <given-names>KW</given-names>
+                    </name>
+                    <name>
+                      <surname>Ioannidis</surname>
+                      <given-names>JPA</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Reproducible research practices, transparency, and open access data in the biomedical literature, 2015-2017</article-title>
+                  <source>PLoS Biol</source>
+                  <year>2018</year>
+                  <volume>16</volume>
+                  <issue>11</issue>
+                  <fpage>e2006930</fpage>
+                  <pub-id pub-id-type="pmid">30457984</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR26">
+                <label>26.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Hemkens</surname>
+                      <given-names>LG</given-names>
+                    </name>
+                    <name>
+                      <surname>Ewald</surname>
+                      <given-names>H</given-names>
+                    </name>
+                    <name>
+                      <surname>Naudet</surname>
+                      <given-names>F</given-names>
+                    </name>
+                    <name>
+                      <surname>Ladanie</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Shaw</surname>
+                      <given-names>JG</given-names>
+                    </name>
+                    <name>
+                      <surname>Sajeev</surname>
+                      <given-names>G</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Interpretation of epidemiologic studies very often lacked adequate consideration of confounding</article-title>
+                  <source>J Clin Epidemiol</source>
+                  <year>2018</year>
+                  <volume>93</volume>
+                  <fpage>94</fpage>
+                  <lpage>102</lpage>
+                  <pub-id pub-id-type="pmid">28943377</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR27">
+                <label>27.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Serghiou</surname>
+                      <given-names>S</given-names>
+                    </name>
+                    <name>
+                      <surname>Patel</surname>
+                      <given-names>CJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Tan</surname>
+                      <given-names>YY</given-names>
+                    </name>
+                    <name>
+                      <surname>Koay</surname>
+                      <given-names>P</given-names>
+                    </name>
+                    <name>
+                      <surname>Ioannidis</surname>
+                      <given-names>JP</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Field-wide meta-analyses of observational associations can map selective availability of risk factors and the impact of model specifications</article-title>
+                  <source>J Clin Epidemiol</source>
+                  <year>2016</year>
+                  <volume>71</volume>
+                  <fpage>58</fpage>
+                  <lpage>67</lpage>
+                  <pub-id pub-id-type="pmid">26415577</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR28">
+                <label>28.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Poikolainen</surname>
+                      <given-names>K</given-names>
+                    </name>
+                    <name>
+                      <surname>Vahtera</surname>
+                      <given-names>J</given-names>
+                    </name>
+                    <name>
+                      <surname>Virtanen</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Linna</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Kivimäki</surname>
+                      <given-names>M</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Alcohol and coronary heart disease risk--is there an unknown confounder?</article-title>
+                  <source>Addiction.</source>
+                  <year>2005</year>
+                  <volume>100</volume>
+                  <issue>8</issue>
+                  <fpage>1150</fpage>
+                  <lpage>1157</lpage>
+                  <pub-id pub-id-type="pmid">16042645</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR29">
+                <label>29.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Rehm</surname>
+                      <given-names>J</given-names>
+                    </name>
+                    <name>
+                      <surname>Shield</surname>
+                      <given-names>KD</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>The impact of confounding and alcohol consumption patterns on the calculated risks of alcohol-related diseases</article-title>
+                  <source>Addiction.</source>
+                  <year>2013</year>
+                  <volume>108</volume>
+                  <issue>9</issue>
+                  <fpage>1544</fpage>
+                  <lpage>1545</lpage>
+                  <pub-id pub-id-type="pmid">23947725</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR30">
+                <label>30.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Grønbaek</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Deis</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Sørensen</surname>
+                      <given-names>TI</given-names>
+                    </name>
+                    <name>
+                      <surname>Becker</surname>
+                      <given-names>U</given-names>
+                    </name>
+                    <name>
+                      <surname>Borch-Johnsen</surname>
+                      <given-names>K</given-names>
+                    </name>
+                    <name>
+                      <surname>Müller</surname>
+                      <given-names>C</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Influence of sex, age, body mass index, and smoking on alcohol intake and mortality</article-title>
+                  <source>BMJ.</source>
+                  <year>1994</year>
+                  <volume>308</volume>
+                  <issue>6924</issue>
+                  <fpage>302</fpage>
+                  <lpage>306</lpage>
+                  <pub-id pub-id-type="pmid">8124118</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR31">
+                <label>31.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Roerecke</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Rehm</surname>
+                      <given-names>J</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>The cardioprotective association of average alcohol consumption and ischaemic heart disease: a systematic review and meta-analysis</article-title>
+                  <source>Addiction.</source>
+                  <year>2012</year>
+                  <volume>107</volume>
+                  <issue>7</issue>
+                  <fpage>1246</fpage>
+                  <lpage>1260</lpage>
+                  <pub-id pub-id-type="pmid">22229788</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR32">
+                <label>32.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Chikritzhs</surname>
+                      <given-names>T</given-names>
+                    </name>
+                    <name>
+                      <surname>Fillmore</surname>
+                      <given-names>K</given-names>
+                    </name>
+                    <name>
+                      <surname>Stockwell</surname>
+                      <given-names>T</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>A healthy dose of scepticism: four good reasons to think again about protective effects of alcohol on coronary heart disease</article-title>
+                  <source>Drug Alcohol Rev</source>
+                  <year>2009</year>
+                  <volume>28</volume>
+                  <issue>4</issue>
+                  <fpage>441</fpage>
+                  <lpage>444</lpage>
+                  <pub-id pub-id-type="pmid">19594799</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR33">
+                <label>33.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Müllner</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Matthews</surname>
+                      <given-names>H</given-names>
+                    </name>
+                    <name>
+                      <surname>Altman</surname>
+                      <given-names>DG</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Reporting on statistical methods to adjust for confounding: a cross-sectional survey</article-title>
+                  <source>Ann Intern Med</source>
+                  <year>2002</year>
+                  <volume>136</volume>
+                  <issue>2</issue>
+                  <fpage>122</fpage>
+                  <lpage>126</lpage>
+                  <pub-id pub-id-type="pmid">11790063</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR34">
+                <label>34.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Groenwold</surname>
+                      <given-names>RH</given-names>
+                    </name>
+                    <name>
+                      <surname>Van Deursen</surname>
+                      <given-names>AM</given-names>
+                    </name>
+                    <name>
+                      <surname>Hoes</surname>
+                      <given-names>AW</given-names>
+                    </name>
+                    <name>
+                      <surname>Hak</surname>
+                      <given-names>E</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Poor quality of reporting confounding bias in observational intervention studies: a systematic review</article-title>
+                  <source>Ann Epidemiol</source>
+                  <year>2008</year>
+                  <volume>18</volume>
+                  <issue>10</issue>
+                  <fpage>746</fpage>
+                  <lpage>751</lpage>
+                  <pub-id pub-id-type="pmid">18693038</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR35">
+                <label>35.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Groenwold</surname>
+                      <given-names>RH</given-names>
+                    </name>
+                    <name>
+                      <surname>Klungel</surname>
+                      <given-names>OH</given-names>
+                    </name>
+                    <name>
+                      <surname>Altman</surname>
+                      <given-names>DG</given-names>
+                    </name>
+                    <name>
+                      <surname>van der Graaf</surname>
+                      <given-names>Y</given-names>
+                    </name>
+                    <name>
+                      <surname>Hoes</surname>
+                      <given-names>AW</given-names>
+                    </name>
+                    <name>
+                      <surname>Moons</surname>
+                      <given-names>KG</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Adjustment for continuous confounders: an example of how to prevent residual confounding</article-title>
+                  <source>CMAJ.</source>
+                  <year>2013</year>
+                  <volume>185</volume>
+                  <issue>5</issue>
+                  <fpage>401</fpage>
+                  <lpage>406</lpage>
+                  <pub-id pub-id-type="pmid">23401401</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR36">
+                <label>36.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Patel</surname>
+                      <given-names>CJ</given-names>
+                    </name>
+                    <name>
+                      <surname>Burford</surname>
+                      <given-names>B</given-names>
+                    </name>
+                    <name>
+                      <surname>Ioannidis</surname>
+                      <given-names>JP</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Assessment of vibration of effects due to model specification can demonstrate the instability of observational associations</article-title>
+                  <source>J Clin Epidemiol</source>
+                  <year>2015</year>
+                  <volume>68</volume>
+                  <issue>9</issue>
+                  <fpage>1046</fpage>
+                  <lpage>1058</lpage>
+                  <pub-id pub-id-type="pmid">26279400</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR37">
+                <label>37.</label>
+                <mixed-citation publication-type="other">Higgins JPT. In: Green S, editor. Cochrane Handbook for Systematic Reviews of Interventions Version 5.1.0 [updated March 2011]: The Cochrane Collaboration; 2011. Available from <ext-link ext-link-type="uri" xlink:href="http://www.handbook.cochrane.org">www.handbook.cochrane.org</ext-link>.</mixed-citation>
+              </ref>
+              <ref id="CR38">
+                <label>38.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Bellou</surname>
+                      <given-names>V</given-names>
+                    </name>
+                    <name>
+                      <surname>Belbasis</surname>
+                      <given-names>L</given-names>
+                    </name>
+                    <name>
+                      <surname>Tzoulaki</surname>
+                      <given-names>I</given-names>
+                    </name>
+                    <name>
+                      <surname>Middleton</surname>
+                      <given-names>LT</given-names>
+                    </name>
+                    <name>
+                      <surname>Ioannidis</surname>
+                      <given-names>JPA</given-names>
+                    </name>
+                    <name>
+                      <surname>Evangelou</surname>
+                      <given-names>E</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Systematic evaluation of the associations between environmental risk factors and dementia: an umbrella review of systematic reviews and meta-analyses</article-title>
+                  <source>Alzheimers Dement</source>
+                  <year>2017</year>
+                  <volume>13</volume>
+                  <issue>4</issue>
+                  <fpage>406</fpage>
+                  <lpage>418</lpage>
+                  <pub-id pub-id-type="pmid">27599208</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR39">
+                <label>39.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Tsilidis</surname>
+                      <given-names>KK</given-names>
+                    </name>
+                    <name>
+                      <surname>Kasimis</surname>
+                      <given-names>JC</given-names>
+                    </name>
+                    <name>
+                      <surname>Lopez</surname>
+                      <given-names>DS</given-names>
+                    </name>
+                    <name>
+                      <surname>Ntzani</surname>
+                      <given-names>EE</given-names>
+                    </name>
+                    <name>
+                      <surname>Ioannidis</surname>
+                      <given-names>JP</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Type 2 diabetes and cancer: umbrella review of meta-analyses of observational studies</article-title>
+                  <source>BMJ.</source>
+                  <year>2015</year>
+                  <volume>350</volume>
+                  <fpage>g7607</fpage>
+                  <pub-id pub-id-type="pmid">25555821</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR40">
+                <label>40.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Bortolato</surname>
+                      <given-names>B</given-names>
+                    </name>
+                    <name>
+                      <surname>Köhler</surname>
+                      <given-names>CA</given-names>
+                    </name>
+                    <name>
+                      <surname>Evangelou</surname>
+                      <given-names>E</given-names>
+                    </name>
+                    <name>
+                      <surname>León-Caballero</surname>
+                      <given-names>J</given-names>
+                    </name>
+                    <name>
+                      <surname>Solmi</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Stubbs</surname>
+                      <given-names>B</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Systematic assessment of environmental risk factors for bipolar disorder: an umbrella review of systematic reviews and meta-analyses</article-title>
+                  <source>Bipolar Disord</source>
+                  <year>2017</year>
+                  <volume>19</volume>
+                  <issue>2</issue>
+                  <fpage>84</fpage>
+                  <lpage>96</lpage>
+                  <pub-id pub-id-type="pmid">28470927</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR41">
+                <label>41.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>McRae</surname>
+                      <given-names>MP</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Health benefits of dietary whole grains: an umbrella review of Meta-analyses</article-title>
+                  <source>J Chiropr Med</source>
+                  <year>2017</year>
+                  <volume>16</volume>
+                  <issue>1</issue>
+                  <fpage>10</fpage>
+                  <lpage>18</lpage>
+                  <pub-id pub-id-type="pmid">28228693</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR42">
+                <label>42.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Neuenschwander</surname>
+                      <given-names>M</given-names>
+                    </name>
+                    <name>
+                      <surname>Ballon</surname>
+                      <given-names>A</given-names>
+                    </name>
+                    <name>
+                      <surname>Weber</surname>
+                      <given-names>KS</given-names>
+                    </name>
+                    <name>
+                      <surname>Norat</surname>
+                      <given-names>T</given-names>
+                    </name>
+                    <name>
+                      <surname>Aune</surname>
+                      <given-names>D</given-names>
+                    </name>
+                    <name>
+                      <surname>Schwingshackl</surname>
+                      <given-names>L</given-names>
+                    </name>
+                    <etal/>
+                  </person-group>
+                  <article-title>Role of diet in type 2 diabetes incidence: umbrella review of meta-analyses of prospective observational studies</article-title>
+                  <source>BMJ.</source>
+                  <year>2019</year>
+                  <volume>366</volume>
+                  <fpage>l2368</fpage>
+                  <pub-id pub-id-type="pmid">31270064</pub-id>
+                </element-citation>
+              </ref>
+              <ref id="CR43">
+                <label>43.</label>
+                <element-citation publication-type="journal">
+                  <person-group person-group-type="author">
+                    <name>
+                      <surname>Pouwels</surname>
+                      <given-names>KB</given-names>
+                    </name>
+                    <name>
+                      <surname>Widyakusuma</surname>
+                      <given-names>NN</given-names>
+                    </name>
+                    <name>
+                      <surname>Groenwold</surname>
+                      <given-names>RH</given-names>
+                    </name>
+                    <name>
+                      <surname>Hak</surname>
+                      <given-names>E</given-names>
+                    </name>
+                  </person-group>
+                  <article-title>Quality of reporting of confounding remained suboptimal after the STROBE guideline</article-title>
+                  <source>J Clin Epidemiol</source>
+                  <year>2016</year>
+                  <volume>69</volume>
+                  <fpage>217</fpage>
+                  <lpage>224</lpage>
+                  <pub-id pub-id-type="pmid">26327488</pub-id>
+                </element-citation>
+              </ref>
+            </ref-list>
+          </back>
+        </article>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>

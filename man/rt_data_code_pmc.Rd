@@ -18,7 +18,11 @@ only extracts text from specific locations (footnotes, methods,
 supplements).}
 }
 \value{
-A dataframe of results. Takes a median of 200ms per article.
+A dataframe of results. It returns unique IDs of the article,
+    whether this article is deemed a research article, whether it is deemed
+    relevant to data or code, whether data or code was found, and if so, what
+    the text that suggested the presence of data or code was. Takes a median
+    of 200ms per article.
 }
 \description{
 Takes a PMC XML file and returns data related to the presence of Data or

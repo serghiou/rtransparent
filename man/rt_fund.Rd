@@ -10,7 +10,11 @@ rt_fund(filename)
 \item{filename}{The name of the TXT file as a string.}
 }
 \value{
-A dataframe of results.
+A dataframe of results. It returns the PMID (if this was part of the
+    filename), whether a funding statement was found, what this statement
+    was and the name of the function that identified this text. The functions
+    are returned to add flexibility in how this package is used, such as
+    future definitions of COI that may differ from the one we used.
 }
 \description{
 Takes a TXT file and returns data related to the presence of a Funding
