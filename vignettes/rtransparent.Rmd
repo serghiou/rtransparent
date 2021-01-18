@@ -4,9 +4,10 @@ author: Stylianos Serghiou
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 description: >
-  A demonstration of how to use the `rtransparent` package to extract indicators of transparency from published articles in biomedicine.
+  A demonstration of how to use the `rtransparent` package to extract indicators 
+  of transparency from published articles in biomedicine.
 vignette: >
-  %\VignetteIndexEntry{rtransparent}
+  %\VignetteIndexEntry{Introduction to rtransparent}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -42,13 +43,13 @@ First, I downloaded the PDF of the open access publication [Reproducible researc
 
 ```{r, results = 'hold'}
 # Extract txt from pdf
-article <- rt_read_pdf("../inst/extdata/PMID30457984-PMC6245499.pdf")
+article <- rt_read_pdf("../inst/extdata/PMID32171256-PMC7071725.pdf")
 
 # Print the first 200 characters
 cat(substr(article, start = 1, stop = 200))
 
 # Save
-write(article, "PMID30457984.txt")
+write(article, "PMID32171256.txt")
 ```
 
 Note that the package automatically takes the name of the file as the PMID (PubMed ID) when reading the TXT file. As such, either name your file using its PMID (as I have done here), or disregard the column "pmid" in the resulting dataframes (see below).
@@ -59,7 +60,7 @@ Note that the package automatically takes the name of the file as the PMID (PubM
 Search for any availability of data or code. Note that this is done by utilizing Nico Riedel's great package `oddpub`.
 
 ```{r}
-data_code <- rt_data_code("PMID30457984.txt")
+data_code <- rt_data_code("PMID32171256.txt")
 
 # Glimpse
 dplyr::glimpse(data_code)
@@ -69,7 +70,7 @@ dplyr::glimpse(data_code)
 Search for mention of Conflicts of interest (COI).
 
 ```{r}
-coi <- rt_coi("PMID30457984.txt")
+coi <- rt_coi("PMID32171256.txt")
 
 # Glimpse
 dplyr::glimpse(coi)
@@ -79,7 +80,7 @@ dplyr::glimpse(coi)
 Search for mention of Funding.
 
 ```{r}
-fund <- rt_fund("PMID30457984.txt")
+fund <- rt_fund("PMID32171256.txt")
 
 # Glimpse
 dplyr::glimpse(fund)
@@ -89,7 +90,7 @@ dplyr::glimpse(fund)
 Search for mention of Protocol registration.
 
 ```{r}
-register <- rt_register("PMID30457984.txt")
+register <- rt_register("PMID32171256.txt")
 
 # Glimpse
 dplyr::glimpse(register)
@@ -99,7 +100,7 @@ dplyr::glimpse(register)
 Search for all of COI, Funding and Protocol registration concurrently. Note that the functions for data and code utilize the `oddpub` package. As such, they use a slightly different approach to parallelization, which was necessary in running this function across millions of articles, which was not compatible with the rest of the functions. This is why the data and code functions were not implemented within the `rt_all` function.
 
 ```{r}
-all_indicators <- rt_all("PMID30457984.txt")
+all_indicators <- rt_all("PMID32171256.txt")
 
 # Glimpse
 dplyr::glimpse(all_indicators)
@@ -115,7 +116,7 @@ First, let us download the PMC XML file for the same article: [Reproducible rese
 
 ```{r}
 # Download XML file
-metareadr::mt_read_pmcoa(pmcid = "6245499", file_name = "PMID30457984.xml")
+metareadr::mt_read_pmcoa(pmcid = "7071725", file_name = "PMID32171256.xml")
 ```
 
 
@@ -124,7 +125,7 @@ metareadr::mt_read_pmcoa(pmcid = "6245499", file_name = "PMID30457984.xml")
 Search for any availability of data or code. Note that this is done by utilizing Nico Riedel's package `oddpub`. Note also the use of the `remove_ns` argument to remove the PMC XML namespace - this is not required if using the new version of `metareadr`, but illustrated in case you are using an old version or downloading these files by yourself.
 
 ```{r}
-data_code <- rt_data_code_pmc("PMID30457984.xml", remove_ns = T)
+data_code <- rt_data_code_pmc("PMID32171256.xml", remove_ns = T)
 
 # Glimpse
 dplyr::glimpse(data_code)
@@ -134,7 +135,7 @@ dplyr::glimpse(data_code)
 Search for mention of Conflicts of interest (COI).
 
 ```{r}
-coi <- rt_coi_pmc("PMID30457984.xml", remove_ns = T)
+coi <- rt_coi_pmc("PMID32171256.xml", remove_ns = T)
 
 # Glimpse
 dplyr::glimpse(coi)
@@ -144,7 +145,7 @@ dplyr::glimpse(coi)
 Search for mention of Funding.
 
 ```{r}
-fund <- rt_fund_pmc("PMID30457984.xml",  remove_ns = T)
+fund <- rt_fund_pmc("PMID32171256.xml",  remove_ns = T)
 
 # Glimpse
 dplyr::glimpse(fund)
@@ -154,7 +155,7 @@ dplyr::glimpse(fund)
 Search for mention of Protocol registration.
 
 ```{r}
-register <- rt_register_pmc("PMID30457984.xml",  remove_ns = T)
+register <- rt_register_pmc("PMID32171256.xml",  remove_ns = T)
 
 # Glimpse
 dplyr::glimpse(register)
@@ -164,7 +165,7 @@ Search for all of COI, Funding and Protocol registration concurrently. Note that
 
 
 ```{r}
-all_indicators <- rt_all_pmc("PMID30457984.xml",  remove_ns = T)
+all_indicators <- rt_all_pmc("PMID32171256.xml",  remove_ns = T)
 
 # Glimpse
 dplyr::glimpse(all_indicators)
