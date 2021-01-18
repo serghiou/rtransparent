@@ -25,16 +25,24 @@ First, install the `oddpub` package.
 devtools::install_github("quest-bih/oddpub")
 ```
 
-Then, install the `rtransparent` package.
+Then, install the `rtransparent` package. Note that you need to use the argument
+`build_vignettes = T` to render the vignette, otherwise this will not be
+accessible.
 
 ```r
-devtools::install_github("serghiou/rtransparent")
+devtools::install_github("serghiou/rtransparent", build_vignettes = T)
 ```
 
 
 ## Usage
 
-Inspect the vignette to learn how to use this package. Note this naming convention: functions that work on txt files extracted from PDFs do not end in `_pmc`. Functions that work on XML files from NLM end in `_pmc`. To run all functions on PMC use the `rt_all_pmc` function. To get all meta-data from PMC articles, use the `rt_meta_pmc` function.
+The best way to learn how to use this package is to inspect the vignette. This
+can be done by installing the package as explained above and then using the
+command `vignette("rtransparent")`. This package uses the following naming 
+convention: functions that work with TXT files extracted from PDF files do not 
+end in `_pmc`. Functions that work with XML files from PubMed Central (PMC) end 
+in `_pmc`. To run all functions on PMC use the `rt_all_pmc` function. To get all
+meta-data from PMC articles, use the `rt_meta_pmc` function.
 
 
 ## Coming soon
