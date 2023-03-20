@@ -120,7 +120,8 @@
     "protocol",
     "letter",
     "brief-report",
-    "data-paper"
+    "data-paper",
+    "other"
   )
 
   review_types <- c(
